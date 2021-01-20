@@ -24,6 +24,8 @@ public class BotService {
 
     private final Gson gson;
 
+    private final String a = "";
+
     public BotService(RestTemplate restTemplate, Gson gson) {
         this.restTemplate = restTemplate;
         this.gson = gson;
