@@ -4,19 +4,24 @@
 db-service/.idea
 db-service/.mvn
 db-service/target
+db-service/db-service.iml
 
 logistic-service/.idea
 logistic-service/.mvn
 logistic-service/target
+logistic-service/logistic-service.iml
 
 parsing-service/.idea
 parsing-service/.mvn
 parsing-service/target
+parsing-service/parsing-service.iml
 
 telegram-user-service/.idea
 telegram-user-service/.mvn
 telegram-user-service/target
+telegram-user-service/telegram-user-service.iml
 
 service-registry/.idea
 service-registry/.mvn
 service-registry/target
+service-registry/service-registry.iml

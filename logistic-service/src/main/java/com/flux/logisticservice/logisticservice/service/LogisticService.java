@@ -1,6 +1,7 @@
 package com.flux.logisticservice.logisticservice.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -26,8 +27,8 @@ public class LogisticService {
         this.restTemplate = restTemplate;
     }
 
-    public String addUser(String userJson) {
-        return restTemplate.postForObject(DB_SERVICE + SAVE_USER, userJson, String.class);
+    public ResponseEntity<String> addUser(String userJson) {
+        return new ResponseEntity<>(restTemplate.postForObject(DB_SERVICE + SAVE_USER, userJson, String.class), HttpStatus.OK);
     }
 
     public String findLessonsByGroup(String groupName) {

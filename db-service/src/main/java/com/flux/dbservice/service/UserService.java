@@ -1,10 +1,13 @@
 package com.flux.dbservice.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flux.dbservice.entity.user.User;
 import com.flux.dbservice.repository.UserRepository;
-import com.google.gson.Gson;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static java.util.Objects.isNull;
 
 
 @Service
@@ -14,9 +17,16 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
-    private Gson gson;
+    private ObjectMapper objectMapper;
 
+    @SneakyThrows
     public String saveUser(String userJson) {
-        return gson.toJson(userRepository.save(gson.fromJson(userJson, User.class)));
+        User jsonUser = objectMapper.readValue(userJson, User.class);
+        User dbUser = userRepository.findByChatId(jsonUser.getChatId());
+
+        if (!isNull(dbUser)) {
+            jsonUser.setId(dbUser.getId());
+        }
+        return objectMapper.writeValueAsString(userRepository.save(jsonUser));
     }
 }

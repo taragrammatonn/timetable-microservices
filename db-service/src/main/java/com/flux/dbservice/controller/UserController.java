@@ -1,8 +1,12 @@
 package com.flux.dbservice.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.flux.dbservice.entity.user.User;
 import com.flux.dbservice.service.ParsingService;
 import com.flux.dbservice.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.SneakyThrows;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -10,20 +14,27 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api-gateway")
 public class UserController {
 
-    @Autowired
-    private ParsingService parsingService;
+    private final ParsingService parsingService;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    private final ObjectMapper objectMapper;
+
+    public UserController(ParsingService parsingService, UserService userService, ObjectMapper objectMapper) {
+        this.parsingService = parsingService;
+        this.userService = userService;
+        this.objectMapper = objectMapper;
+    }
 
     @GetMapping("/check-connection")
     public String checkConnection() {
         return parsingService.checkConnection();
     }
 
-    @PostMapping("/saveUser")
-    public String saveUser(@RequestBody String userJson) {
-        return userService.saveUser(userJson);
+    @SneakyThrows
+    @PostMapping(value = "/saveUser")
+    public ResponseEntity<String> saveUser(@RequestBody String user) {
+        return new ResponseEntity<String>(userService.saveUser(user), HttpStatus.OK);
     }
 
     @GetMapping("/findGroup")

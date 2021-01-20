@@ -11,6 +11,9 @@ spring:
     password: postgres
     driver-class-name: org.postgresql.Driver
   jpa:
+    properties:
+      hibernate:
+        format_sql: true
     generate-ddl: true
     show-sql: true
     hibernate:
