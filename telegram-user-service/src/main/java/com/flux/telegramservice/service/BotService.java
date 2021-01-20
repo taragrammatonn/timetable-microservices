@@ -1,7 +1,10 @@
 package com.flux.telegramservice.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flux.telegramservice.entity.User;
 import com.google.gson.Gson;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -22,11 +25,8 @@ public class BotService {
 
     private final RestTemplate restTemplate;
 
-    private final Gson gson;
-
-    public BotService(RestTemplate restTemplate, Gson gson) {
+    public BotService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
-        this.gson = gson;
     }
 
     public User addNewUser(Update update) {
@@ -40,9 +40,8 @@ public class BotService {
         return restTemplate.getForObject(LOGISTIC_SERVICE + LESSON_BY_GROUP, String.class, groupJson);
     }
 
-    private String completeUser(Update update) {
-        return gson.toJson(
-                new User(
+    private User completeUser(Update update) {
+        return new User(
                         update.getMessage().getChatId(),
                         update.getMessage().getChat().getFirstName(),
                         update.getMessage().getChat().getLastName(),
@@ -50,7 +49,6 @@ public class BotService {
                         null,
                         update.getMessage().getFrom().getLanguageCode(),
                         true, false
-                )
         );
     }
 }

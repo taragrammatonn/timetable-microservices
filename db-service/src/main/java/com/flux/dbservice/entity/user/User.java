@@ -12,7 +12,6 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "user", schema = "users")
 public class User {
