@@ -1,0 +1,11 @@
+url: jdbc:postgresql://localhost:5432/
+password: postgres
+user: postgres
+driver-class-name: org.postgresql.Driver
+outputChangeLogFile: src/main/resources/db/changelog/changelog.postgresql.sql
+database-name: timetable
+change-log: src/main/resources/db/changelog/changelog-1.0.postgresql.sql
+
+databaseChangeLog:
+  - includeAll:
+      path: db/changelog/
