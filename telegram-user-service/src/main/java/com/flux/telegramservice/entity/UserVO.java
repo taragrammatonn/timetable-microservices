@@ -20,4 +20,5 @@ public class UserVO {
     String userLanguage;
     Boolean active;
     Boolean adminEntity;
+    Boolean isDefined;
 }
