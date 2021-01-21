@@ -6,8 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Date;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,6 +14,6 @@ public class HistoryVO {
 
     HistoryEvent event;
     String requestMessage;
-    Date requestDate;
+    String requestDate;
     Long userChatId;
 }
