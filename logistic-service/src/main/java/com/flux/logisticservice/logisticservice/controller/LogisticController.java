@@ -36,4 +36,10 @@ public class LogisticController {
     public String getDailyParametersByWeekNotNull() {
         return logisticService.getDailyParametersByWeekNotNull();
     }
+
+    @PostMapping("/saveHistory")
+    @ResponseBody
+    public ResponseEntity<String> saveHistory(@RequestBody String historyJson) {
+        return logisticService.saveHistory(historyJson);
+    }
 }

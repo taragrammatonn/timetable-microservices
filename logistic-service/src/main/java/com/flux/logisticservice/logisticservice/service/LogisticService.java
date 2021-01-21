@@ -20,6 +20,7 @@ public class LogisticService {
     private static final String FIND_GROUP = "/findGroup?groupName={groupName}";
     private static final String SAVE_DAILY_PARAMETERS = "/saveDailyParameters";
     public static final String GET_DAILY_PARAMETERS_BY_WEEK_NOT_NULL = "/getDailyParametersByWeekNotNull";
+    public static final String SAVE_HISTORY = "/saveHistory";
 
     private final RestTemplate restTemplate;
 
@@ -54,5 +55,9 @@ public class LogisticService {
 
     public String getDailyParametersByWeekNotNull() {
         return restTemplate.getForObject(DB_SERVICE + GET_DAILY_PARAMETERS_BY_WEEK_NOT_NULL, String.class);
+    }
+
+    public ResponseEntity<String> saveHistory(String historyJson) {
+        return new ResponseEntity<>(restTemplate.postForObject(DB_SERVICE + SAVE_HISTORY, historyJson, String.class), HttpStatus.OK);
     }
 }

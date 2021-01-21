@@ -1,4 +1,4 @@
-package com.flux.dbservice.repository;
+package com.flux.dbservice.repository.parsing;
 
 import com.flux.dbservice.entity.parsing.Lesson;
 import org.springframework.data.jpa.repository.JpaRepository;

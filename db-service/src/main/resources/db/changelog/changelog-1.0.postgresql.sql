@@ -1,7 +1,7 @@
-create schema parsing;
-create schema users;
+create schema if not exists parsing;
+create schema if not exists users;
 
-create table audience
+create table if not exists audience
 (
     id   bigint not null
         constraint audience_pkey
@@ -12,7 +12,7 @@ create table audience
 alter table audience
     owner to postgres;
 
-create table "group"
+create table if not exists "group"
 (
     id   bigint not null
         constraint group_pkey
@@ -23,7 +23,7 @@ create table "group"
 alter table "group"
     owner to postgres;
 
-create table lesson
+create table if not exists lesson
 (
     id             bigint not null
         constraint lesson_pkey
@@ -40,7 +40,7 @@ create table lesson
 alter table lesson
     owner to postgres;
 
-create table teacher
+create table if not exists teacher
 (
     id   bigint not null
         constraint teacher_pkey
@@ -51,7 +51,7 @@ create table teacher
 alter table teacher
     owner to postgres;
 
-create table daily_parameters
+create table if not exists daily_parameters
 (
     id              bigint  not null
         constraint daily_parameters_pkey
@@ -67,7 +67,7 @@ alter table daily_parameters
 
 
 
-create table "user"
+create table if not exists "user"
 (
     id             bigint not null
         constraint user_pkey
@@ -83,4 +83,20 @@ create table "user"
 );
 
 alter table "user"
+    owner to postgres;
+
+create schema if not exists history_data;
+
+create table if not exists history_data.history
+(
+    id      bigint not null
+        constraint history_pkey
+            primary key,
+    event   varchar(255),
+    user_id bigint
+        constraint fkn4gjyu69m6xa5f3bot571imbe
+            references users."user"
+);
+
+alter table history_data.history
     owner to postgres;

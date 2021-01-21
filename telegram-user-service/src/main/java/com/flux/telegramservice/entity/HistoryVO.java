@@ -6,18 +6,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Date;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class User {
+public class HistoryVO {
 
-    Long chatId;
-    String fName;
-    String lName;
-    String userNickName;
-    String userGroup;
-    String userLanguage;
-    Boolean active;
-    Boolean adminEntity;
+    HistoryEvent event;
+    String requestMessage;
+    Date requestDate;
+    Long userId;
 }

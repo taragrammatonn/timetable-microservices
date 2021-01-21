@@ -1,13 +1,13 @@
 package com.flux.telegramservice.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flux.telegramservice.entity.User;
-import com.google.gson.Gson;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.flux.telegramservice.entity.HistoryEvent;
+import com.flux.telegramservice.entity.HistoryVO;
+import com.flux.telegramservice.entity.UserVO;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.meta.api.objects.Update;
+
+import java.util.Date;
 
 import static java.util.Objects.isNull;
 
@@ -19,6 +19,7 @@ public class BotService {
     private static final String SAVE_USER = "/addUser";
     public static final String FIND_GROUP = "/findGroup?groupName={groupName}";
     public static final String LESSON_BY_GROUP = "/lessonByGroup?groupJson={groupJson}";
+    public static final String SAVE_HISTORY = "/saveHistory";
 
     // Util
     public static final String NULL = "null";
@@ -29,19 +30,22 @@ public class BotService {
         this.restTemplate = restTemplate;
     }
 
-    public User addNewUser(Update update) {
-        return restTemplate.postForObject(LOGISTIC_SERVICE + SAVE_USER, completeUser(update), User.class);
+    public UserVO addNewUser(Update update) {
+        saveHistory(update, HistoryEvent.NEW_USER);
+
+        return restTemplate.postForObject(LOGISTIC_SERVICE + SAVE_USER, completeUser(update), UserVO.class);
     }
 
-    public String findLessonsByGroup(String groupName) {
-        String groupJson = restTemplate.getForObject(LOGISTIC_SERVICE + FIND_GROUP, String.class, groupName);
+    public String findLessonsByGroup(Update update) {
+        String groupJson = restTemplate.getForObject(LOGISTIC_SERVICE + FIND_GROUP, String.class, update.getMessage().getText());
         if (isNull(groupJson) || groupJson.equals(NULL)) return "Такой группы не существует!";
 
+        saveHistory(update, HistoryEvent.GROUP);
         return restTemplate.getForObject(LOGISTIC_SERVICE + LESSON_BY_GROUP, String.class, groupJson);
     }
 
-    private User completeUser(Update update) {
-        return new User(
+    private UserVO completeUser(Update update) {
+        return new UserVO(
                         update.getMessage().getChatId(),
                         update.getMessage().getChat().getFirstName(),
                         update.getMessage().getChat().getLastName(),
@@ -49,6 +53,18 @@ public class BotService {
                         null,
                         update.getMessage().getFrom().getLanguageCode(),
                         true, false
+        );
+    }
+
+    private void saveHistory(Update update, HistoryEvent event) {
+        restTemplate.postForObject(
+                LOGISTIC_SERVICE + SAVE_HISTORY,
+                new HistoryVO(
+                        event,
+                        update.getMessage().getText(),
+                        new Date(),
+                        update.getMessage().getChatId()),
+                HistoryVO.class
         );
     }
 }

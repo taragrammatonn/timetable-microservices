@@ -1,7 +1,6 @@
 package com.flux.dbservice.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flux.dbservice.entity.user.User;
+import com.flux.dbservice.service.HistoryService;
 import com.flux.dbservice.service.ParsingService;
 import com.flux.dbservice.service.UserService;
 import lombok.SneakyThrows;
@@ -18,12 +17,12 @@ public class UserController {
 
     private final UserService userService;
 
-    private final ObjectMapper objectMapper;
+    private final HistoryService historyService;
 
-    public UserController(ParsingService parsingService, UserService userService, ObjectMapper objectMapper) {
+    public UserController(ParsingService parsingService, UserService userService, HistoryService historyService) {
         this.parsingService = parsingService;
         this.userService = userService;
-        this.objectMapper = objectMapper;
+        this.historyService = historyService;
     }
 
     @GetMapping("/check-connection")
@@ -34,7 +33,7 @@ public class UserController {
     @SneakyThrows
     @PostMapping(value = "/saveUser")
     public ResponseEntity<String> saveUser(@RequestBody String user) {
-        return new ResponseEntity<String>(userService.saveUser(user), HttpStatus.OK);
+        return new ResponseEntity<>(userService.saveUser(user), HttpStatus.OK);
     }
 
     @GetMapping("/findGroup")
@@ -55,5 +54,10 @@ public class UserController {
     @GetMapping("/getDailyParametersByWeekNotNull")
     public String getDailyParametersByWeekNotNull() {
         return parsingService.getDailyParametersByWeekNotNull();
+    }
+
+    @PostMapping("/saveHistory")
+    public ResponseEntity<String> saveHistory(@RequestBody String historyJson) {
+        return new ResponseEntity<>(historyService.saveHistory(historyJson), HttpStatus.OK);
     }
 }
