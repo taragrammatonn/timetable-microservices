@@ -42,4 +42,9 @@ public class LogisticController {
     public ResponseEntity<String> saveHistory(@RequestBody String historyJson) {
         return logisticService.saveHistory(historyJson);
     }
+
+    @GetMapping("/getUser")
+    public String getUserByChatId(@RequestParam String chatId) {
+        return logisticService.getUserByChatId(chatId);
+    }
 }

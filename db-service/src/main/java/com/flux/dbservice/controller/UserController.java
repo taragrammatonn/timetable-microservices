@@ -60,4 +60,9 @@ public class UserController {
     public ResponseEntity<String> saveHistory(@RequestBody String historyJson) {
         return new ResponseEntity<>(historyService.saveHistory(historyJson), HttpStatus.OK);
     }
+
+    @GetMapping("/getUser")
+    public ResponseEntity<String> getDailyParametersByWeekNotNull(@RequestParam String chatId) {
+        return new ResponseEntity<>(userService.getUserByChatId(chatId), HttpStatus.OK);
+    }
 }
