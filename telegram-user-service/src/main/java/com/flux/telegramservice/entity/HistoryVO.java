@@ -17,5 +17,5 @@ public class HistoryVO {
     HistoryEvent event;
     String requestMessage;
     Date requestDate;
-    Long userId;
+    Long userChatId;
 }

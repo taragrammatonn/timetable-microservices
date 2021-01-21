@@ -28,11 +28,11 @@ public class History {
 
     String requestMessage;
     String requestDate;
-//    Long userChatId;
+    Long userChatId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_chat_id", referencedColumnName = "chatId")
-    User userChatId;
+    @JoinColumn(name = "user_id")
+    User user;
 
     @PrePersist
     protected void onCreate() {

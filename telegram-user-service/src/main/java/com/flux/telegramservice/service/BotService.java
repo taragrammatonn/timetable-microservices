@@ -31,9 +31,10 @@ public class BotService {
     }
 
     public UserVO addNewUser(Update update) {
+        UserVO user = restTemplate.postForObject(LOGISTIC_SERVICE + SAVE_USER, completeUser(update), UserVO.class);
         saveHistory(update, HistoryEvent.NEW_USER);
 
-        return restTemplate.postForObject(LOGISTIC_SERVICE + SAVE_USER, completeUser(update), UserVO.class);
+        return user;
     }
 
     public String findLessonsByGroup(Update update) {
