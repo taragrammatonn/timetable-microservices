@@ -1,10 +1,6 @@
 package com.flux.telegramservice.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flux.telegramservice.entity.User;
-import com.google.gson.Gson;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -17,6 +13,7 @@ public class BotService {
     // LOGISTIC-SERVICE API's
     public static final String LOGISTIC_SERVICE = "http://LOGISTIC-SERVICE/logistic-api";
     private static final String SAVE_USER = "/addUser";
+    private static final String GET_USER_BY_CHAT_ID = "/getUser?chatId={chatId}";
     public static final String FIND_GROUP = "/findGroup?groupName={groupName}";
     public static final String LESSON_BY_GROUP = "/lessonByGroup?groupJson={groupJson}";
 
@@ -41,14 +38,26 @@ public class BotService {
     }
 
     private User completeUser(Update update) {
-        return new User(
-                        update.getMessage().getChatId(),
-                        update.getMessage().getChat().getFirstName(),
-                        update.getMessage().getChat().getLastName(),
-                        update.getMessage().getChat().getUserName(),
-                        null,
-                        update.getMessage().getFrom().getLanguageCode(),
-                        true, false
+        User user = restTemplate.getForObject(
+                LOGISTIC_SERVICE + GET_USER_BY_CHAT_ID,
+                User.class,
+                update.getMessage().getChatId()
         );
+
+        if (isNull(user)) {
+            return new User(
+                    update.getMessage().getChatId(),
+                    update.getMessage().getChat().getFirstName(),
+                    update.getMessage().getChat().getLastName(),
+                    update.getMessage().getChat().getUserName(),
+                    null,
+                    update.getMessage().getFrom().getLanguageCode(),
+                    true, false, false
+            );
+        } else {
+            user.setIsDefined(true);
+            return user;
+        }
     }
+
 }

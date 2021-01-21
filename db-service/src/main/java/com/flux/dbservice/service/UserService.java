@@ -29,4 +29,9 @@ public class UserService {
         }
         return objectMapper.writeValueAsString(userRepository.save(jsonUser));
     }
+
+    @SneakyThrows
+    public String getUserByChatId(String chatId) {
+        return objectMapper.writeValueAsString(userRepository.findByChatId(Long.valueOf(chatId)));
+    }
 }

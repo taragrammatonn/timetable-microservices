@@ -20,4 +20,5 @@ public class User {
     String userLanguage;
     Boolean active;
     Boolean adminEntity;
+    Boolean isDefined;
 }

@@ -36,4 +36,9 @@ public class LogisticController {
     public String getDailyParametersByWeekNotNull() {
         return logisticService.getDailyParametersByWeekNotNull();
     }
+
+    @GetMapping("/getUser")
+    public String getUserByChatId(@RequestParam String chatId) {
+        return logisticService.getUserByChatId(chatId);
+    }
 }

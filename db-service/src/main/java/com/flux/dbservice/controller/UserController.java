@@ -1,7 +1,5 @@
 package com.flux.dbservice.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flux.dbservice.entity.user.User;
 import com.flux.dbservice.service.ParsingService;
 import com.flux.dbservice.service.UserService;
 import lombok.SneakyThrows;
@@ -18,12 +16,9 @@ public class UserController {
 
     private final UserService userService;
 
-    private final ObjectMapper objectMapper;
-
-    public UserController(ParsingService parsingService, UserService userService, ObjectMapper objectMapper) {
+    public UserController(ParsingService parsingService, UserService userService) {
         this.parsingService = parsingService;
         this.userService = userService;
-        this.objectMapper = objectMapper;
     }
 
     @GetMapping("/check-connection")
@@ -34,7 +29,7 @@ public class UserController {
     @SneakyThrows
     @PostMapping(value = "/saveUser")
     public ResponseEntity<String> saveUser(@RequestBody String user) {
-        return new ResponseEntity<String>(userService.saveUser(user), HttpStatus.OK);
+        return new ResponseEntity<>(userService.saveUser(user), HttpStatus.OK);
     }
 
     @GetMapping("/findGroup")
@@ -55,5 +50,10 @@ public class UserController {
     @GetMapping("/getDailyParametersByWeekNotNull")
     public String getDailyParametersByWeekNotNull() {
         return parsingService.getDailyParametersByWeekNotNull();
+    }
+
+    @GetMapping("/getUser")
+    public ResponseEntity<String> getDailyParametersByWeekNotNull(@RequestParam String chatId) {
+        return new ResponseEntity<>(userService.getUserByChatId(chatId), HttpStatus.OK);
     }
 }
