@@ -3,5 +3,7 @@ server:
 
 eureka:
   client:
+    healthcheck:
+      enabled: true
     register-with-eureka: false
     fetch-registry: false

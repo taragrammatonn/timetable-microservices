@@ -1,8 +1,10 @@
 package com.flux.dbservice.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flux.dbservice.entity.user.User;
-import com.flux.dbservice.repository.UserRepository;
+import com.flux.dbservice.entity.history.History;
+import com.flux.dbservice.entity.users.User;
+import com.flux.dbservice.repository.history.HistoryRepository;
+import com.flux.dbservice.repository.users.UserRepository;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private HistoryRepository historyRepository;
 
     @Autowired
     private ObjectMapper objectMapper;

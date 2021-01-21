@@ -1,5 +1,6 @@
-package com.flux.dbservice.entity.user;
+package com.flux.dbservice.entity.users;
 
+import com.flux.dbservice.entity.history.History;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
+import java.util.LinkedList;
+import java.util.List;
 
 @Data
 @Entity
@@ -28,5 +31,7 @@ public class User {
     String userLanguage;
     Boolean active;
     Boolean adminEntity;
-    Boolean isDefined;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    List<History> history = new LinkedList<>();
 }

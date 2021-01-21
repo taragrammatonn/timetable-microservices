@@ -2,8 +2,8 @@ package com.flux.dbservice.service;
 
 import com.flux.dbservice.entity.parsing.DailyParameters;
 import com.flux.dbservice.entity.parsing.Group;
-import com.flux.dbservice.repository.DailyParametersRepository;
-import com.flux.dbservice.repository.GroupRepository;
+import com.flux.dbservice.repository.parsing.DailyParametersRepository;
+import com.flux.dbservice.repository.parsing.GroupRepository;
 import com.google.gson.Gson;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
@@ -36,7 +36,12 @@ public class ParsingService {
 
     private final Gson gson;
 
-    public ParsingService(DailyParametersRepository dailyParametersRepository, GroupRepository groupRepository, RestTemplate restTemplate, Gson gson) {
+    public ParsingService(
+            DailyParametersRepository dailyParametersRepository,
+            GroupRepository groupRepository,
+            RestTemplate restTemplate,
+            Gson gson
+    ) {
         this.dailyParametersRepository = dailyParametersRepository;
         this.groupRepository = groupRepository;
         this.restTemplate = restTemplate;

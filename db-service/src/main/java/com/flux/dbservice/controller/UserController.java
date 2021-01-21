@@ -1,5 +1,6 @@
 package com.flux.dbservice.controller;
 
+import com.flux.dbservice.service.HistoryService;
 import com.flux.dbservice.service.ParsingService;
 import com.flux.dbservice.service.UserService;
 import lombok.SneakyThrows;
@@ -16,9 +17,12 @@ public class UserController {
 
     private final UserService userService;
 
-    public UserController(ParsingService parsingService, UserService userService) {
+    private final HistoryService historyService;
+
+    public UserController(ParsingService parsingService, UserService userService, HistoryService historyService) {
         this.parsingService = parsingService;
         this.userService = userService;
+        this.historyService = historyService;
     }
 
     @GetMapping("/check-connection")
@@ -52,8 +56,8 @@ public class UserController {
         return parsingService.getDailyParametersByWeekNotNull();
     }
 
-    @GetMapping("/getUser")
-    public ResponseEntity<String> getDailyParametersByWeekNotNull(@RequestParam String chatId) {
-        return new ResponseEntity<>(userService.getUserByChatId(chatId), HttpStatus.OK);
+    @PostMapping("/saveHistory")
+    public ResponseEntity<String> saveHistory(@RequestBody String historyJson) {
+        return new ResponseEntity<>(historyService.saveHistory(historyJson), HttpStatus.OK);
     }
 }

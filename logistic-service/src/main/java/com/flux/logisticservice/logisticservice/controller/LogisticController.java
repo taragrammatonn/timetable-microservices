@@ -37,8 +37,9 @@ public class LogisticController {
         return logisticService.getDailyParametersByWeekNotNull();
     }
 
-    @GetMapping("/getUser")
-    public String getUserByChatId(@RequestParam String chatId) {
-        return logisticService.getUserByChatId(chatId);
+    @PostMapping("/saveHistory")
+    @ResponseBody
+    public ResponseEntity<String> saveHistory(@RequestBody String historyJson) {
+        return logisticService.saveHistory(historyJson);
     }
 }

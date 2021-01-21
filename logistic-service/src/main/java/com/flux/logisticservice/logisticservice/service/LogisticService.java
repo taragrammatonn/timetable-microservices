@@ -17,10 +17,10 @@ public class LogisticService {
     // DB-SERVICE API's
     private static final String DB_SERVICE = "http://DB-SERVICE/api-gateway";
     private static final String SAVE_USER = "/saveUser";
-    private static final String GET_USER_BY_CHAT_ID = "/getUser?chatId={chatId}";
     private static final String FIND_GROUP = "/findGroup?groupName={groupName}";
     private static final String SAVE_DAILY_PARAMETERS = "/saveDailyParameters";
     public static final String GET_DAILY_PARAMETERS_BY_WEEK_NOT_NULL = "/getDailyParametersByWeekNotNull";
+    public static final String SAVE_HISTORY = "/saveHistory";
 
     private final RestTemplate restTemplate;
 
@@ -57,7 +57,7 @@ public class LogisticService {
         return restTemplate.getForObject(DB_SERVICE + GET_DAILY_PARAMETERS_BY_WEEK_NOT_NULL, String.class);
     }
 
-    public String getUserByChatId(String chatId) {
-        return restTemplate.getForObject(DB_SERVICE + GET_USER_BY_CHAT_ID, String.class, chatId);
+    public ResponseEntity<String> saveHistory(String historyJson) {
+        return new ResponseEntity<>(restTemplate.postForObject(DB_SERVICE + SAVE_HISTORY, historyJson, String.class), HttpStatus.OK);
     }
 }

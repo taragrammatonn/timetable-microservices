@@ -1,6 +1,6 @@
-package com.flux.dbservice.repository;
+package com.flux.dbservice.repository.users;
 
-import com.flux.dbservice.entity.user.User;
+import com.flux.dbservice.entity.users.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

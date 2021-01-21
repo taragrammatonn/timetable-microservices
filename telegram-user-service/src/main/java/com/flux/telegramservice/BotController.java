@@ -26,7 +26,7 @@ public class BotController extends Bot {
 
         switch (update.getMessage().getText()) {
             case "/start" -> sendMessage(update, userService.completeUser(botService.addNewUser(update)));
-            default ->  sendMessage(update, botService.findLessonsByGroup(update.getMessage().getText()));
+            default ->  sendMessage(update, botService.findLessonsByGroup(update));
         }
     }
 
