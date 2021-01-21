@@ -17,6 +17,7 @@ public class BotService {
     // LOGISTIC-SERVICE API's
     public static final String LOGISTIC_SERVICE = "http://LOGISTIC-SERVICE/logistic-api";
     private static final String SAVE_USER = "/addUser";
+    private static final String GET_USER_BY_CHAT_ID = "/getUser?chatId={chatId}";
     public static final String FIND_GROUP = "/findGroup?groupName={groupName}";
     public static final String LESSON_BY_GROUP = "/lessonByGroup?groupJson={groupJson}";
     public static final String SAVE_HISTORY = "/saveHistory";
@@ -46,15 +47,26 @@ public class BotService {
     }
 
     private UserVO completeUser(Update update) {
-        return new UserVO(
-                        update.getMessage().getChatId(),
-                        update.getMessage().getChat().getFirstName(),
-                        update.getMessage().getChat().getLastName(),
-                        update.getMessage().getChat().getUserName(),
-                        null,
-                        update.getMessage().getFrom().getLanguageCode(),
-                        true, false
+        UserVO user = restTemplate.getForObject(
+                LOGISTIC_SERVICE + GET_USER_BY_CHAT_ID,
+                UserVO.class,
+                update.getMessage().getChatId()
         );
+
+        if (isNull(user)) {
+            return new UserVO(
+                    update.getMessage().getChatId(),
+                    update.getMessage().getChat().getFirstName(),
+                    update.getMessage().getChat().getLastName(),
+                    update.getMessage().getChat().getUserName(),
+                    null,
+                    update.getMessage().getFrom().getLanguageCode(),
+                    true, false, false
+            );
+        } else {
+            user.setIsDefined(true);
+            return user;
+        }
     }
 
     private void saveHistory(Update update, HistoryEvent event) {
