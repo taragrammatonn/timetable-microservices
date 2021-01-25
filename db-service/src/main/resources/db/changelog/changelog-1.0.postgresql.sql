@@ -9,7 +9,7 @@ create table if not exists parsing.audience
         primary key (id)
 );
 
-alter table audience
+alter table parsing.audience
     owner to postgres;
 
 create table if not exists parsing.daily_parameters
