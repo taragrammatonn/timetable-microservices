@@ -1,7 +1,7 @@
 package com.flux.telegramservice.botconfiguration;
 
-import com.flux.telegramservice.service.BotService;
-import com.flux.telegramservice.service.UserService;
+import com.flux.telegramservice.service.project.BotService;
+import com.flux.telegramservice.service.project.UserService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
