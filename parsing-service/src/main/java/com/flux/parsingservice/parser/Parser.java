@@ -1,5 +1,10 @@
 package com.flux.parsingservice.parser;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import lombok.SneakyThrows;
@@ -13,10 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.Objects.isNull;
 
@@ -76,7 +78,7 @@ public class Parser {
             );
         }
 
-        return Jsoup.connect(String.valueOf(LessonsBy.GROUP.getApi()))
+        return getTodaysLessons(Jsoup.connect(String.valueOf(LessonsBy.GROUP.getApi()))
                 .method(Connection.Method.POST)
                 .referrer("http://orar.usarb.md/")
                 .userAgent(USER_AGENT)
@@ -90,7 +92,26 @@ public class Parser {
                 .data("week", dailyParametersObject.get("week").toString().replace("\"", ""))
                 .data("grName", groupObject.get("name").toString().replace("\"", ""))
                 .execute()
-                .body();
+                .body(), dailyParametersObject.get("day").getAsInt());
+    }
+
+    private String getTodaysLessons(String weekLessons, int day_number) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayNode arrayNode = (ArrayNode) mapper.readTree(weekLessons).get("week");
+        StringBuilder todayLessons = new StringBuilder();
+        String[] cours_nr = {"1. 8:00-9:30\n", "2. 9:45-11:15\n", "3. 11:30-13:00\n", "4. 13:15-14:45\n", "5. 15:00-16:30\n", "6. 16:45-18:15\n", "7. 18:30-20:00\n"};
+        if (arrayNode.isArray()) {
+            for (JsonNode jsonNode : arrayNode) {
+                if (day_number == (jsonNode.get("day_number").asInt())) {
+                    int count = jsonNode.get("cours_nr").asInt() - 1;
+                    todayLessons.append(cours_nr[count]).append(jsonNode.get("cours_name").asText()).append("\n");
+                    todayLessons.append(jsonNode.get("cours_type").asText()).append("\n");
+                    todayLessons.append(jsonNode.get("Titlu").asText()).append(" ").append(jsonNode.get("teacher_name").asText()).append("\n");
+                    todayLessons.append(jsonNode.get("cours_office").asText()).append("\n");
+                }
+            }
+        }
+        return todayLessons.toString();
     }
 
     private String formatJson(String json) {
