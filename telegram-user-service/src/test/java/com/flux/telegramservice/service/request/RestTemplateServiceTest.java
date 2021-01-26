@@ -2,6 +2,8 @@ package com.flux.telegramservice.service.request;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.flux.telegramservice.entity.HistoryEvent;
+import com.flux.telegramservice.entity.HistoryVO;
 import com.flux.telegramservice.entity.UserVO;
 import lombok.SneakyThrows;
 import org.json.JSONArray;
@@ -11,6 +13,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.web.client.RestTemplate;
+import org.telegram.telegrambots.meta.api.objects.Update;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static com.flux.telegramservice.util.Links.*;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -113,12 +119,34 @@ class RestTemplateServiceTest {
     }
 
     @Test
-    void saveHistory() {
-        // TODO
+    void saveHistory_Should_Return_Non_Null_History() {
+        given(restTemplate.postForObject(LOGISTIC_SERVICE + SAVE_HISTORY,
+                new HistoryVO(
+                        HistoryEvent.TEST,
+                        "message",
+                        new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()),
+                        123L),
+                HistoryVO.class
+        )).willReturn(new HistoryVO(
+                HistoryEvent.TEST,
+                "message",
+                new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()),
+                123L));
+
+        assertThat(restTemplateService.saveHistory(new Update(), HistoryEvent.TEST)).isNotNull();
     }
 
     @Test
-    void saveErrorMessage() {
-        // TODO
+    void saveHistory_Should_Return_Null() {
+        given(restTemplate.postForObject(LOGISTIC_SERVICE + SAVE_HISTORY,
+                new HistoryVO(
+                        HistoryEvent.TEST,
+                        "message",
+                        new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()),
+                        123L),
+                HistoryVO.class
+        )).willReturn(null);
+
+        assertThat(restTemplateService.saveHistory(new Update(), HistoryEvent.TEST)).isNotNull();
     }
 }

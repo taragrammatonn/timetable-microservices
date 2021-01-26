@@ -48,7 +48,4 @@ public class RestTemplateService {
                 HistoryVO.class
         ) != null;
     }
-
-    public void saveErrorMessage(HistoryEvent group) {
-    }
 }
