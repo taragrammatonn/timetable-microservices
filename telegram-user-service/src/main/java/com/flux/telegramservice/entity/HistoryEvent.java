@@ -4,5 +4,6 @@ public enum HistoryEvent {
     GROUP,
     TEACHER,
     AUDIENCE,
-    NEW_USER
+    NEW_USER,
+    TEST
 }

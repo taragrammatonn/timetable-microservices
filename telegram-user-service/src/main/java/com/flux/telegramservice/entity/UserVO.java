@@ -12,6 +12,12 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserVO {
 
+    public UserVO(Long chatId, String fName, String lName) {
+        this.chatId = chatId;
+        this.fName = fName;
+        this.lName = lName;
+    }
+
     Long chatId;
     String fName;
     String lName;
