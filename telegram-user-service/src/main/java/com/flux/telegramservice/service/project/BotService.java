@@ -19,7 +19,6 @@ public class BotService extends AbstractTelegramService {
         if (isNull(groupJson) || groupJson.equals(NULL)) return "Такой группы не существует!";
 
         if (!saveHistory(update, HistoryEvent.GROUP)) {
-            restTemplateService.saveErrorMessage(HistoryEvent.GROUP);
             throw new CannotSaveHistoryException("Can't save History at entity: " + update.getMessage().getChatId());
         }
 

@@ -6,13 +6,17 @@ import com.flux.telegramservice.entity.HistoryEvent;
 import com.flux.telegramservice.entity.HistoryVO;
 import com.flux.telegramservice.entity.UserVO;
 import lombok.SneakyThrows;
+import org.checkerframework.checker.units.qual.C;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
+import org.telegram.telegrambots.meta.api.objects.Chat;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.text.SimpleDateFormat;
@@ -21,6 +25,8 @@ import java.util.Date;
 import static com.flux.telegramservice.util.Links.*;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class RestTemplateServiceTest {
 
@@ -133,7 +139,21 @@ class RestTemplateServiceTest {
                 new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()),
                 123L));
 
-        assertThat(restTemplateService.saveHistory(new Update(), HistoryEvent.TEST)).isNotNull();
+
+        Update update = mock(Update.class) ;
+        Message message = mock(Message.class);
+        Chat chat = mock(Chat.class);
+
+        ReflectionTestUtils.setField(message, "text", "test");
+        ReflectionTestUtils.setField(chat, "id", 123L);
+        ReflectionTestUtils.setField(message, "chat", chat);
+        ReflectionTestUtils.setField(update, "message", message);
+
+
+//        when(update.getMessage().getText()).thenReturn("test");
+//        when(update.getMessage().getChatId()).thenReturn(123L);
+//
+//        assertThat(restTemplateService.saveHistory(new Update(), HistoryEvent.TEST)).isNotNull();
     }
 
     @Test
@@ -147,6 +167,9 @@ class RestTemplateServiceTest {
                 HistoryVO.class
         )).willReturn(null);
 
-        assertThat(restTemplateService.saveHistory(new Update(), HistoryEvent.TEST)).isNotNull();
+//        given(update.getMessage().getText()).willReturn("test");
+//        given(update.getMessage().getChatId()).willReturn(123L);
+
+//        assertThat(restTemplateService.saveHistory(new Update(), HistoryEvent.TEST)).isNotNull();
     }
 }
