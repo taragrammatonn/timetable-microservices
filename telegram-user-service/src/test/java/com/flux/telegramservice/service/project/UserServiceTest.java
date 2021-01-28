@@ -43,9 +43,8 @@ class UserServiceTest {
 
     @Test
     void addNewUser_Should_Return_Null_User() {
-        given(restTemplateService.saveUser(userVO)).willReturn(userVO);
-        assertThat(userVO).isNotNull();
-        assertThat(userVO.getChatId()).isEqualTo(123L);
+        given(restTemplateService.saveUser(userVO)).willReturn(null);
+        assertThat(restTemplateService.saveUser(userVO)).isNull();
     }
 
     @Test

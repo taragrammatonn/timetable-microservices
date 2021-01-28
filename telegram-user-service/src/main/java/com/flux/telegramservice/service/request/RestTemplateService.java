@@ -37,8 +37,8 @@ public class RestTemplateService {
         return restTemplate.getForObject(LOGISTIC_SERVICE + LESSON_BY_GROUP, String.class, group);
     }
 
-    public boolean saveHistory(Update update, HistoryEvent event) {
-        return restTemplate.postForObject(
+    public void saveHistory(Update update, HistoryEvent event) {
+        restTemplate.postForObject(
                 LOGISTIC_SERVICE + SAVE_HISTORY,
                 new HistoryVO(
                         event,
@@ -46,6 +46,6 @@ public class RestTemplateService {
                         new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()),
                         update.getMessage().getChatId()),
                 HistoryVO.class
-        ) != null;
+        );
     }
 }

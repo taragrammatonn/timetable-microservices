@@ -16,7 +16,7 @@ public abstract class AbstractTelegramService {
     @Autowired
     protected BotService botService;
 
-    protected boolean saveHistory(Update update, HistoryEvent event) {
-        return restTemplateService.saveHistory(update, event);
+    protected void saveHistory(Update update, HistoryEvent event) {
+        restTemplateService.saveHistory(update, event);
     }
 }
