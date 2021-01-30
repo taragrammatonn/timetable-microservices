@@ -2,6 +2,7 @@ package com.flux.logisticservice.logisticservice.controller;
 
 import com.flux.logisticservice.logisticservice.service.LogisticService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +24,7 @@ public class LogisticController {
     }
 
     @GetMapping("/getAllGroups")
-    public String getAllGroups() {
+    public ResponseEntity<String> getAllGroups() {
         return logisticService.getAllGroups();
     }
 
@@ -46,5 +47,15 @@ public class LogisticController {
     @GetMapping("/getUser")
     public String getUserByChatId(@RequestParam String chatId) {
         return logisticService.getUserByChatId(chatId);
+    }
+
+    @RequestMapping("/saveUserOption") @ResponseBody
+    public void saveUserOption(@RequestBody String userOptionJson) {
+        logisticService.saveUserOption(userOptionJson);
+    }
+
+    @GetMapping("/getUserOption")
+    public ResponseEntity<String> getUserOption(@RequestParam Long chatId) {
+        return new ResponseEntity<>(logisticService.getUserOptionByChatId(chatId), HttpStatus.OK);
     }
 }
