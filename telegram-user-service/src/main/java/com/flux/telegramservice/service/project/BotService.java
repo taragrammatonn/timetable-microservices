@@ -14,7 +14,7 @@ import static java.util.Objects.isNull;
 public class BotService extends AbstractTelegramService {
 
     public String findLessonsByGroup(Update update) throws CannotSaveHistoryException {
-        String groupJson = restTemplateService.findGroup(update.getMessage().getText());
+        String groupJson = findGroup(update.getMessage().getText());
 
         if (isNull(groupJson) || groupJson.equals(NULL)) return "Такой группы не существует!";
 
@@ -23,5 +23,9 @@ public class BotService extends AbstractTelegramService {
         }
 
         return restTemplateService.getLessonsByGroup(groupJson);
+    }
+
+    public String findGroup(String group) {
+        return restTemplateService.findGroup(group);
     }
 }

@@ -69,20 +69,29 @@ alter table parsing.teacher
 
 create table if not exists users."user"
 (
-    id             bigint not null,
+    id             bigint not null
+        constraint user_pkey
+            primary key,
     active         boolean,
     admin_entity   boolean,
-    chat_id        bigint,
+    chat_id        bigint
+        constraint uk_2x9mn7ijqx1uaori01f3w9hoj
+            unique,
     f_name         varchar(255),
     l_name         varchar(255),
     user_group     varchar(255),
     user_language  varchar(255),
     user_nick_name varchar(255),
-    constraint user_pkey
-        primary key (id),
-    constraint uk_2x9mn7ijqx1uaori01f3w9hoj
-        unique (chat_id)
+    is_defined     boolean,
+    user_option_id bigint
+        constraint fkbww14fbccdta6op5weoxth0py
+            references users.user_option
 );
+
+alter table users."user"
+    owner to postgres;
+
+
 
 alter table users."user"
     owner to postgres;
@@ -107,3 +116,18 @@ create table if not exists history_data.history
 alter table history_data.history
     owner to postgres;
 
+create table if not exists users.user_option
+(
+    id                bigint not null
+        constraint user_option_pkey
+            primary key,
+    audience_selected boolean,
+    group_selected    boolean,
+    teacher_selected  boolean,
+    user_id           bigint
+        constraint fk8usx5lqy3o113k7k4436xberw
+            references users."user"
+);
+
+alter table users.user_option
+    owner to postgres;

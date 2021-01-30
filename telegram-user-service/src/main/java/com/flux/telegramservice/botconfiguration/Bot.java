@@ -1,10 +1,7 @@
 package com.flux.telegramservice.botconfiguration;
 
-import com.flux.telegramservice.service.project.BotService;
-import com.flux.telegramservice.service.project.UserService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -12,12 +9,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Slf4j
 public abstract class Bot extends TelegramLongPollingBot {
-
-    @Autowired
-    protected BotService botService;
-
-    @Autowired
-    protected UserService userService;
 
     @Value("${bot.name}")
     private String botUsername;
