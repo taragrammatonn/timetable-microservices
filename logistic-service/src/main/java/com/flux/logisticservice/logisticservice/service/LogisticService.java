@@ -22,6 +22,8 @@ public class LogisticService {
     private static final String SAVE_DAILY_PARAMETERS = "/saveDailyParameters";
     public static final String GET_DAILY_PARAMETERS_BY_WEEK_NOT_NULL = "/getDailyParametersByWeekNotNull";
     public static final String SAVE_HISTORY = "/saveHistory";
+    private static final String SAVE_USER_OPTION = "/saveUserOption";
+    private static final String GET_USER_OPTION_BY_CHAT_ID = "/getUserOption?chatId={chatId}";
 
     private final RestTemplate restTemplate;
 
@@ -37,8 +39,8 @@ public class LogisticService {
         return restTemplate.getForObject(DB_SERVICE + FIND_GROUP, String.class, groupName);
     }
 
-    public String getAllGroups() {
-        return restTemplate.getForObject(PARSING_SERVICE + GET_GROUPS, String.class);
+    public  ResponseEntity<String> getAllGroups() {
+        return new ResponseEntity<>(restTemplate.getForObject(PARSING_SERVICE + GET_GROUPS, String.class), HttpStatus.OK);
     }
 
     public String getLessonsByGroup(String groupJson) {
@@ -64,5 +66,13 @@ public class LogisticService {
 
     public String getUserByChatId(String chatId) {
         return restTemplate.getForObject(DB_SERVICE + GET_USER_BY_CHAT_ID, String.class, chatId);
+    }
+
+    public void saveUserOption(String userOptionJson) {
+        restTemplate.postForObject(DB_SERVICE + SAVE_USER_OPTION, userOptionJson, String.class);
+    }
+
+    public String getUserOptionByChatId(Long chatId) {
+        return restTemplate.getForObject(DB_SERVICE + GET_USER_OPTION_BY_CHAT_ID, String.class, chatId);
     }
 }

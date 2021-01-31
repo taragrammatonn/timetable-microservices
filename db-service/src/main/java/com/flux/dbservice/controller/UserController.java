@@ -65,4 +65,14 @@ public class UserController {
     public ResponseEntity<String> getDailyParametersByWeekNotNull(@RequestParam String chatId) {
         return new ResponseEntity<>(userService.getUserByChatId(chatId), HttpStatus.OK);
     }
+
+    @PostMapping("/saveUserOption")
+    public void saveUserOption(@RequestBody String userOptionJson) {
+        userService.saveUserOptions(userOptionJson);
+    }
+
+    @GetMapping("/getUserOption")
+    public ResponseEntity<String> getUserOption(@RequestParam Long chatId) {
+        return new ResponseEntity<>(userService.getUserOptionByChatId(chatId), HttpStatus.OK);
+    }
 }
