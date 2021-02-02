@@ -1,4 +1,4 @@
-package com.flux.parsingservice.parser;
+package com.flux.parsingservice.parser.lessons;
 
 
 public enum LessonsBy {

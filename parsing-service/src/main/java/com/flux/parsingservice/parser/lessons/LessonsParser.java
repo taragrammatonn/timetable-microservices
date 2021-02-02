@@ -1,10 +1,9 @@
-package com.flux.parsingservice.parser;
+package com.flux.parsingservice.parser.lessons;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import lombok.SneakyThrows;
@@ -21,7 +20,7 @@ import java.util.*;
 import static java.util.Objects.isNull;
 
 @Component
-public class Parser {
+public class LessonsParser {
 
     // LOGISTIC_SERVICE API's
     public static final String LOGISTIC_SERVICE = "http://LOGISTIC-SERVICE/logistic-api";
@@ -42,7 +41,7 @@ public class Parser {
     private final Gson gson;
     private final RestTemplate restTemplate;
 
-    public Parser(Gson gson, RestTemplate restTemplate) {
+    public LessonsParser(Gson gson, RestTemplate restTemplate) {
         this.gson = gson;
         this.restTemplate = restTemplate;
     }

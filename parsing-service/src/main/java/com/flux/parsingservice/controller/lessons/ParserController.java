@@ -1,6 +1,6 @@
-package com.flux.parsingservice.controller;
+package com.flux.parsingservice.controller.lessons;
 
-import com.flux.parsingservice.service.ParserService;
+import com.flux.parsingservice.service.lessons.LessonParserService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/lessons/api")
 public class ParserController {
 
-    private final ParserService parserService;
+    private final LessonParserService lessonParserService;
 
-    public ParserController(ParserService parserService) {
-        this.parserService = parserService;
+    public ParserController(LessonParserService lessonParserService) {
+        this.lessonParserService = lessonParserService;
     }
 
     @RequestMapping("/")
@@ -24,26 +24,26 @@ public class ParserController {
     public String getLessons(
             @RequestParam String groupJson,
             @RequestParam String dailyParameters) {
-        return parserService.getLessons(groupJson, dailyParameters);
+        return lessonParserService.getLessons(groupJson, dailyParameters);
     }
 
     @RequestMapping("/groups")
     public String getGroups() {
-        return parserService.getGroups();
+        return lessonParserService.getGroups();
     }
 
     @RequestMapping("/teachers")
     public String getTeachers() {
-        return parserService.getTeachers();
+        return lessonParserService.getTeachers();
     }
 
     @RequestMapping("/audiences")
     public String getAudiences() {
-        return parserService.getAudiences();
+        return lessonParserService.getAudiences();
     }
 
     @RequestMapping("/getDailyParameters")
     public String getDailyParameters() {
-        return parserService.getDailyParameters();
+        return lessonParserService.getDailyParameters();
     }
 }
