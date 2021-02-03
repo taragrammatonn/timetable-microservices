@@ -14,14 +14,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class HistoryService {
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
-    @Autowired
-    private HistoryRepository historyRepository;
+    private final HistoryRepository historyRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public HistoryService(ObjectMapper objectMapper, HistoryRepository historyRepository, UserRepository userRepository) {
+        this.objectMapper = objectMapper;
+        this.historyRepository = historyRepository;
+        this.userRepository = userRepository;
+    }
 
     @SneakyThrows
     @JsonInclude(JsonInclude.Include.NON_NULL)
