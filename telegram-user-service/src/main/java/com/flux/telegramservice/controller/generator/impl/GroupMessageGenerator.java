@@ -1,5 +1,6 @@
 package com.flux.telegramservice.controller.generator.impl;
 
+import com.flux.telegramservice.botconfiguration.Bot;
 import com.flux.telegramservice.controller.generator.CommandGenerator;
 import com.flux.telegramservice.entity.UserOptionVO;
 import com.flux.telegramservice.service.project.BotService;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Component
-public class GroupMessageGenerator implements CommandGenerator {
+public class GroupMessageGenerator extends Bot implements CommandGenerator {
 
     protected final BotService botService;
     protected final RestTemplateService restTemplateService;
@@ -21,14 +22,19 @@ public class GroupMessageGenerator implements CommandGenerator {
 
     @Override
     @SneakyThrows
-    public String generateCommand(Update update) {
+    public void generateCommand(Update update) {
         restTemplateService.saveUserOption(new UserOptionVO().groupSelected(update.getMessage().getChatId()));
 
-        return "Введите навзание группы.";
+        sendMessage(update, "Введите навзание группы.");
     }
 
     @Override
     public String getInputCommand() {
         return "/group";
+    }
+
+    @Override
+    protected void sendMessage(Update update, String message) {
+        super.sendMessage(update, message);
     }
 }

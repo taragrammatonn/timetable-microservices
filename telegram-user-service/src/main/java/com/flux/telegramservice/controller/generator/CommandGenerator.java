@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 public interface CommandGenerator {
-    String generateCommand(Update update);
+    void generateCommand(Update update);
 
     String getInputCommand();
 

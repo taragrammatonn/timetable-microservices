@@ -1,12 +1,16 @@
 package com.flux.telegramservice.controller;
 
 import com.flux.telegramservice.botconfiguration.Bot;
+import com.flux.telegramservice.controller.generator.CommandGenerator;
+import com.flux.telegramservice.service.project.BotService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static java.util.Objects.isNull;
 
@@ -14,37 +18,34 @@ import static java.util.Objects.isNull;
 @Slf4j
 public class BotController extends Bot {
 
+    private final Map<String, CommandGenerator> commands = new HashMap<>();
+
+    @Autowired
+    private BotService botService;
+
     @SneakyThrows
     @Override
     public void onUpdateReceived(Update update) {
-
-        switch (messageProcessing(update)) {
-            case "/start" -> {
-                sendMessage(update, userService.completeUser(userService.addNewUser(update)));
-                execute(setButtons(update.getMessage().getChatId()));
-            }
-
-            case "ALPHA" -> {
-                execute(new SendMessage().setChatId(getChatId(update)).setText(MY_PINUS));
-            }
-
-            case "Misha" -> {
-                execute(new SendMessage().setChatId(getChatId(update)).setText(MISHA_PENIS));
-            }
-
-            default -> {
-                sendMessage(update, botService.findLessonsByGroup(update));
-            }
-        }
+        send(update);
     }
 
-    private String messageProcessing(Update update) {
-        if (!isNull(update.getMessage()))
-            return update.getMessage().getText();
-        else return update.getCallbackQuery().getData();
+    public void send(Update update) {
+        String command = update.getMessage().getText();
+
+        CommandGenerator commandGenerator = commands.get(command);
+
+        if (commandGenerator == null) {
+            String response = botService.searchCommand(command, update);
+
+            if (isNull(response)) {
+                throw new UnsupportedOperationException("Command \"" + command + "\" not supported yet.");
+            }
+
+            sendMessage(update, response);
+        } else commandGenerator.generateCommand(update);
     }
 
-    private Long getChatId(Update update) {
-        return update.getMessage() != null ? update.getMessage().getChatId() : update.getCallbackQuery().getMessage().getChatId();
+    public void register(String code, CommandGenerator generator) {
+        commands.put(code, generator);
     }
 }
