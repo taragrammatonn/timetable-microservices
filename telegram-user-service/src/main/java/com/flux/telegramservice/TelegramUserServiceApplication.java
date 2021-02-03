@@ -1,6 +1,5 @@
 package com.flux.telegramservice;
 
-import com.google.gson.Gson;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
@@ -25,8 +24,4 @@ public class TelegramUserServiceApplication {
 		return new RestTemplate();
 	}
 
-	@Bean
-	public Gson gson() {
-		return new Gson();
-	}
 }

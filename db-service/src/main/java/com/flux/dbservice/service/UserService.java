@@ -1,10 +1,8 @@
 package com.flux.dbservice.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flux.dbservice.entity.history.History;
 import com.flux.dbservice.entity.users.User;
 import com.flux.dbservice.entity.users.UserOption;
-import com.flux.dbservice.repository.history.HistoryRepository;
 import com.flux.dbservice.repository.users.UserOptionRepository;
 import com.flux.dbservice.repository.users.UserRepository;
 import lombok.SneakyThrows;
@@ -13,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static java.util.Objects.isNull;
-
 
 @Service
 public class UserService {

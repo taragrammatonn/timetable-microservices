@@ -1,12 +1,10 @@
 package com.flux.parsingservice.parser;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import lombok.SneakyThrows;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -37,13 +35,16 @@ public class Parser {
 
     private static final String VALUE = "value";
 
+    private static final String NO_DATA_FOR_TODAY = "[[]]";
+    private static final String NO_DATA_FOR_TODAY_MESSAGE = "No data for today.";
+
     private static final List<String> CURRENT = Arrays.asList("day", "week", "semester");
 
-    private final Gson gson;
+    private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
 
-    public Parser(Gson gson, RestTemplate restTemplate) {
-        this.gson = gson;
+    public Parser(ObjectMapper objectMapper, RestTemplate restTemplate) {
+        this.objectMapper = objectMapper;
         this.restTemplate = restTemplate;
     }
 
@@ -65,18 +66,18 @@ public class Parser {
         Document timeTableDom = res.parse();
         String csrf = timeTableDom.select("meta[name=\"csrf-token\"]").first().attr("content");
 
-        JsonObject groupObject = gson.fromJson(groupJson, JsonObject.class);
-        JsonObject dailyParametersObject = gson.fromJson(dailyParameters, JsonObject.class);
+        JsonNode jsonNode = objectMapper.readTree(groupJson);
+        Map<String, String> map = objectMapper.readValue(dailyParameters, new TypeReference<>(){});
 
-        if (isNull(dailyParametersObject.get("week"))) {
-            JsonObject dailyParams = gson.fromJson(restTemplate.getForObject(LOGISTIC_SERVICE + GET_DAILY_PARAMETERS_BY_WEEK_NOT_NULL, String.class), JsonObject.class);
-            dailyParametersObject.add(
+        if (isNull(map.get("week"))) {
+            ArrayNode dailyParams = (ArrayNode) objectMapper.readTree(restTemplate.getForObject(LOGISTIC_SERVICE + GET_DAILY_PARAMETERS_BY_WEEK_NOT_NULL, String.class));
+            map.put(
                     "week",
-                    dailyParams.get("week")
+                    dailyParams.get("week").asText()
             );
         }
 
-        return getTodaysLessons(Jsoup.connect(String.valueOf(LessonsBy.GROUP.getApi()))
+        String response = Jsoup.connect(String.valueOf(LessonsBy.GROUP.getApi()))
                 .method(Connection.Method.POST)
                 .referrer("http://orar.usarb.md/")
                 .userAgent(USER_AGENT)
@@ -84,16 +85,22 @@ public class Parser {
                 .ignoreContentType(true)
                 .cookies(res.cookies())
                 .data("_csrf", csrf)
-                .data("gr", groupObject.get("id").toString().replace("\"", ""))
-                .data("sem", dailyParametersObject.get("semester").toString().replace("\"", ""))
-                .data("day", dailyParametersObject.get("day").toString().replace("\"", ""))
-                .data("week", dailyParametersObject.get("week").toString().replace("\"", ""))
-                .data("grName", groupObject.get("name").toString().replace("\"", ""))
+                .data("gr", jsonNode.get("id").toString().replace("\"", ""))
+                .data("sem", map.get("semester").replace("\"", ""))
+                .data("day", map.get("day").replace("\"", ""))
+                .data("week", map.get("week").replace("\"", ""))
+                .data("grName", jsonNode.get("name").toString().replace("\"", ""))
                 .execute()
-                .body(), dailyParametersObject.get("day").getAsInt());
+                .body();
+
+        if (response.equals(NO_DATA_FOR_TODAY)) {
+            return NO_DATA_FOR_TODAY_MESSAGE;
+        }
+
+        return getTodayLessons(response, Integer.parseInt(map.get("day")));
     }
 
-    private String getTodaysLessons(String weekLessons, int dayNumber) throws JsonProcessingException {
+    private String getTodayLessons(String weekLessons, int dayNumber) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         ArrayNode arrayNode = (ArrayNode) mapper.readTree(weekLessons).get("week");
         StringBuilder todayLessons = new StringBuilder();
@@ -152,6 +159,6 @@ public class Parser {
             weekData.put(CURRENT.get(2), current.get(2).attr(VALUE));
         }
 
-        return gson.toJson(weekData);
+        return objectMapper.writeValueAsString(weekData);
     }
 }
