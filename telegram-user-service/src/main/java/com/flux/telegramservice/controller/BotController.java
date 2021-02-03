@@ -20,8 +20,11 @@ public class BotController extends Bot {
 
     private final Map<String, CommandGenerator> commands = new HashMap<>();
 
-    @Autowired
-    private BotService botService;
+    private final BotService botService;
+
+    public BotController(BotService botService) {
+        this.botService = botService;
+    }
 
     @SneakyThrows
     @Override
@@ -29,6 +32,7 @@ public class BotController extends Bot {
         send(update);
     }
 
+    @SneakyThrows
     public void send(Update update) {
         String command = update.getMessage().getText();
 
@@ -42,7 +46,7 @@ public class BotController extends Bot {
             }
 
             sendMessage(update, response);
-        } else commandGenerator.generateCommand(update);
+        } else execute(commandGenerator.generateCommand(update));
     }
 
     public void register(String code, CommandGenerator generator) {

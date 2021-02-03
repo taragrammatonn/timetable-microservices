@@ -24,9 +24,4 @@ public class TelegramUserServiceApplication {
 	public RestTemplate restTemplate() {
 		return new RestTemplate();
 	}
-
-	@Bean
-	public SendMessage sendMessage() {
-		return new SendMessage();
-	}
 }
