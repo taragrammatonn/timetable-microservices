@@ -1,7 +1,7 @@
 create schema if not exists parsing;
 create schema if not exists users;
 
-create table if not exists parsing.audience
+create table if not exists lesson_parsing.audience
 (
     id   bigint not null,
     name varchar(255),
@@ -9,10 +9,10 @@ create table if not exists parsing.audience
         primary key (id)
 );
 
-alter table parsing.audience
+alter table lesson_parsing.audience
     owner to postgres;
 
-create table if not exists parsing.daily_parameters
+create table if not exists lesson_parsing.daily_parameters
 (
     id              bigint       not null,
     day             varchar(255),
@@ -23,10 +23,10 @@ create table if not exists parsing.daily_parameters
         primary key (id)
 );
 
-alter table parsing.daily_parameters
+alter table lesson_parsing.daily_parameters
     owner to postgres;
 
-create table if not exists parsing."group"
+create table if not exists lesson_parsing."group"
 (
     id   bigint not null,
     name varchar(255),
@@ -34,10 +34,10 @@ create table if not exists parsing."group"
         primary key (id)
 );
 
-alter table parsing."group"
+alter table lesson_parsing."group"
     owner to postgres;
 
-create table if not exists parsing.lesson
+create table if not exists lesson_parsing.lesson
 (
     id             bigint not null,
     cours_name     varchar(255),
@@ -51,10 +51,10 @@ create table if not exists parsing.lesson
         primary key (id)
 );
 
-alter table parsing.lesson
+alter table lesson_parsing.lesson
     owner to postgres;
 
-create table if not exists parsing.teacher
+create table if not exists lesson_parsing.teacher
 (
     id   bigint not null,
     name varchar(255),
@@ -62,7 +62,7 @@ create table if not exists parsing.teacher
         primary key (id)
 );
 
-alter table parsing.teacher
+alter table lesson_parsing.teacher
     owner to postgres;
 
 

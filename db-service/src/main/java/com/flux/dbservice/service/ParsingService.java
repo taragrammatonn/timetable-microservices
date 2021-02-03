@@ -1,7 +1,7 @@
 package com.flux.dbservice.service;
 
-import com.flux.dbservice.entity.parsing.DailyParameters;
-import com.flux.dbservice.entity.parsing.Group;
+import com.flux.dbservice.entity.parsing.lessons.DailyParameters;
+import com.flux.dbservice.entity.parsing.lessons.Group;
 import com.flux.dbservice.repository.parsing.DailyParametersRepository;
 import com.flux.dbservice.repository.parsing.GroupRepository;
 import com.google.gson.Gson;

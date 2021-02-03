@@ -1,4 +1,4 @@
-package com.flux.dbservice.entity.parsing;
+package com.flux.dbservice.entity.parsing.lessons;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -13,11 +13,17 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "group", schema = "parsing")
-public class Group {
+@Table(name = "lesson", schema = "lesson_parsing")
+public class Lesson {
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
     Long id;
-    String name;
+    String coursName;
+    String lessonNumber;
+    Integer dayNumber;
+    String coursOffice;
+    String teacherName;
+    String groupName;
+    String subGroupName;
 }

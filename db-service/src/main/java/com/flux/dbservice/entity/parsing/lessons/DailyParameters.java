@@ -1,4 +1,4 @@
-package com.flux.dbservice.entity.parsing;
+package com.flux.dbservice.entity.parsing.lessons;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -15,7 +15,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "daily_parameters", schema = "parsing")
+@Table(name = "daily_parameters", schema = "lesson_parsing")
 public class DailyParameters {
 
     @Id

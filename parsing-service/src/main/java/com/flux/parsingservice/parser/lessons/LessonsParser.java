@@ -75,7 +75,7 @@ public class LessonsParser {
             );
         }
 
-        return getTodaysLessons(Jsoup.connect(String.valueOf(LessonsBy.GROUP.getApi()))
+        return getTodayLessons(Jsoup.connect(String.valueOf(LessonsBy.GROUP.getApi()))
                 .method(Connection.Method.POST)
                 .referrer("http://orar.usarb.md/")
                 .userAgent(USER_AGENT)
@@ -92,7 +92,7 @@ public class LessonsParser {
                 .body(), dailyParametersObject.get("day").getAsInt());
     }
 
-    private String getTodaysLessons(String weekLessons, int dayNumber) throws JsonProcessingException {
+    private String getTodayLessons(String weekLessons, int dayNumber) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         ArrayNode arrayNode = (ArrayNode) mapper.readTree(weekLessons).get("week");
         StringBuilder todayLessons = new StringBuilder();

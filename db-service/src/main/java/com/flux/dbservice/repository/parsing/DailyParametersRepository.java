@@ -1,6 +1,6 @@
 package com.flux.dbservice.repository.parsing;
 
-import com.flux.dbservice.entity.parsing.DailyParameters;
+import com.flux.dbservice.entity.parsing.lessons.DailyParameters;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,5 +1,6 @@
 package com.flux.telegramservice.service.project;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flux.telegramservice.entity.HistoryEvent;
 import com.flux.telegramservice.entity.UserOptionVO;
 import com.flux.telegramservice.service.request.RestTemplateService;
@@ -19,6 +20,9 @@ public abstract class AbstractTelegramService {
 
     @Autowired
     protected BotService botService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     protected boolean saveHistory(Update update, HistoryEvent event) {
         return restTemplateService.saveHistory(update, event);
