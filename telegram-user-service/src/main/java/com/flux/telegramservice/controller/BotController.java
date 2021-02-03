@@ -42,7 +42,7 @@ public class BotController extends Bot {
             }
 
             sendMessage(update, response);
-        } else sendMessage(update, commandGenerator.generateCommand(update));
+        } else commandGenerator.generateCommand(update);
     }
 
     public void register(String code, CommandGenerator generator) {
