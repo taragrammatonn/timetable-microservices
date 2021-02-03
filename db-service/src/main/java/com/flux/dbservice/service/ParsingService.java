@@ -6,9 +6,11 @@ import com.flux.dbservice.repository.parsing.DailyParametersRepository;
 import com.flux.dbservice.repository.parsing.GroupRepository;
 import com.google.gson.Gson;
 import lombok.SneakyThrows;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.persistence.NonUniqueResultException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -76,7 +78,14 @@ public class ParsingService {
 
     @SneakyThrows
     public String saveDailyParameters(String parametersJson) {
-        var dailyParameters = dailyParametersRepository.getByParametersDate(new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
+        DailyParameters dailyParameters;
+        try {
+            dailyParameters = dailyParametersRepository.getByParametersDate(new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
+        } catch (IncorrectResultSizeDataAccessException ex) {
+            dailyParametersRepository.deleteAll();
+            return gson.toJson(dailyParametersRepository.save(gson.fromJson(parametersJson, DailyParameters.class)));
+        }
+
         if (isNull(dailyParameters)) {
             if (dailyParametersRepository.count() > 2) {
                 dailyParametersRepository.deleteAll();

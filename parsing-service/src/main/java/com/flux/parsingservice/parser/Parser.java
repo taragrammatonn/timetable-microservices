@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import lombok.SneakyThrows;
@@ -36,6 +35,9 @@ public class Parser {
     private static final String AUDIENCE_API = "http://orar.usarb.md/api/getOffices";
 
     private static final String VALUE = "value";
+
+    private static final String NO_DATA_FOR_TODAY = "[[]]";
+    private static final String NO_DATA_FOR_TODAY_MESSAGE = "No data for today.";
 
     private static final List<String> CURRENT = Arrays.asList("day", "week", "semester");
 
@@ -76,7 +78,7 @@ public class Parser {
             );
         }
 
-        return getTodaysLessons(Jsoup.connect(String.valueOf(LessonsBy.GROUP.getApi()))
+        String response = Jsoup.connect(String.valueOf(LessonsBy.GROUP.getApi()))
                 .method(Connection.Method.POST)
                 .referrer("http://orar.usarb.md/")
                 .userAgent(USER_AGENT)
@@ -90,10 +92,16 @@ public class Parser {
                 .data("week", dailyParametersObject.get("week").toString().replace("\"", ""))
                 .data("grName", groupObject.get("name").toString().replace("\"", ""))
                 .execute()
-                .body(), dailyParametersObject.get("day").getAsInt());
+                .body();
+
+        if (response.equals(NO_DATA_FOR_TODAY)) {
+            return NO_DATA_FOR_TODAY_MESSAGE;
+        }
+
+        return getTodayLessons(response, dailyParametersObject.get("day").getAsInt());
     }
 
-    private String getTodaysLessons(String weekLessons, int dayNumber) throws JsonProcessingException {
+    private String getTodayLessons(String weekLessons, int dayNumber) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         ArrayNode arrayNode = (ArrayNode) mapper.readTree(weekLessons).get("week");
         StringBuilder todayLessons = new StringBuilder();
