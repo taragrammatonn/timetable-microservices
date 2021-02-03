@@ -65,7 +65,7 @@ public class ParsingService {
 
             if (containsName(groups, groupName)) {
                 groupRepository.saveAll(groups);
-            } else return "null";
+            } else return NULL;
             return objectMapper.writeValueAsString(groupRepository.findByName(groupName.toUpperCase()));
         }
 

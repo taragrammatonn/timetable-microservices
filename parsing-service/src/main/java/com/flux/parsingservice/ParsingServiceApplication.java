@@ -1,6 +1,5 @@
 package com.flux.parsingservice;
 
-import com.google.gson.Gson;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
@@ -12,11 +11,6 @@ public class ParsingServiceApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ParsingServiceApplication.class, args);
-	}
-
-	@Bean
-	public Gson gson() {
-		return new Gson();
 	}
 
 	@Bean

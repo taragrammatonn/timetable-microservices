@@ -52,8 +52,8 @@ public class UserController {
     }
 
     @GetMapping("/getDailyParametersByWeekNotNull")
-    public String getDailyParametersByWeekNotNull() {
-        return parsingService.getDailyParametersByWeekNotNull();
+    public ResponseEntity<String> getDailyParametersByWeekNotNull() {
+        return new ResponseEntity<>(parsingService.getDailyParametersByWeekNotNull(), HttpStatus.OK);
     }
 
     @PostMapping("/saveHistory")
