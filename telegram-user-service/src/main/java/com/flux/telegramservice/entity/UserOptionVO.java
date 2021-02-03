@@ -18,7 +18,7 @@ public class UserOptionVO {
     Boolean audienceSelected;
 
     public UserOptionVO groupSelected(Long chatId) {
-        return new UserOptionVO();
+        return new UserOptionVO(chatId, true, false, false);
     }
 
     public UserOptionVO teacherSelected(Long chatId) {
