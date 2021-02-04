@@ -6,7 +6,6 @@ import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.ApiContextInitializer;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 @SpringBootApplication
 public class TelegramUserServiceApplication {

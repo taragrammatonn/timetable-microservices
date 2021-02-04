@@ -8,11 +8,6 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class GroupMessageGenerator implements CommandGenerator {
@@ -36,21 +31,5 @@ public class GroupMessageGenerator implements CommandGenerator {
     @Override
     public String getInputCommand() {
         return "Grupa";
-    }
-
-    public InlineKeyboardMarkup setButtons() {
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
-        inlineKeyboardButton1.setText("Liubomir");
-        inlineKeyboardButton1.setCallbackData("Button \"Liubomir\" has been pressed");
-        List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
-        List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
-        keyboardButtonsRow1.add(new InlineKeyboardButton().setText("Hozyain").setCallbackData("ALPHA"));
-        keyboardButtonsRow1.add(new InlineKeyboardButton().setText("Misha").setCallbackData("Misha"));
-        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        rowList.add(keyboardButtonsRow1);
-        rowList.add(keyboardButtonsRow2);
-        inlineKeyboardMarkup.setKeyboard(rowList);
-        return inlineKeyboardMarkup;
     }
 }

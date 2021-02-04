@@ -104,6 +104,7 @@ public class Parser {
         ObjectMapper mapper = new ObjectMapper();
         ArrayNode arrayNode = (ArrayNode) mapper.readTree(weekLessons).get("week");
         StringBuilder todayLessons = new StringBuilder();
+        String newLine = "\n--- ";
         Map<Integer, String> courseNr = Map.of(
                 1, "\n1. 8:00-9:30\n- ",
                 2, "\n2. 9:45-11:15\n- ",
@@ -116,9 +117,9 @@ public class Parser {
         if (arrayNode.isArray()) {
             for (JsonNode jsonNode : arrayNode) {
                 if (dayNumber == (jsonNode.get("day_number").asInt())) {
-                    todayLessons.append(courseNr.get(jsonNode.get("cours_nr").asInt())).append(jsonNode.get("cours_name").asText()).append("\n--- ");
-                    todayLessons.append(jsonNode.get("cours_type").asText()).append("\n--- ");
-                    todayLessons.append(jsonNode.get("Titlu").asText()).append(" ").append(jsonNode.get("teacher_name").asText()).append("\n--- ");
+                    todayLessons.append(courseNr.get(jsonNode.get("cours_nr").asInt())).append(jsonNode.get("cours_name").asText()).append(newLine);
+                    todayLessons.append(jsonNode.get("cours_type").asText()).append(newLine);
+                    todayLessons.append(jsonNode.get("Titlu").asText()).append(" ").append(jsonNode.get("teacher_name").asText()).append(newLine);
                     todayLessons.append(jsonNode.get("cours_office").asText()).append("\n");
                 }
             }
