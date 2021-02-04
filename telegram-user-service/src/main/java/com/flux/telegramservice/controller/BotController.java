@@ -5,7 +5,6 @@ import com.flux.telegramservice.controller.generator.CommandGenerator;
 import com.flux.telegramservice.service.project.BotService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 

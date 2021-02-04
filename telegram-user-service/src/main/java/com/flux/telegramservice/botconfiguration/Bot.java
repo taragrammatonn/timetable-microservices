@@ -10,6 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -21,8 +22,8 @@ public abstract class Bot extends TelegramLongPollingBot {
     @Value("${bot.token}")
     private String botToken;
 
-    public static final String MY_PINUS = "8============================D";
-    public static final String MISHA_PENIS = "{(')}";
+    public static final String Liubomir_PINUS = "{(')}";
+    public static final String MISHA_PENIS = "8============================D";
 
     @SneakyThrows
     @Override
@@ -34,7 +35,17 @@ public abstract class Bot extends TelegramLongPollingBot {
     protected void sendMessage(Update update, String message) {
         log.info("\n###################--> Message send to: " + update.getMessage().getChat().getFirstName() + " " + update.getMessage().getChat().getLastName() + " <-- ###################\n" +
                 "###################--> Message text   : " + update.getMessage().getText() + "          <-- ###################");
-        execute(new SendMessage().enableMarkdown(true).setChatId(update.getMessage().getChatId()).setText(message));
+        execute(new SendMessage().enableMarkdown(true).setChatId(update.getMessage().getChatId()).setText(message).setReplyMarkup(setButtons()));
+    }
+
+    public InlineKeyboardMarkup setButtons() {
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
+        keyboardButtonsRow1.add(new InlineKeyboardButton().setText("+1day").setCallbackData("+1d"));
+        keyboardButtonsRow1.add(new InlineKeyboardButton().setText("+2day's").setCallbackData("+2d"));
+        keyboardButtonsRow1.add(new InlineKeyboardButton().setText("+1week").setCallbackData("+1w"));
+        inlineKeyboardMarkup.setKeyboard(Collections.singletonList(keyboardButtonsRow1));
+        return inlineKeyboardMarkup;
     }
 
     @Override
