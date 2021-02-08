@@ -13,8 +13,8 @@ import static java.util.Objects.isNull;
 @Slf4j
 public class BotService extends AbstractTelegramService {
 
-    public String findLessonsByGroup(Update update) throws CannotSaveHistoryException {
-        String groupJson = findGroup(update.getMessage().getText());
+    public String findLessonsByGroup(Update update, String command) throws CannotSaveHistoryException {
+        String groupJson = findGroup(command);
 
         if (isNull(groupJson) || groupJson.equals(NULL)) return "Такой группы не существует!";
 
