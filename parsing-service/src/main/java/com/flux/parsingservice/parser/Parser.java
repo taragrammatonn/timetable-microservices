@@ -116,7 +116,7 @@ public class Parser {
         );
         if (arrayNode.isArray()) {
             for (JsonNode jsonNode : arrayNode) {
-                if (dayNumber == (jsonNode.get("day_number").asInt())) {
+                if (dayNumber + 1 == (jsonNode.get("day_number").asInt())) {
                     todayLessons.append(courseNr.get(jsonNode.get("cours_nr").asInt())).append(jsonNode.get("cours_name").asText()).append(newLine);
                     todayLessons.append(jsonNode.get("cours_type").asText()).append(newLine);
                     todayLessons.append(jsonNode.get("Titlu").asText()).append(" ").append(jsonNode.get("teacher_name").asText()).append(newLine);

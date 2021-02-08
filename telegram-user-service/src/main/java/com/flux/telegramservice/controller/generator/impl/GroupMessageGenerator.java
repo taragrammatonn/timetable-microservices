@@ -8,6 +8,12 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Component
 public class GroupMessageGenerator implements CommandGenerator {
@@ -24,8 +30,19 @@ public class GroupMessageGenerator implements CommandGenerator {
     @SneakyThrows
     public SendMessage generateCommand(Update update) {
         restTemplateService.saveUserOption(new UserOptionVO().groupSelected(update.getMessage().getChatId()));
+        String command = "ba31z";
+        String response = botService.searchCommand(command, update);
+        return new SendMessage(update.getMessage().getChatId(), response).setReplyMarkup(setButtons());
+    }
 
-        return new SendMessage(update.getMessage().getChatId(), "Введите навзание группы.");
+    public InlineKeyboardMarkup setButtons() {
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
+        keyboardButtonsRow1.add(new InlineKeyboardButton().setText("+1day").setCallbackData("+1d"));
+        keyboardButtonsRow1.add(new InlineKeyboardButton().setText("+2day's").setCallbackData("+2d"));
+        keyboardButtonsRow1.add(new InlineKeyboardButton().setText("+1week").setCallbackData("+1w"));
+        inlineKeyboardMarkup.setKeyboard(Collections.singletonList(keyboardButtonsRow1));
+        return inlineKeyboardMarkup;
     }
 
     @Override

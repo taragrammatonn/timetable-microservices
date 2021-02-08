@@ -33,7 +33,7 @@ public abstract class AbstractTelegramService {
             response = botService.findGroup(command);
 
             if (!isNull(response) && !response.equals("null")) {
-                return botService.findLessonsByGroup(update);
+                return botService.findLessonsByGroup(update, command);
             }
         }
 
