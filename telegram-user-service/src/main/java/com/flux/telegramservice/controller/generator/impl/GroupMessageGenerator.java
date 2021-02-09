@@ -2,6 +2,7 @@ package com.flux.telegramservice.controller.generator.impl;
 
 import com.flux.telegramservice.controller.generator.CommandGenerator;
 import com.flux.telegramservice.entity.UserOptionVO;
+import com.flux.telegramservice.entity.UserVO;
 import com.flux.telegramservice.service.project.BotService;
 import com.flux.telegramservice.service.request.RestTemplateService;
 import lombok.SneakyThrows;
@@ -14,6 +15,8 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static java.util.Objects.isNull;
 
 @Component
 public class GroupMessageGenerator implements CommandGenerator {
@@ -29,13 +32,16 @@ public class GroupMessageGenerator implements CommandGenerator {
     @Override
     @SneakyThrows
     public SendMessage generateCommand(Update update) {
-        restTemplateService.saveUserOption(new UserOptionVO().groupSelected(update.getMessage().getChatId()));
-        String command = "ba31z";
-        String response = botService.searchCommand(command, update);
-        return new SendMessage(update.getMessage().getChatId(), response).setReplyMarkup(setButtons());
+        UserVO userVO = restTemplateService.getUserByChatId(update.getMessage().getChatId());
+
+        if (isNull(userVO.getUserGroup())) {
+            restTemplateService.saveUserOption(new UserOptionVO().groupSelected(update.getMessage().getChatId()));
+        }
+
+        return new SendMessage(update.getMessage().getChatId(), "Введите навзание группы.");
     }
 
-    public InlineKeyboardMarkup setButtons() {
+    public static InlineKeyboardMarkup setButtons() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         keyboardButtonsRow1.add(new InlineKeyboardButton().setText("+1day").setCallbackData("+1d"));
