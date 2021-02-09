@@ -1,5 +1,6 @@
 package com.flux.dbservice.entity.parsing.lessons;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,6 +9,7 @@ import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -26,15 +28,6 @@ public class DailyParameters {
     String semester;
     String week;
 
-    @Basic(optional = false)
-    @Column(name = "parameters_date" )
-    private String parametersDate;
-
-
-    @PrePersist
-    protected void onCreate() {
-        if (parametersDate == null) {
-            parametersDate = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
-        }
-    }
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    LocalDate parametersDate;
 }
