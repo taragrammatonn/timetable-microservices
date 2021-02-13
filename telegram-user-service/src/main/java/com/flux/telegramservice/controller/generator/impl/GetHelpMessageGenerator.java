@@ -12,7 +12,7 @@ public class GetHelpMessageGenerator implements CommandGenerator {
     public SendMessage generateCommand(Update update) {
         String response = "Здарова сталкер!\n " +
                 "А если ты девушка то, \"Привет красавица!\"\n" +
-                "Этот бот сделан группой энтузиастов (ну как \"группой\", бота создал @KavalskyAnalys а @MihaiCojusnean так подсосался под конец) для студетов и хорошых учителей USARB.\n" +
+                "Этот бот сделан группой энтузиастов (ну как \"группой\", бота создал @tetragramatonn а @MihaiCojusnean так подсосался под конец) для студетов и хорошых учителей USARB.\n" +
                 "Пока что бот поддерживает следующие команды:\n" +
                 "/penis\n" +
                 "Другие команды в разработке.\n" +
