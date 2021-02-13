@@ -36,9 +36,12 @@ public class GroupMessageGenerator implements CommandGenerator {
 
         if (isNull(userVO.getUserGroup())) {
             restTemplateService.saveUserOption(new UserOptionVO().groupSelected(update.getMessage().getChatId()));
+            return new SendMessage(update.getMessage().getChatId(), "Введите навзание группы.");
         }
 
-        return new SendMessage(update.getMessage().getChatId(), "Введите навзание группы.");
+        String command = userVO.getUserGroup();
+        String response = botService.searchCommand(update, command, "1");
+        return new SendMessage(update.getMessage().getChatId(), response).setReplyMarkup(setButtons());
     }
 
     public static InlineKeyboardMarkup setButtons() {

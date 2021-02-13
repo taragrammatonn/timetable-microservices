@@ -15,9 +15,6 @@ public abstract class Bot extends TelegramLongPollingBot {
     @Value("${bot.token}")
     private String botToken;
 
-    public static final String Liubomir_PINUS = "{(')}";
-    public static final String MISHA_PENIS = "8============================D";
-
     @SneakyThrows
     @Override
     public void onUpdateReceived(Update update) {

@@ -1,11 +1,10 @@
-package com.flux.parsingservice.parser.lessons;
+package com.flux.parsingservice.parser;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import lombok.SneakyThrows;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -20,7 +19,7 @@ import java.util.*;
 import static java.util.Objects.isNull;
 
 @Component
-public class LessonsParser {
+public class Parser {
 
     // LOGISTIC_SERVICE API's
     public static final String LOGISTIC_SERVICE = "http://LOGISTIC-SERVICE/logistic-api";
@@ -36,13 +35,16 @@ public class LessonsParser {
 
     private static final String VALUE = "value";
 
+    private static final String NO_DATA_FOR_TODAY = "[[]]";
+    private static final String NO_DATA_FOR_TODAY_MESSAGE = "No data for today.";
+
     private static final List<String> CURRENT = Arrays.asList("day", "week", "semester");
 
-    private final Gson gson;
+    private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
 
-    public LessonsParser(Gson gson, RestTemplate restTemplate) {
-        this.gson = gson;
+    public Parser(ObjectMapper objectMapper, RestTemplate restTemplate) {
+        this.objectMapper = objectMapper;
         this.restTemplate = restTemplate;
     }
 
@@ -58,24 +60,31 @@ public class LessonsParser {
         return getJsonContent(AUDIENCE_API);
     }
 
-    public String getLessons(String groupJson, String dailyParameters) throws IOException {
+    public String getLessons(String groupJson, String dailyParameters, String day) throws IOException {
 
         Connection.Response res = getResponseContent();
         Document timeTableDom = res.parse();
         String csrf = timeTableDom.select("meta[name=\"csrf-token\"]").first().attr("content");
 
-        JsonObject groupObject = gson.fromJson(groupJson, JsonObject.class);
-        JsonObject dailyParametersObject = gson.fromJson(dailyParameters, JsonObject.class);
+        JsonNode jsonNode = objectMapper.readTree(groupJson);
+        Map<String, String> map = objectMapper.readValue(dailyParameters, new TypeReference<>(){});
+        int dayNumber = Integer.parseInt(map.get("day")) + Integer.parseInt(day);
 
-        if (isNull(dailyParametersObject.get("week"))) {
-            JsonObject dailyParams = gson.fromJson(restTemplate.getForObject(LOGISTIC_SERVICE + GET_DAILY_PARAMETERS_BY_WEEK_NOT_NULL, String.class), JsonObject.class);
-            dailyParametersObject.add(
+        if (isNull(map.get("week"))) {
+            ArrayNode dailyParams = (ArrayNode) objectMapper.readTree(restTemplate.getForObject(LOGISTIC_SERVICE + GET_DAILY_PARAMETERS_BY_WEEK_NOT_NULL, String.class));
+            map.put(
                     "week",
-                    dailyParams.get("week")
+                    dailyParams.get("week").asText()
             );
         }
 
-        return getTodayLessons(Jsoup.connect(String.valueOf(LessonsBy.GROUP.getApi()))
+        if (Integer.parseInt(day) == 7) {
+            String nextWeek = String.valueOf(Integer.parseInt(map.get("week")) + 1);
+            map.replace("week", nextWeek);
+            dayNumber = 1;
+        }
+
+        String response = Jsoup.connect(String.valueOf(LessonsBy.GROUP.getApi()))
                 .method(Connection.Method.POST)
                 .referrer("http://orar.usarb.md/")
                 .userAgent(USER_AGENT)
@@ -83,20 +92,29 @@ public class LessonsParser {
                 .ignoreContentType(true)
                 .cookies(res.cookies())
                 .data("_csrf", csrf)
-                .data("gr", groupObject.get("id").toString().replace("\"", ""))
-                .data("sem", dailyParametersObject.get("semester").toString().replace("\"", ""))
-                .data("day", dailyParametersObject.get("day").toString().replace("\"", ""))
-                .data("week", dailyParametersObject.get("week").toString().replace("\"", ""))
-                .data("grName", groupObject.get("name").toString().replace("\"", ""))
+                .data("gr", jsonNode.get("id").toString().replace("\"", ""))
+                .data("sem", map.get("semester").replace("\"", ""))
+                .data("day", map.get("day").replace("\"", ""))
+                .data("week", map.get("week").replace("\"", ""))
+                .data("grName", jsonNode.get("name").toString().replace("\"", ""))
                 .execute()
-                .body(), dailyParametersObject.get("day").getAsInt());
+                .body();
+
+        if (response.equals(NO_DATA_FOR_TODAY)) {
+            return NO_DATA_FOR_TODAY_MESSAGE;
+        }
+
+        return parseLessons(response, dayNumber);
     }
 
-    private String getTodayLessons(String weekLessons, int dayNumber) throws JsonProcessingException {
+    @SneakyThrows
+    private String parseLessons(String weekLessons, int dayNumber) {
         ObjectMapper mapper = new ObjectMapper();
         ArrayNode arrayNode = (ArrayNode) mapper.readTree(weekLessons).get("week");
         StringBuilder todayLessons = new StringBuilder();
         String newLine = "\n--- ";
+        String[] weekDay = getWeekDay(dayNumber);
+        todayLessons.append(weekDay[0]).append(" ---> ").append(weekDay[1]).append("\n");
         Map<Integer, String> courseNr = Map.of(
                 1, "\n1. 8:00-9:30\n- ",
                 2, "\n2. 9:45-11:15\n- ",
@@ -108,7 +126,7 @@ public class LessonsParser {
         );
         if (arrayNode.isArray()) {
             for (JsonNode jsonNode : arrayNode) {
-                if (dayNumber + 1 == (jsonNode.get("day_number").asInt())) {
+                if (dayNumber == (jsonNode.get("day_number").asInt())) {
                     todayLessons.append(courseNr.get(jsonNode.get("cours_nr").asInt())).append(jsonNode.get("cours_name").asText()).append(newLine);
                     todayLessons.append(jsonNode.get("cours_type").asText()).append(newLine);
                     todayLessons.append(jsonNode.get("Titlu").asText()).append(" ").append(jsonNode.get("teacher_name").asText()).append(newLine);
@@ -116,6 +134,11 @@ public class LessonsParser {
                 }
             }
         }
+
+        if (todayLessons.length() < 40) {
+            return todayLessons.append("На этот день нет пар! ... тау тау тау тау").toString();
+        }
+
         return todayLessons.toString();
     }
 
@@ -152,6 +175,23 @@ public class LessonsParser {
             weekData.put(CURRENT.get(2), current.get(2).attr(VALUE));
         }
 
-        return gson.toJson(weekData);
+        return objectMapper.writeValueAsString(weekData);
+    }
+
+    public String[] getWeekDay(int day) throws IOException {
+        String[] weekDays = {"Luni", "Marți", "Miercuri", "Joi", "Vineri", "Sâmbătă", "Duminică"};
+        String[] weekDay = new String[2];
+        Document a = Jsoup.connect(String.valueOf(LessonsBy.GROUP.getApi())).get();
+        String b = a.select("option[selected=\"selected\"]").get(1).html();
+        String[] c = b.substring(b.indexOf("(") + 1, b.indexOf("-")).split("\\.");
+
+        for (int i = 0; i < 7; i++) {
+            if (day == i + 1) {
+                weekDay[0] = Arrays.toString(c).replaceAll("\\[|]", "").replace(",", ".");
+                weekDay[1] = weekDays[i];
+            }
+            c[0] = String.valueOf(Integer.parseInt(c[0]) + 1);
+        }
+        return weekDay;
     }
 }

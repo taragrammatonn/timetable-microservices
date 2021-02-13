@@ -1,6 +1,7 @@
-package com.flux.parsingservice.controller.lessons;
+package com.flux.parsingservice.controller;
 
-import com.flux.parsingservice.service.lessons.LessonParserService;
+import com.flux.parsingservice.service.ParserService;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,10 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/lessons/api")
 public class ParserController {
 
-    private final LessonParserService lessonParserService;
+    private final ParserService parserService;
 
-    public ParserController(LessonParserService lessonParserService) {
-        this.lessonParserService = lessonParserService;
+    public ParserController(ParserService parserService) {
+        this.parserService = parserService;
     }
 
     @RequestMapping("/")
@@ -20,30 +21,31 @@ public class ParserController {
         return "Connected";
     }
 
-    @RequestMapping("/lessonsByGroup")
-    public String getLessons(
-            @RequestParam String groupJson,
-            @RequestParam String dailyParameters) {
-        return lessonParserService.getLessons(groupJson, dailyParameters);
-    }
-
     @RequestMapping("/groups")
     public String getGroups() {
-        return lessonParserService.getGroups();
+        return parserService.getGroups();
     }
 
     @RequestMapping("/teachers")
     public String getTeachers() {
-        return lessonParserService.getTeachers();
+        return parserService.getTeachers();
     }
 
     @RequestMapping("/audiences")
     public String getAudiences() {
-        return lessonParserService.getAudiences();
+        return parserService.getAudiences();
     }
 
     @RequestMapping("/getDailyParameters")
     public String getDailyParameters() {
-        return lessonParserService.getDailyParameters();
+        return parserService.getDailyParameters();
+    }
+
+    @GetMapping("/getLessons")
+    public String getLessons(
+            @RequestParam String groupJson,
+            @RequestParam String dailyParameters,
+            @RequestParam String day) {
+        return parserService.getLessons(groupJson, dailyParameters, day);
     }
 }

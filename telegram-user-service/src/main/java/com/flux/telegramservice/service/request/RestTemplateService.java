@@ -36,10 +36,6 @@ public class RestTemplateService {
         return restTemplate.getForObject(LOGISTIC_SERVICE + FIND_GROUP, String.class, group);
     }
 
-    public String getLessonsByGroup(String group) {
-        return restTemplate.getForObject(LOGISTIC_SERVICE + LESSON_BY_GROUP, String.class, group);
-    }
-
     public List<GroupVO> getAllGroups() {
         ResponseEntity<GroupVO[]> response = restTemplate.getForEntity(LOGISTIC_SERVICE + GET_ALL_GROUPS, GroupVO[].class);
 
@@ -53,7 +49,17 @@ public class RestTemplateService {
     }
 
     public boolean saveHistory(Update update, HistoryEvent event) {
-        return restTemplate.postForObject(
+        if (update.getMessage() == null) {
+            return restTemplate.postForObject(
+                    LOGISTIC_SERVICE + SAVE_HISTORY,
+                    new HistoryVO(
+                            event,
+                            update.getCallbackQuery().getData(),
+                            new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()),
+                            Long.valueOf(update.getCallbackQuery().getFrom().getId())),
+                    HistoryVO.class
+            ) != null;
+        } else return restTemplate.postForObject(
                 LOGISTIC_SERVICE + SAVE_HISTORY,
                 new HistoryVO(
                         event,
@@ -70,5 +76,9 @@ public class RestTemplateService {
 
     public UserOptionVO getUserOptionVO(Long chatId) {
         return restTemplate.getForObject(LOGISTIC_SERVICE + GET_USER_OPTION_BY_CHAT_ID, UserOptionVO.class, chatId);
+    }
+
+    public String getLessons(String json, String day) {
+        return restTemplate.getForObject(LOGISTIC_SERVICE + GET_LESSONS, String.class, json, day);
     }
 }
