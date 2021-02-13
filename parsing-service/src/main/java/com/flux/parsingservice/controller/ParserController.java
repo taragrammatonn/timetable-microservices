@@ -1,6 +1,7 @@
 package com.flux.parsingservice.controller;
 
 import com.flux.parsingservice.service.ParserService;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,13 +19,6 @@ public class ParserController {
     @RequestMapping("/")
     public String getLessons() {
         return "Connected";
-    }
-
-    @RequestMapping("/lessonsByGroup")
-    public String getLessons(
-            @RequestParam String groupJson,
-            @RequestParam String dailyParameters) {
-        return parserService.getLessons(groupJson, dailyParameters);
     }
 
     @RequestMapping("/groups")
@@ -45,5 +39,13 @@ public class ParserController {
     @RequestMapping("/getDailyParameters")
     public String getDailyParameters() {
         return parserService.getDailyParameters();
+    }
+
+    @GetMapping("/getLessons")
+    public String getLessons(
+            @RequestParam String groupJson,
+            @RequestParam String dailyParameters,
+            @RequestParam String day) {
+        return parserService.getLessons(groupJson, dailyParameters, day);
     }
 }

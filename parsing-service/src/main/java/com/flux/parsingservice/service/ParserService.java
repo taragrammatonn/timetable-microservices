@@ -15,11 +15,6 @@ public class ParserService {
     }
 
     @SneakyThrows
-    public String getLessons(String groupJson, String dailyParameters) {
-        return parser.getLessons(groupJson, dailyParameters);
-    }
-
-    @SneakyThrows
     public String getGroups() {
         return parser.getGroups();
     }
@@ -36,5 +31,10 @@ public class ParserService {
 
     public String getDailyParameters() {
         return parser.getDailyParameters();
+    }
+
+    @SneakyThrows
+    public String getLessons(String groupJson, String dailyParameters, String day) {
+        return parser.getLessons(groupJson, dailyParameters, day);
     }
 }

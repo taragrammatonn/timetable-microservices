@@ -34,6 +34,7 @@ public class User {
     String userLanguage;
     Boolean active;
     Boolean adminEntity;
+    Boolean isDefined;
 
     @OneToMany(fetch = FetchType.LAZY)
     List<History> history = new LinkedList<>();

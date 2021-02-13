@@ -28,11 +28,6 @@ public class LogisticController {
         return logisticService.getAllGroups();
     }
 
-    @RequestMapping("/lessonByGroup")
-    public String lessonByGroup(@RequestParam String groupJson) {
-        return logisticService.getLessonsByGroup(groupJson);
-    }
-
     @GetMapping("/getDailyParametersByWeekNotNull")
     public String getDailyParametersByWeekNotNull() {
         return logisticService.getDailyParametersByWeekNotNull();
@@ -57,5 +52,12 @@ public class LogisticController {
     @GetMapping("/getUserOption")
     public ResponseEntity<String> getUserOption(@RequestParam Long chatId) {
         return new ResponseEntity<>(logisticService.getUserOptionByChatId(chatId), HttpStatus.OK);
+    }
+
+    @GetMapping("/getLessons")
+    public String lessonsDay(
+            @RequestParam String groupJson,
+            @RequestParam String day) {
+        return logisticService.getLessons(groupJson, day);
     }
 }

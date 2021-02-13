@@ -23,8 +23,9 @@ public class StartMessageGenerator implements CommandGenerator {
 
     @Override
     public SendMessage generateCommand(Update update) {
+        String response = userService.completeUser(userService.addNewUser(update));
         return new SendMessage(
-                update.getMessage().getChatId(), userService.completeUser(userService.addNewUser(update))
+                update.getMessage().getChatId(), response
         ).enableMarkdown(true).setReplyMarkup(setStickyButtons());
     }
 

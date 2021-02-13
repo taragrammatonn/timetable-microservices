@@ -60,7 +60,7 @@ public class Parser {
         return getJsonContent(AUDIENCE_API);
     }
 
-    public String getLessons(String groupJson, String dailyParameters) throws IOException {
+    public String getLessons(String groupJson, String dailyParameters, String day) throws IOException {
 
         Connection.Response res = getResponseContent();
         Document timeTableDom = res.parse();
@@ -68,6 +68,7 @@ public class Parser {
 
         JsonNode jsonNode = objectMapper.readTree(groupJson);
         Map<String, String> map = objectMapper.readValue(dailyParameters, new TypeReference<>(){});
+        int dayNumber = Integer.parseInt(map.get("day")) + Integer.parseInt(day);
 
         if (isNull(map.get("week"))) {
             ArrayNode dailyParams = (ArrayNode) objectMapper.readTree(restTemplate.getForObject(LOGISTIC_SERVICE + GET_DAILY_PARAMETERS_BY_WEEK_NOT_NULL, String.class));
@@ -75,6 +76,12 @@ public class Parser {
                     "week",
                     dailyParams.get("week").asText()
             );
+        }
+
+        if (Integer.parseInt(day) == 7) {
+            String nextWeek = String.valueOf(Integer.parseInt(map.get("week")) + 1);
+            map.replace("week", nextWeek);
+            dayNumber = 1;
         }
 
         String response = Jsoup.connect(String.valueOf(LessonsBy.GROUP.getApi()))
@@ -97,14 +104,17 @@ public class Parser {
             return NO_DATA_FOR_TODAY_MESSAGE;
         }
 
-        return getTodayLessons(response, Integer.parseInt(map.get("day")));
+        return parseLessons(response, dayNumber);
     }
 
-    private String getTodayLessons(String weekLessons, int dayNumber) throws JsonProcessingException {
+    @SneakyThrows
+    private String parseLessons(String weekLessons, int dayNumber) {
         ObjectMapper mapper = new ObjectMapper();
         ArrayNode arrayNode = (ArrayNode) mapper.readTree(weekLessons).get("week");
         StringBuilder todayLessons = new StringBuilder();
         String newLine = "\n--- ";
+        String[] weekDay = getWeekDay(dayNumber);
+        todayLessons.append(weekDay[0]).append(" ---> ").append(weekDay[1]).append("\n");
         Map<Integer, String> courseNr = Map.of(
                 1, "\n1. 8:00-9:30\n- ",
                 2, "\n2. 9:45-11:15\n- ",
@@ -116,7 +126,7 @@ public class Parser {
         );
         if (arrayNode.isArray()) {
             for (JsonNode jsonNode : arrayNode) {
-                if (dayNumber + 1 == (jsonNode.get("day_number").asInt())) {
+                if (dayNumber == (jsonNode.get("day_number").asInt())) {
                     todayLessons.append(courseNr.get(jsonNode.get("cours_nr").asInt())).append(jsonNode.get("cours_name").asText()).append(newLine);
                     todayLessons.append(jsonNode.get("cours_type").asText()).append(newLine);
                     todayLessons.append(jsonNode.get("Titlu").asText()).append(" ").append(jsonNode.get("teacher_name").asText()).append(newLine);
@@ -124,6 +134,11 @@ public class Parser {
                 }
             }
         }
+
+        if (todayLessons.length() < 40) {
+            return todayLessons.append("На этот день нет пар! ... тау тау тау тау").toString();
+        }
+
         return todayLessons.toString();
     }
 
@@ -161,5 +176,22 @@ public class Parser {
         }
 
         return objectMapper.writeValueAsString(weekData);
+    }
+
+    public String[] getWeekDay(int day) throws IOException {
+        String[] weekDays = {"Luni", "Marți", "Miercuri", "Joi", "Vineri", "Sâmbătă", "Duminică"};
+        String[] weekDay = new String[2];
+        Document a = Jsoup.connect(String.valueOf(LessonsBy.GROUP.getApi())).get();
+        String b = a.select("option[selected=\"selected\"]").get(1).html();
+        String[] c = b.substring(b.indexOf("(") + 1, b.indexOf("-")).split("\\.");
+
+        for (int i = 0; i < 7; i++) {
+            if (day == i + 1) {
+                weekDay[0] = Arrays.toString(c).replaceAll("\\[|]", "").replace(",", ".");
+                weekDay[1] = weekDays[i];
+            }
+            c[0] = String.valueOf(Integer.parseInt(c[0]) + 1);
+        }
+        return weekDay;
     }
 }

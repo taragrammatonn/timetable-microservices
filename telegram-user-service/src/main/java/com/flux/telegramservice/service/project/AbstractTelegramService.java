@@ -28,14 +28,18 @@ public abstract class AbstractTelegramService {
     @SneakyThrows
     public String searchCommand(String command, Update update) {
         UserOptionVO userOption = restTemplateService.getUserOptionVO(update.getMessage().getChatId());
+        UserVO userVO = restTemplateService.getUserByChatId(update.getMessage().getChatId());
         String response = null;
 
         if (Boolean.TRUE.equals(userOption.getGroupSelected())) {
+            if (userVO.getUserGroup() == null) {
+                userVO.setUserGroup(command);
+                restTemplateService.saveUser(userVO);
+            }
             response = botService.findGroup(command);
 
             if (!isNull(response) && !response.equals("null")) {
-                restTemplateService.saveUser(new UserVO(update.getMessage().getChatId(), command));
-                return botService.findLessonsByGroup(update, command);
+                return botService.searchCommand(update, command, "1");
             }
         }
 
