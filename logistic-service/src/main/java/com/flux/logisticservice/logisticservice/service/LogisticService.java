@@ -11,7 +11,7 @@ public class LogisticService {
     // PARSING_SERVICE API's
     private static final String PARSING_SERVICE = "http://PARSING-SERVICE/lessons/api";
     private static final String GET_GROUPS = "/groups";
-    private static final String GET_LESSONS_BY_GROUP = "/lessonsByGroup?groupJson={groupJson}&dailyParameters={dailyParameters}";
+    private static final String GET_LESSONS = "/getLessons?groupJson={groupJson}&dailyParameters={dailyParameters}&day={day}";
     private static final String GET_DAILY_PARAMETERS = "/getDailyParameters";
 
     // DB-SERVICE API's
@@ -43,19 +43,6 @@ public class LogisticService {
         return new ResponseEntity<>(restTemplate.getForObject(PARSING_SERVICE + GET_GROUPS, String.class), HttpStatus.OK);
     }
 
-    public String getLessonsByGroup(String groupJson) {
-        return restTemplate.getForObject(
-                PARSING_SERVICE + GET_LESSONS_BY_GROUP, String.class, groupJson,
-                restTemplate.postForObject(
-                        DB_SERVICE + SAVE_DAILY_PARAMETERS,
-                        restTemplate.getForObject(
-                                PARSING_SERVICE + GET_DAILY_PARAMETERS,
-                                String.class
-                        ), String.class
-                )
-        );
-    }
-
     public String getDailyParametersByWeekNotNull() {
         return restTemplate.getForObject(DB_SERVICE + GET_DAILY_PARAMETERS_BY_WEEK_NOT_NULL, String.class);
     }
@@ -74,5 +61,18 @@ public class LogisticService {
 
     public String getUserOptionByChatId(Long chatId) {
         return restTemplate.getForObject(DB_SERVICE + GET_USER_OPTION_BY_CHAT_ID, String.class, chatId);
+    }
+
+    public String getLessons(String groupJson, String day) {
+        return restTemplate.getForObject(
+                PARSING_SERVICE + GET_LESSONS, String.class, groupJson,
+                restTemplate.postForObject(
+                        DB_SERVICE + SAVE_DAILY_PARAMETERS,
+                        restTemplate.getForObject(
+                                PARSING_SERVICE + GET_DAILY_PARAMETERS,
+                                String.class
+                        ), String.class
+                ), day
+        );
     }
 }

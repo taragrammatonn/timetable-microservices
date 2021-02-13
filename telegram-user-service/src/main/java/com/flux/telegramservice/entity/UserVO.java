@@ -30,9 +30,9 @@ public class UserVO {
         this.lName = lName;
     }
 
-    public UserVO(Long chatId, UserOptionVO userOption) {
+    public UserVO(Long chatId, String userGroup) {
         this.chatId = chatId;
-        this.userOption = userOption;
+        this.userGroup = userGroup;
     }
 
     Long chatId;

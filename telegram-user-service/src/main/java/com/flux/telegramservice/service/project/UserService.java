@@ -11,8 +11,8 @@ import static java.util.Objects.isNull;
 @Service
 public class UserService extends AbstractTelegramService {
 
-    public static final String FIRST_START_INPUT = "Привет, %s!\nВведи имя группы, что получить расписание на сегодня!";
-    public static final String REPEATING_START_INPUT = "Астановитесь, %s!\nОтделу GroupConsulting нужно название вашей группы! \nВведите название:";
+    public static final String FIRST_START_INPUT = "Привет, %s!\nВыбери тип расписания из меню! Можешь не торопится, мы нанели Ждуна обраьатовать запросы";
+    public static final String REPEATING_START_INPUT = "Астановитесь, %s!\nСлишко много работы может растроить Ждуна! \nВыбери тип расписания";
 
     public UserService(RestTemplateService restTemplateService) {
         this.restTemplateService = restTemplateService;

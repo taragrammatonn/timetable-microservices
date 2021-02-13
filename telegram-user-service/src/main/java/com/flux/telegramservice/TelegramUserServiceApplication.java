@@ -23,5 +23,4 @@ public class TelegramUserServiceApplication {
 	public RestTemplate restTemplate() {
 		return new RestTemplate();
 	}
-
 }
