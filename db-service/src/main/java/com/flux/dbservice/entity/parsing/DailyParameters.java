@@ -27,5 +27,5 @@ public class DailyParameters {
     String week;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-    LocalDate parametersDate;
+    LocalDate parametersDate = LocalDate.now();
 }

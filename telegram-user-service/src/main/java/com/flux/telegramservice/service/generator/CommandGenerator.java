@@ -1,6 +1,6 @@
-package com.flux.telegramservice.controller.generator;
+package com.flux.telegramservice.service.generator;
 
-import com.flux.telegramservice.controller.BotController;
+import com.flux.telegramservice.service.project.BotService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -11,7 +11,7 @@ public interface CommandGenerator {
     String getInputCommand();
 
     @Autowired
-    default void registerMySelf(BotController botController) {
-        botController.register(getInputCommand(), this);
+    default void registerMySelf(BotService botService) {
+        botService.register(getInputCommand(), this);
     }
 }

@@ -1,6 +1,6 @@
-package com.flux.telegramservice.controller.generator.impl;
+package com.flux.telegramservice.service.generator.impl;
 
-import com.flux.telegramservice.controller.generator.CommandGenerator;
+import com.flux.telegramservice.service.generator.CommandGenerator;
 import com.flux.telegramservice.entity.UserOptionVO;
 import com.flux.telegramservice.entity.UserVO;
 import com.flux.telegramservice.service.project.BotService;
@@ -40,7 +40,7 @@ public class GroupMessageGenerator implements CommandGenerator {
         }
 
         String command = userVO.getUserGroup();
-        String response = botService.searchCommand(update, command, "1");
+        String response = botService.searchCommand(command, update);
         return new SendMessage(update.getMessage().getChatId(), response).setReplyMarkup(setButtons());
     }
 

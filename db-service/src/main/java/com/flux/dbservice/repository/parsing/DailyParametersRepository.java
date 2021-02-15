@@ -4,9 +4,11 @@ import com.flux.dbservice.entity.parsing.DailyParameters;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+
 @Repository
 public interface DailyParametersRepository extends JpaRepository<DailyParameters, Long> {
-    DailyParameters getByParametersDate(String parametersDate);
+    DailyParameters getByParametersDate(LocalDate parametersDate);
 
     DailyParameters findByWeekNotNull();
 }

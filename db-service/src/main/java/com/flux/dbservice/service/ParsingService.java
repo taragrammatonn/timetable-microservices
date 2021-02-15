@@ -6,12 +6,12 @@ import com.flux.dbservice.entity.parsing.Group;
 import com.flux.dbservice.repository.parsing.DailyParametersRepository;
 import com.flux.dbservice.repository.parsing.GroupRepository;
 import lombok.SneakyThrows;
+import org.hibernate.NonUniqueResultException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import static java.util.Objects.isNull;
@@ -55,8 +55,13 @@ public class ParsingService {
 
     @SneakyThrows
     public String findLessonsByGroup(String groupName) {
-        String groupJson = objectMapper.writeValueAsString(groupRepository.findByName(groupName.toUpperCase()));
-        if (groupJson.equals(NULL)) {
+        String groupJson;
+
+        try {
+            groupJson = objectMapper.writeValueAsString(groupRepository.getByName(groupName.toUpperCase()));
+        } catch (NonUniqueResultException ex) {
+            groupRepository.deleteAll();
+
             List<Group> groups = Arrays.asList(objectMapper.readValue(
                     restTemplate.getForObject(
                             LOGISTIC_SERVICE + GET_ALL_GROUPS, String.class),
@@ -66,7 +71,8 @@ public class ParsingService {
             if (containsName(groups, groupName)) {
                 groupRepository.saveAll(groups);
             } else return NULL;
-            return objectMapper.writeValueAsString(groupRepository.findByName(groupName.toUpperCase()));
+
+            return objectMapper.writeValueAsString(groupRepository.getByName(groupName.toUpperCase()));
         }
 
         return groupJson;
@@ -79,9 +85,9 @@ public class ParsingService {
 
     @SneakyThrows
     public String saveDailyParameters(String parametersJson) {
-        var dailyParameters = dailyParametersRepository.getByParametersDate(new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
+        var dailyParameters = dailyParametersRepository.getByParametersDate(LocalDate.now());
         if (isNull(dailyParameters)) {
-            if (dailyParametersRepository.count() > 2) {
+            if (dailyParametersRepository.count() >= 1) {
                 dailyParametersRepository.deleteAll();
             }
             return objectMapper.writeValueAsString(dailyParametersRepository.save(objectMapper.readValue(parametersJson, DailyParameters.class)));
@@ -95,7 +101,7 @@ public class ParsingService {
         return objectMapper.writeValueAsString(dailyParametersRepository.findByWeekNotNull());
     }
 
-    private boolean containsName(final List<Group> list, final String name){
+    private boolean containsName(final List<Group> list, final String name) {
         return list.stream().anyMatch(o -> o.getName().equalsIgnoreCase(name));
     }
 }

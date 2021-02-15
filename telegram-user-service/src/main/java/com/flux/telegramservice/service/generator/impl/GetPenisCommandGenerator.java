@@ -1,6 +1,6 @@
-package com.flux.telegramservice.controller.generator.impl;
+package com.flux.telegramservice.service.generator.impl;
 
-import com.flux.telegramservice.controller.generator.CommandGenerator;
+import com.flux.telegramservice.service.generator.CommandGenerator;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -8,7 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.security.SecureRandom;
 
 @Component
-public class GetPenisCommandGenarator implements CommandGenerator {
+public class GetPenisCommandGenerator implements CommandGenerator {
 
     @Override
     public SendMessage generateCommand(Update update) {
