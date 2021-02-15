@@ -97,9 +97,8 @@ public class Parser {
         try {
             response = Jsoup.connect(String.valueOf(LessonsBy.GROUP.getApi()))
                     .method(Connection.Method.POST)
-                    .referrer("http://orar.usarb.md/")
                     .userAgent(USER_AGENT)
-                    .referrer("http://orar.usarb.md/")
+                    .referrer(ORIGIN_URL)
                     .ignoreContentType(true)
                     .cookies(res.cookies())
                     .data("_csrf", csrf)
@@ -197,7 +196,7 @@ public class Parser {
 
         for (int i = 0; i < 7; i++) {
             if (day == i + 1) {
-                weekDay[0] = Arrays.toString(c).replaceAll("\\[|]", "").replace(",", ".");
+                weekDay[0] = Arrays.toString(c).replaceAll("[\\[\\]]", "").replace(",", ".");
                 weekDay[1] = weekDays[i];
             }
             c[0] = String.valueOf(Integer.parseInt(c[0]) + 1);
