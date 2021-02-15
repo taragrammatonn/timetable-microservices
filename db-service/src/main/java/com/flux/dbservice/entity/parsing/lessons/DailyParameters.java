@@ -1,4 +1,4 @@
-package com.flux.dbservice.entity.parsing.lessons;
+package com.flux.dbservice.entity.parsing;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AccessLevel;
@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "daily_parameters", schema = "lesson_parsing")
+@Table(name = "daily_parameters", schema = "parsing")
 public class DailyParameters {
 
     @Id
@@ -27,5 +27,5 @@ public class DailyParameters {
     String week;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-    LocalDate parametersDate;
+    LocalDate parametersDate = LocalDate.now();
 }

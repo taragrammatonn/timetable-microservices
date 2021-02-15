@@ -92,7 +92,7 @@ class RestTemplateServiceTest {
         given(restTemplate.getForObject(LOGISTIC_SERVICE + GET_LESSONS, String.class, "group")).willReturn(
                 "{ \"week\": [ { \"cours_nr\": 3, \"cours_name\": \"Stresul în mediul educațional\", \"cours_office\": \"videoconferință\", \"teacher_name\": \"Cazacu D. \", \"cours_type\": \"Consultație\", \"Titlu\": \"lect. univ., dr.\", \"Color\": \"-32640\", \"day_number\": 1, \"Denumire\": \"MI31Z\", \"Subgrupa\": \"Subgrupa 1\", \"week\": 21 }, { \"cours_nr\": 4, \"cours_name\": \"Psihologia vârstelor\", \"cours_office\": \"videoconferință\", \"teacher_name\": \"S. Briceag\", \"cours_type\": \"Consultație\", \"Titlu\": \"conf. univ., dr.\", \"Color\": \"-8323073\", \"day_number\": 1, \"Denumire\": \"MI31Z\", \"Subgrupa\": \"Subgrupa 2\", \"week\": 21 }, { \"cours_nr\": 2, \"cours_name\": \"Psihologia vârstelor\", \"cours_office\": null, \"teacher_name\": \"S. Briceag\", \"cours_type\": \"Examinare\", \"Titlu\": \"conf. univ., dr.\", \"Color\": \"-8323073\", \"day_number\": 2, \"Denumire\": \"MI31Z\", \"Subgrupa\": \"Subgrupa 2\", \"week\": 21 }, { \"cours_nr\": 2, \"cours_name\": \"Stresul în mediul educațional\", \"cours_office\": \"513\", \"teacher_name\": \"Cazacu D. \", \"cours_type\": \"Examinare\", \"Titlu\": \"lect. univ., dr.\", \"Color\": \"-32640\", \"day_number\": 2, \"Denumire\": \"MI31Z\", \"Subgrupa\": \"Subgrupa 1\", \"week\": 21 } ] }");
 
-        String lessonsJson = restTemplateService.getLessons("group", "1");
+        String lessonsJson = restTemplateService.getLessonsWithParam("group", null);
 
         assertThat(objectMapper.readTree(lessonsJson).get("week")).isNotNull();
         ArrayNode arrayNode = (ArrayNode) objectMapper.readTree(lessonsJson).get("week");

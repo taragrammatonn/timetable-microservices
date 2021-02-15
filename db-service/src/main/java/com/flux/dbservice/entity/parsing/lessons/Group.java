@@ -18,5 +18,6 @@ public class Group {
 
     @Id
     Long id;
+    String groupId;
     String name;
 }

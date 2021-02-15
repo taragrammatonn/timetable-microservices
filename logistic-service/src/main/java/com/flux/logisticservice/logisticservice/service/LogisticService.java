@@ -11,7 +11,7 @@ public class LogisticService {
     // PARSING_SERVICE API's
     private static final String PARSING_SERVICE = "http://PARSING-SERVICE/lessons/api";
     private static final String GET_GROUPS = "/groups";
-    private static final String GET_LESSONS = "/getLessons?groupJson={groupJson}&dailyParameters={dailyParameters}&day={day}";
+    private static final String GET_LESSONS_WITH_PARAM = "/getLessons?groupJson={groupJson}&dailyParameters={dailyParameters}&day={day}";
     private static final String GET_DAILY_PARAMETERS = "/getDailyParameters";
 
     // DB-SERVICE API's
@@ -63,16 +63,23 @@ public class LogisticService {
         return restTemplate.getForObject(DB_SERVICE + GET_USER_OPTION_BY_CHAT_ID, String.class, chatId);
     }
 
+//    public String getLessons(String groupJson) {
+//        return restTemplate.getForObject(
+//                PARSING_SERVICE + GET_LESSONS, String.class, groupJson, saveDailyParameters()
+//        );
+//    }
+
     public String getLessons(String groupJson, String day) {
         return restTemplate.getForObject(
-                PARSING_SERVICE + GET_LESSONS, String.class, groupJson,
-                restTemplate.postForObject(
-                        DB_SERVICE + SAVE_DAILY_PARAMETERS,
-                        restTemplate.getForObject(
-                                PARSING_SERVICE + GET_DAILY_PARAMETERS,
-                                String.class
-                        ), String.class
-                ), day
+                PARSING_SERVICE + GET_LESSONS_WITH_PARAM, String.class, groupJson, saveDailyParameters(), day
         );
+    }
+
+    private String getDailyParameters() {
+        return restTemplate.getForObject(PARSING_SERVICE + GET_DAILY_PARAMETERS, String.class);
+    }
+
+    private String saveDailyParameters() {
+        return restTemplate.postForObject(DB_SERVICE + SAVE_DAILY_PARAMETERS, getDailyParameters(), String.class);
     }
 }

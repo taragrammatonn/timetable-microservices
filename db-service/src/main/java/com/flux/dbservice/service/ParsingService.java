@@ -1,17 +1,17 @@
 package com.flux.dbservice.service;
 
-import com.flux.dbservice.entity.parsing.lessons.DailyParameters;
-import com.flux.dbservice.entity.parsing.lessons.Group;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.flux.dbservice.entity.parsing.DailyParameters;
+import com.flux.dbservice.entity.parsing.Group;
 import com.flux.dbservice.repository.parsing.DailyParametersRepository;
 import com.flux.dbservice.repository.parsing.GroupRepository;
-import com.google.gson.Gson;
 import lombok.SneakyThrows;
+import org.hibernate.NonUniqueResultException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import static java.util.Objects.isNull;
@@ -34,28 +34,35 @@ public class ParsingService {
 
     private final RestTemplate restTemplate;
 
-    private final Gson gson;
+    private final ObjectMapper objectMapper;
 
     public ParsingService(
             DailyParametersRepository dailyParametersRepository,
             GroupRepository groupRepository,
             RestTemplate restTemplate,
-            Gson gson
+            ObjectMapper objectMapper
+
     ) {
         this.dailyParametersRepository = dailyParametersRepository;
         this.groupRepository = groupRepository;
         this.restTemplate = restTemplate;
-        this.gson = gson;
+        this.objectMapper = objectMapper;
     }
 
     public String checkConnection() {
         return restTemplate.getForObject(PARSING_SERVICE + "/api", String.class);
     }
 
+    @SneakyThrows
     public String findLessonsByGroup(String groupName) {
-        String groupJson = gson.toJson(groupRepository.findByName(groupName.toUpperCase()));
-        if (groupJson.equals(NULL)) {
-            List<Group> groups = Arrays.asList(gson.fromJson(
+        String groupJson;
+
+        try {
+            groupJson = objectMapper.writeValueAsString(groupRepository.getByName(groupName.toUpperCase()));
+        } catch (NonUniqueResultException ex) {
+            groupRepository.deleteAll();
+
+            List<Group> groups = Arrays.asList(objectMapper.readValue(
                     restTemplate.getForObject(
                             LOGISTIC_SERVICE + GET_ALL_GROUPS, String.class),
                     Group[].class)
@@ -63,35 +70,38 @@ public class ParsingService {
 
             if (containsName(groups, groupName)) {
                 groupRepository.saveAll(groups);
-            } else return "null";
-            return gson.toJson(groupRepository.findByName(groupName.toUpperCase()));
+            } else return NULL;
+
+            return objectMapper.writeValueAsString(groupRepository.getByName(groupName.toUpperCase()));
         }
 
         return groupJson;
     }
 
+    @SneakyThrows
     public void refreshGroups(String groupsJson) {
-        groupRepository.saveAll(Arrays.asList(gson.fromJson(groupsJson, Group[].class)));
+        groupRepository.saveAll(Arrays.asList(objectMapper.readValue(groupsJson, Group[].class)));
     }
 
     @SneakyThrows
     public String saveDailyParameters(String parametersJson) {
-        var dailyParameters = dailyParametersRepository.getByParametersDate(new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
+        var dailyParameters = dailyParametersRepository.getByParametersDate(LocalDate.now());
         if (isNull(dailyParameters)) {
-            if (dailyParametersRepository.count() > 2) {
+            if (dailyParametersRepository.count() >= 1) {
                 dailyParametersRepository.deleteAll();
             }
-            return gson.toJson(dailyParametersRepository.save(gson.fromJson(parametersJson, DailyParameters.class)));
-        } else return gson.toJson(dailyParameters);
+            return objectMapper.writeValueAsString(dailyParametersRepository.save(objectMapper.readValue(parametersJson, DailyParameters.class)));
+        } else return objectMapper.writeValueAsString(dailyParameters);
     }
 
+    @SneakyThrows
     public String getDailyParametersByWeekNotNull() {
         DailyParameters dailyParameters = dailyParametersRepository.findByWeekNotNull();
         dailyParameters.setWeek(String.valueOf(Integer.parseInt(dailyParameters.getWeek()) + 1));
-        return gson.toJson(dailyParametersRepository.findByWeekNotNull());
+        return objectMapper.writeValueAsString(dailyParametersRepository.findByWeekNotNull());
     }
 
-    private boolean containsName(final List<Group> list, final String name){
+    private boolean containsName(final List<Group> list, final String name) {
         return list.stream().anyMatch(o -> o.getName().equalsIgnoreCase(name));
     }
 }
