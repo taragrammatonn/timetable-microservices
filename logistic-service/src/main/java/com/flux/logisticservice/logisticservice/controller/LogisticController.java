@@ -20,7 +20,7 @@ public class LogisticController {
 
     @RequestMapping("/findGroup")
     public String findGroup(@RequestParam String groupName) {
-        return logisticService.findLessonsByGroup(groupName);
+        return logisticService.findGroup(groupName);
     }
 
     @GetMapping("/getAllGroups")

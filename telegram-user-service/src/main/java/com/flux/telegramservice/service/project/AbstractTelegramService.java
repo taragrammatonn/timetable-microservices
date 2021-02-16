@@ -38,11 +38,6 @@ public abstract class AbstractTelegramService {
                 userVO.setUserGroup(command);
                 restTemplateService.saveUser(userVO);
             }
-            response = botService.findGroup(command);
-
-            if (!isNull(response) && !response.equals("null")) {
-                return botService.getLessonsByGroup(update, command);
-            }
         }
 
         if (userOption.getAudienceSelected()) {

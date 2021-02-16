@@ -54,7 +54,7 @@ public class ParsingService {
     }
 
     @SneakyThrows
-    public String findLessonsByGroup(String groupName) {
+    public String findGroup(String groupName) {
         String groupJson;
 
         try {
