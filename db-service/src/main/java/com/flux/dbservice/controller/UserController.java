@@ -41,11 +41,6 @@ public class UserController {
         return new ResponseEntity<>(parsingService.findLessonsByGroup(groupName), HttpStatus.OK);
     }
 
-    @PostMapping("/refreshGroups")
-    public void refreshGroups(@RequestBody String groupsJson) {
-        parsingService.refreshGroups(groupsJson);
-    }
-
     @PostMapping("/saveDailyParameters")
     public ResponseEntity<String> saveDailyParameters(@RequestBody String parametersJson) {
         return new ResponseEntity<>(parsingService.saveDailyParameters(parametersJson), HttpStatus.OK);
