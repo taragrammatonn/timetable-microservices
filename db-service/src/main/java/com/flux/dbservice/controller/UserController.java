@@ -38,7 +38,7 @@ public class UserController {
 
     @GetMapping("/findGroup")
     public ResponseEntity<String> findGroup(@RequestParam String groupName) {
-        return new ResponseEntity<>(parsingService.findGroup(groupName), HttpStatus.OK);
+        return new ResponseEntity<>(parsingService.findLessonsByGroup(groupName), HttpStatus.OK);
     }
 
     @PostMapping("/saveDailyParameters")
