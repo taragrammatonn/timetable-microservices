@@ -6,10 +6,12 @@ import com.flux.dbservice.entity.parsing.Group;
 import com.flux.dbservice.repository.parsing.DailyParametersRepository;
 import com.flux.dbservice.repository.parsing.GroupRepository;
 import lombok.SneakyThrows;
-import org.hibernate.NonUniqueResultException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.persistence.NonUniqueResultException;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +19,7 @@ import java.util.List;
 import static java.util.Objects.isNull;
 
 @Service
+@Slf4j
 public class ParsingService {
 
     private static final String PARSING_SERVICE = "http://PARSING-SERVICE/lessons/api";
@@ -55,32 +58,36 @@ public class ParsingService {
 
     @SneakyThrows
     public String findGroup(String groupName) {
-        String groupJson;
 
         try {
-            groupJson = objectMapper.writeValueAsString(groupRepository.getByName(groupName.toUpperCase()));
-        } catch (NonUniqueResultException ex) {
-            groupRepository.deleteAll();
-
-            List<Group> groups = Arrays.asList(objectMapper.readValue(
-                    restTemplate.getForObject(
-                            LOGISTIC_SERVICE + GET_ALL_GROUPS, String.class),
-                    Group[].class)
-            );
-
-            if (containsName(groups, groupName)) {
-                groupRepository.saveAll(groups);
-            } else return NULL;
-
             return objectMapper.writeValueAsString(groupRepository.getByName(groupName.toUpperCase()));
+        } catch (IncorrectResultSizeDataAccessException ex) {
+            if (ex.getCause() instanceof NonUniqueResultException && Boolean.TRUE.equals(refreshGroupsStatus(groupName))) {
+                return objectMapper.writeValueAsString(groupRepository.getByName(groupName.toUpperCase()));
+            }
+            log.error("Error in ParsingService.findLessonsByGroup. Cannot get group from Data Base.");
         }
 
-        return groupJson;
+        return NULL;
     }
 
     @SneakyThrows
-    public void refreshGroups(String groupsJson) {
-        groupRepository.saveAll(Arrays.asList(objectMapper.readValue(groupsJson, Group[].class)));
+    public Boolean refreshGroupsStatus(String groupName) {
+        log.info("Refreshing groups.");
+        groupRepository.deleteAll();
+
+        List<Group> groups = Arrays.asList(objectMapper.readValue(
+                restTemplate.getForObject(
+                        LOGISTIC_SERVICE + GET_ALL_GROUPS, String.class),
+                Group[].class));
+
+        if (containsName(groups, groupName)) {
+            groupRepository.saveAll(groups);
+            return true;
+        }
+
+        log.error("Error in ParsingService.findLessonsByGroup. Cannot find group.");
+         return false;
     }
 
     @SneakyThrows
