@@ -121,12 +121,12 @@ public class LessonsParser {
     }
 
     @SneakyThrows
-    private String parseLessons(String weekLessons, int dayNumber, String[] weekDay) {
+    private String parseLessons(String weekLessons, int dayNumber, String weekDay) {
         ObjectMapper mapper = new ObjectMapper();
         ArrayNode arrayNode = (ArrayNode) mapper.readTree(weekLessons).get("week");
         StringBuilder todayLessons = new StringBuilder();
         String newLine = "\n--- ";
-        todayLessons.append(weekDay[0]).append(" --- ").append(weekDay[1]).append("\n");
+        todayLessons.append(weekDay);
         Map<Integer, String> courseNr = Map.of(
                 1, "\n1. 8:00-9:30\n- ",
                 2, "\n2. 9:45-11:15\n- ",
@@ -186,7 +186,7 @@ public class LessonsParser {
         return objectMapper.writeValueAsString(weekData);
     }
 
-    public String[] getWeekDay(int day, Map<String, String> map) throws IOException {
+    public String getWeekDay(int day, Map<String, String> map) throws IOException {
         Map<Integer, String> daysOfWeek = Map.of(
                 1, "Luni",
                 2, "Marți",
@@ -196,15 +196,15 @@ public class LessonsParser {
                 6, "Sâmbătă",
                 7, "Duminică"
         );
-        String[] weekDay = new String[2];
+        String weekDay = "Error in GetWeekDay";
         String[] a = Jsoup.connect(String.valueOf(LessonsBy.GROUP.getApi())).get()
                 .getElementById("weekSelector").select("option[value=" + map.get("week") + "]").text()
                 .substring(3, 12).split("\\.");
 
         for (int i = 1; i < 8; i++) {
             if (day == i) {
-                weekDay[0] = Arrays.toString(a).replaceAll("[\\[\\]]", "").replace(",", ".");
-                weekDay[1] = daysOfWeek.get(i);
+                weekDay = Arrays.toString(a).replaceAll("[\\[\\]]", "").replace(",", ".")
+                        + " --- " + daysOfWeek.get(i) + "\n";
                 break;
             }
             a[0] = String.valueOf(Integer.parseInt(a[0]) + 1);
