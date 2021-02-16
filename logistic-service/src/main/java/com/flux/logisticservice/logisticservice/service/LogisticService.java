@@ -35,7 +35,7 @@ public class LogisticService {
         return new ResponseEntity<>(restTemplate.postForObject(DB_SERVICE + SAVE_USER, userJson, String.class), HttpStatus.OK);
     }
 
-    public String findLessonsByGroup(String groupName) {
+    public String findGroup(String groupName) {
         return restTemplate.getForObject(DB_SERVICE + FIND_GROUP, String.class, groupName);
     }
 
@@ -62,12 +62,6 @@ public class LogisticService {
     public String getUserOptionByChatId(Long chatId) {
         return restTemplate.getForObject(DB_SERVICE + GET_USER_OPTION_BY_CHAT_ID, String.class, chatId);
     }
-
-//    public String getLessons(String groupJson) {
-//        return restTemplate.getForObject(
-//                PARSING_SERVICE + GET_LESSONS, String.class, groupJson, saveDailyParameters()
-//        );
-//    }
 
     public String getLessons(String groupJson, String day) {
         return restTemplate.getForObject(

@@ -17,6 +17,7 @@ import javax.persistence.*;
 public class Group {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.TABLE)
     Long id;
     String groupId;
     String name;
