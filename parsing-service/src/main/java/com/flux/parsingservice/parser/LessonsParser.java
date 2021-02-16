@@ -26,6 +26,8 @@ import static java.util.Objects.isNull;
 @Slf4j
 public class LessonsParser {
 
+    private Document document;
+
     // LOGISTIC_SERVICE API's
     public static final String LOGISTIC_SERVICE = "http://LOGISTIC-SERVICE/logistic-api";
     public static final String GET_DAILY_PARAMETERS_BY_WEEK_NOT_NULL = "/getDailyParametersByWeekNotNull";
@@ -68,8 +70,8 @@ public class LessonsParser {
     public String getLessons(String groupJson, String dailyParameters, String day) throws IOException {
 
         Connection.Response res = getResponseContent();
-        Document timeTableDom = res.parse();
-        String csrf = timeTableDom.select("meta[name=\"csrf-token\"]").first().attr("content");
+        this.document = res.parse();
+        String csrf = this.document.select("meta[name=\"csrf-token\"]").first().attr("content");
 
         JsonNode jsonNode = objectMapper.readTree(groupJson);
         Map<String, String> map = objectMapper.readValue(dailyParameters, new TypeReference<>() {});
@@ -186,7 +188,7 @@ public class LessonsParser {
         return objectMapper.writeValueAsString(weekData);
     }
 
-    public String getWeekDay(int day, Map<String, String> map) throws IOException {
+    public String getWeekDay(int day, Map<String, String> map) {
         Map<Integer, String> daysOfWeek = Map.of(
                 1, "Luni",
                 2, "Marți",
@@ -196,19 +198,12 @@ public class LessonsParser {
                 6, "Sâmbătă",
                 7, "Duminică"
         );
-        String weekDay = "Error in GetWeekDay";
-        String[] a = Jsoup.connect(String.valueOf(LessonsBy.GROUP.getApi())).get()
-                .getElementById("weekSelector").select("option[value=" + map.get("week") + "]").text()
+
+        String[] a = this.document
+                .getElementById("weekSelector")
+                .select("option[value=" + map.get("week") + "]").text()
                 .substring(3, 12).split("\\.");
 
-        for (int i = 1; i < 8; i++) {
-            if (day == i) {
-                weekDay = Arrays.toString(a).replaceAll("[\\[\\]]", "").replace(",", ".")
-                        + " --- " + daysOfWeek.get(i) + "\n";
-                break;
-            }
-            a[0] = String.valueOf(Integer.parseInt(a[0]) + 1);
-        }
-        return weekDay;
+        return (Integer.parseInt(a[0]) + day - 1) + "." + a[1] + "." + a[2] + " --- " + daysOfWeek.get(day) + "\n";
     }
 }
