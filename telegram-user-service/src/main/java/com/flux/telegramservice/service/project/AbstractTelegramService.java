@@ -7,6 +7,7 @@ import com.flux.telegramservice.service.generator.impl.GroupMessageGenerator;
 import com.flux.telegramservice.service.request.RestTemplateService;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -22,6 +23,9 @@ public abstract class AbstractTelegramService {
 
     @Autowired
     protected BotService botService;
+
+//    @Value("${message}")
+//    private String message;
 
     protected boolean saveHistory(Update update, HistoryEvent event) {
         return restTemplateService.saveHistory(update, event);
@@ -63,4 +67,9 @@ public abstract class AbstractTelegramService {
                 .setText(searchCommand( command, update))
                 .setReplyMarkup(GroupMessageGenerator.setButtons());
     }
+
+//    public void getUserLanguage(Update update) {
+//        String userLnag = restTemplateService.getUserByChatId(update.getMessage().getChatId()).getUserLanguage();
+//        message = "${" + userLnag + "}\"";
+//    }
 }
