@@ -1,14 +1,10 @@
 package com.flux.telegramservice.service.request;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.flux.telegramservice.entity.HistoryEvent;
 import com.flux.telegramservice.entity.HistoryVO;
 import com.flux.telegramservice.entity.UserVO;
 import lombok.SneakyThrows;
-import org.checkerframework.checker.units.qual.C;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -26,7 +22,6 @@ import static com.flux.telegramservice.util.Links.*;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class RestTemplateServiceTest {
 
@@ -41,7 +36,7 @@ class RestTemplateServiceTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        this.restTemplateService = new RestTemplateService(restTemplate);
+        this.restTemplateService = new RestTemplateService();
         this.objectMapper = new ObjectMapper();
     }
 

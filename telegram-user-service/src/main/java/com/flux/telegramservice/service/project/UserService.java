@@ -6,6 +6,7 @@ import com.flux.telegramservice.service.request.RestTemplateService;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import static com.flux.telegramservice.util.Links.GET_USER_BY_CHAT_ID;
 import static java.util.Objects.isNull;
 
 @Service
@@ -19,7 +20,7 @@ public class UserService extends AbstractTelegramService {
     }
 
     public UserVO addNewUser(Update update) {
-        UserVO user = restTemplateService.getUserByChatId(update.getMessage().getChatId());
+        UserVO user = restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID, update.getMessage().getChatId());
 
         if (isNull(user)) {
             user = restTemplateService.saveUser(createNewUserVO(update));

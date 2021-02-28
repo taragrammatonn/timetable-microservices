@@ -1,5 +1,7 @@
 package com.flux.telegramservice.service.generator.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.flux.telegramservice.entity.GroupVO;
 import com.flux.telegramservice.entity.UserVO;
 import com.flux.telegramservice.service.generator.CommandGenerator;
 import com.flux.telegramservice.service.project.BotService;
@@ -14,6 +16,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.Map;
 
+import static com.flux.telegramservice.util.Links.FIND_GROUP;
+import static com.flux.telegramservice.util.Links.GET_USER_BY_CHAT_ID;
+
 
 @Getter
 @Setter
@@ -22,11 +27,13 @@ public abstract class AddDaysCommandGenerator implements CommandGenerator {
 
     private final RestTemplateService restTemplateService;
     private final BotService botService;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    protected AddDaysCommandGenerator(RestTemplateService restTemplateService, BotService botService) {
+    protected AddDaysCommandGenerator(RestTemplateService restTemplateService, BotService botService, ObjectMapper objectMapper) {
         this.restTemplateService = restTemplateService;
         this.botService = botService;
+        this.objectMapper = objectMapper;
     }
 
     private Map<String, String> commandsList = Map.ofEntries(
@@ -38,10 +45,10 @@ public abstract class AddDaysCommandGenerator implements CommandGenerator {
     @Override
     @SneakyThrows
     public SendMessage generateCommand(Update update) {
-        UserVO userVO = restTemplateService.getUserByChatId(Long.valueOf(update.getCallbackQuery().getFrom().getId()));
+        UserVO userVO = restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID, Long.valueOf(update.getCallbackQuery().getFrom().getId()));
 
         String response = botService.getLessonsWithParam(
-                restTemplateService.findGroup(userVO.getUserGroup()),
+                objectMapper.writeValueAsString(restTemplateService.getForObject(GroupVO.class, FIND_GROUP, userVO.getUserGroup())),
                 commandsList.get(update.getCallbackQuery().getData())
         );
 

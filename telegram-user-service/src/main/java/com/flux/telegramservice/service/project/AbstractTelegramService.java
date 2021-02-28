@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import static com.flux.telegramservice.util.Links.GET_USER_BY_CHAT_ID;
 import static java.util.Objects.isNull;
 
 public abstract class AbstractTelegramService {
@@ -30,7 +31,7 @@ public abstract class AbstractTelegramService {
     @SneakyThrows
     public String searchCommand(String command, Update update) {
         UserOptionVO userOption = restTemplateService.getUserOptionVO(update.getMessage().getChatId());
-        UserVO userVO = restTemplateService.getUserByChatId(update.getMessage().getChatId());
+        UserVO userVO = restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID, update.getMessage().getChatId());
         String response = null;
 
         if (Boolean.TRUE.equals(userOption.getGroupSelected())) {
