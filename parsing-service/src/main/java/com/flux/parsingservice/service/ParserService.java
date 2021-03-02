@@ -1,16 +1,16 @@
 package com.flux.parsingservice.service;
 
 
-import com.flux.parsingservice.parser.Parser;
+import com.flux.parsingservice.parser.LessonsParser;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ParserService {
 
-    private final Parser parser;
+    private final LessonsParser parser;
 
-    public ParserService(Parser parser) {
+    public ParserService(LessonsParser parser) {
         this.parser = parser;
     }
 
