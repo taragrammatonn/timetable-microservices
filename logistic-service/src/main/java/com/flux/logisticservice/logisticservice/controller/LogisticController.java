@@ -60,4 +60,9 @@ public class LogisticController {
             @RequestParam String day) {
         return logisticService.getLessons(groupJson, day);
     }
+
+    @GetMapping("getStudyPlan")
+    public String getStudyPlan(@RequestParam String group) {
+        return logisticService.getStudyPlan(group);
+    }
 }

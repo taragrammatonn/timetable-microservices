@@ -1,10 +1,7 @@
 package com.flux.parsingservice.controller;
 
 import com.flux.parsingservice.service.ParserService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/lessons/api")
@@ -47,5 +44,10 @@ public class ParserController {
             @RequestParam String dailyParameters,
             @RequestParam String day) {
         return parserService.getLessons(groupJson, dailyParameters, day);
+    }
+
+    @GetMapping("/getStudyPlan")
+    public String getStudyPlan(@RequestParam String group) {
+        return parserService.getStudyPlan(group);
     }
 }

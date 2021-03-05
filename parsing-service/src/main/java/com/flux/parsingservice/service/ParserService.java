@@ -2,6 +2,7 @@ package com.flux.parsingservice.service;
 
 
 import com.flux.parsingservice.parser.LessonsParser;
+import com.flux.parsingservice.parser.PlanStudiiParser;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
@@ -9,9 +10,11 @@ import org.springframework.stereotype.Service;
 public class ParserService {
 
     private final LessonsParser parser;
+    private final PlanStudiiParser planStudiiParser;
 
-    public ParserService(LessonsParser parser) {
+    public ParserService(LessonsParser parser, PlanStudiiParser planStudiiParser) {
         this.parser = parser;
+        this.planStudiiParser = planStudiiParser;
     }
 
     @SneakyThrows
@@ -36,5 +39,9 @@ public class ParserService {
     @SneakyThrows
     public String getLessons(String groupJson, String dailyParameters, String day) {
         return parser.getLessons(groupJson, dailyParameters, day);
+    }
+
+    public String getStudyPlan(String group) {
+        return planStudiiParser.generateWebRequest(group);
     }
 }
