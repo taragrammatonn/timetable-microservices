@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;
 import lombok.SneakyThrows;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -19,17 +20,18 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component
-public class PlanStudiiParser {
+public class StudyPlanParser {
 
     @Autowired
     private ObjectMapper objectMapper;
 
     private final String[] PARAMS = {"__EVENTTARGET", "__EVENTARGUMENT", "__LASTFOCUS", "__VIEWSTATE", "__VIEWSTATEGENERATOR", "__EVENTVALIDATION"};
-    private final String PLAN_STUDII_URL = "http://planstudii.usarb.md";
+    private final String STUDY_PLAN_URL = "http://planstudii.usarb.md";
 
     private String responseBody;
     private final OkHttpClient httpClient = new OkHttpClient();
@@ -41,12 +43,13 @@ public class PlanStudiiParser {
                 .setUserAgent(AGENT_URL)
                 .setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy())
                 .build();
-        HttpGet httpGet = new HttpGet(PLAN_STUDII_URL);
+        HttpGet httpGet = new HttpGet(STUDY_PLAN_URL);
         try (CloseableHttpResponse response1 = httpClient.execute(httpGet)) {
             HttpEntity entity1 = response1.getEntity();
             responseBody = EntityUtils.toString(entity1);
             EntityUtils.consume(entity1);
         } catch (UndeclaredThrowableException | IOException ignored) {
+            System.out.println("Unexpected code ");
         }
     }
 
@@ -81,7 +84,7 @@ public class PlanStudiiParser {
                     .build();
 
             Request request = new Request.Builder()
-                    .url(PLAN_STUDII_URL)
+                    .url(STUDY_PLAN_URL)
                     .addHeader("User-Agent", "OkHttp Bot")
                     .post(formBody)
                     .build();
@@ -90,7 +93,7 @@ public class PlanStudiiParser {
 
                 if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
 
-                responseBody = response.body().string();
+                responseBody = Objects.requireNonNull(response.body()).string();
             }
         }
 
@@ -111,6 +114,6 @@ public class PlanStudiiParser {
         if (m.find()) {
             return m.group(1);
         }
-        return "";
+        return StringUtils.EMPTY;
     }
 }
