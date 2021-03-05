@@ -23,13 +23,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component
-public class PlanStudiiParser {
+public class StudyPlanParser {
 
     @Autowired
     private ObjectMapper objectMapper;
 
     private final String[] PARAMS = {"__EVENTTARGET", "__EVENTARGUMENT", "__LASTFOCUS", "__VIEWSTATE", "__VIEWSTATEGENERATOR", "__EVENTVALIDATION"};
-    private final String PLAN_STUDII_URL = "http://planstudii.usarb.md";
+    private final String STUDY_PLAN_URL = "http://planstudii.usarb.md";
 
     private String responseBody;
     private final OkHttpClient httpClient = new OkHttpClient();
@@ -41,7 +41,7 @@ public class PlanStudiiParser {
                 .setUserAgent(AGENT_URL)
                 .setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy())
                 .build();
-        HttpGet httpGet = new HttpGet(PLAN_STUDII_URL);
+        HttpGet httpGet = new HttpGet(STUDY_PLAN_URL);
         try (CloseableHttpResponse response1 = httpClient.execute(httpGet)) {
             HttpEntity entity1 = response1.getEntity();
             responseBody = EntityUtils.toString(entity1);
@@ -81,7 +81,7 @@ public class PlanStudiiParser {
                     .build();
 
             Request request = new Request.Builder()
-                    .url(PLAN_STUDII_URL)
+                    .url(STUDY_PLAN_URL)
                     .addHeader("User-Agent", "OkHttp Bot")
                     .post(formBody)
                     .build();

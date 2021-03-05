@@ -11,11 +11,11 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import static com.flux.telegramservice.util.Links.*;
 
 @Component
-public class GetPlanStudiiCommandGenerator implements CommandGenerator {
+public class GetStudyPlanCommandGenerator implements CommandGenerator {
 
     protected final RestTemplateService restTemplateService;
 
-    public GetPlanStudiiCommandGenerator(RestTemplateService restTemplateService) {
+    public GetStudyPlanCommandGenerator(RestTemplateService restTemplateService) {
         this.restTemplateService = restTemplateService;
     }
 
