@@ -16,21 +16,20 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.Map;
 
-import static com.flux.telegramservice.util.Links.FIND_GROUP;
-import static com.flux.telegramservice.util.Links.GET_USER_BY_CHAT_ID;
+import static com.flux.telegramservice.util.Links.*;
 
 
 @Getter
 @Setter
 @Component
-public abstract class AddDaysCommandGenerator implements CommandGenerator {
+public abstract class GenericCallbackQueryCommandGenerator implements CommandGenerator {
 
     private final RestTemplateService restTemplateService;
     private final BotService botService;
     private final ObjectMapper objectMapper;
 
     @Autowired
-    protected AddDaysCommandGenerator(RestTemplateService restTemplateService, BotService botService, ObjectMapper objectMapper) {
+    protected GenericCallbackQueryCommandGenerator(RestTemplateService restTemplateService, BotService botService, ObjectMapper objectMapper) {
         this.restTemplateService = restTemplateService;
         this.botService = botService;
         this.objectMapper = objectMapper;
@@ -39,17 +38,22 @@ public abstract class AddDaysCommandGenerator implements CommandGenerator {
     private Map<String, String> commandsList = Map.ofEntries(
             Map.entry("+1d", "1"),
             Map.entry("+2d", "2"),
-            Map.entry("+1w", "nextWeek")
+            Map.entry("+1w", "nextWeek"),
+            Map.entry("tbSemI", "Semestru I"),
+            Map.entry("tbSemII", "Semestru II")
     );
 
     @Override
     @SneakyThrows
     public SendMessage generateCommand(Update update) {
         UserVO userVO = restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID, Long.valueOf(update.getCallbackQuery().getFrom().getId()));
+        String userGroup = userVO.getUserGroup();
+        String command = update.getCallbackQuery().getData();
 
-        String response = botService.getLessonsWithParam(
+        String response = command.equals("tbSemI") || command.equals("tbSemII") ? restTemplateService.getForObject(String.class, GET_STUDY_PLAN, userGroup, command)
+                : botService.getLessonsWithParam(
                 objectMapper.writeValueAsString(restTemplateService.getForObject(GroupVO.class, FIND_GROUP, userVO.getUserGroup())),
-                commandsList.get(update.getCallbackQuery().getData())
+                commandsList.get(command)
         );
 
         return new SendMessage(String.valueOf(update.getCallbackQuery().getFrom().getId()), response);

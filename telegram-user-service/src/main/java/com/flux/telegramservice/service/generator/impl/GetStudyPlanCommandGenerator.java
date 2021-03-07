@@ -1,14 +1,17 @@
 package com.flux.telegramservice.service.generator.impl;
 
-import com.flux.telegramservice.entity.UserVO;
 import com.flux.telegramservice.service.generator.CommandGenerator;
 import com.flux.telegramservice.service.request.RestTemplateService;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
-import static com.flux.telegramservice.util.Links.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Component
 public class GetStudyPlanCommandGenerator implements CommandGenerator {
@@ -22,10 +25,16 @@ public class GetStudyPlanCommandGenerator implements CommandGenerator {
     @Override
     @SneakyThrows
     public SendMessage generateCommand(Update update) {
-        String userGroup = restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID, update.getMessage().getChatId())
-                .getUserGroup();
-        String response = restTemplateService.getForObject(String.class, GET_STUDY_PLAN, userGroup);
-        return new SendMessage(update.getMessage().getChatId(), response);
+        return new SendMessage(update.getMessage().getChatId(), "Alege semestru").setReplyMarkup(setButtons());
+    }
+
+    public static InlineKeyboardMarkup setButtons() {
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
+        keyboardButtonsRow1.add(new InlineKeyboardButton().setText("Semestru I").setCallbackData("tbSemI"));
+        keyboardButtonsRow1.add(new InlineKeyboardButton().setText("Semestru II").setCallbackData("tbSemII"));
+        inlineKeyboardMarkup.setKeyboard(Collections.singletonList(keyboardButtonsRow1));
+        return inlineKeyboardMarkup;
     }
 
     @Override

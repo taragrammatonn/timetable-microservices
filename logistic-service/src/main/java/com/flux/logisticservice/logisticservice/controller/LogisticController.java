@@ -62,7 +62,9 @@ public class LogisticController {
     }
 
     @GetMapping("getStudyPlan")
-    public String getStudyPlan(@RequestParam String group) {
-        return logisticService.getStudyPlan(group);
+    public String getStudyPlan(
+            @RequestParam String group,
+            @RequestParam String semester) {
+        return logisticService.getStudyPlan(group, semester);
     }
 }

@@ -41,7 +41,7 @@ public class ParserService {
         return parser.getLessons(groupJson, dailyParameters, day);
     }
 
-    public String getStudyPlan(String group) {
-        return studyPlanParser.generateWebRequest(group);
+    public String getStudyPlan(String semester, String group) {
+        return studyPlanParser.generateWebRequest(group, semester);
     }
 }

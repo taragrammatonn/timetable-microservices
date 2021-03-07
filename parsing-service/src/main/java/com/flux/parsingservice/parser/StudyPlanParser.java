@@ -19,8 +19,7 @@ import org.springframework.cglib.proxy.UndeclaredThrowableException;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,11 +48,11 @@ public class StudyPlanParser {
             responseBody = EntityUtils.toString(entity1);
             EntityUtils.consume(entity1);
         } catch (UndeclaredThrowableException | IOException ignored) {
-            System.out.println("Unexpected code ");
+            System.out.println("Unexpected code");
         }
     }
 
-    public String generateWebRequest(String group) {
+    public String generateWebRequest(String group, String semester) {
         List<String> dd, ddValue;
         switch (group.toUpperCase()) {
             case "ME13M" -> {
@@ -66,12 +65,14 @@ public class StudyPlanParser {
             }
             default -> throw new IllegalStateException("Unexpected value: " + group.toUpperCase());
         }
-        return getStudyPlan(dd, ddValue, group);
+        return getStudyPlan(dd, ddValue, group, semester);
     }
 
     @SneakyThrows
-    private String getStudyPlan(List<String> dd, List<String> ddValue, String group) {
+    private String getStudyPlan(List<String> dd, List<String> ddValue, String group, String semester) {
+
         getRequest();
+
         for (int i = 0; i < dd.size(); i++) {
             RequestBody formBody = new FormBody.Builder()
                     .add(PARAMS[0], getHiddenParam(PARAMS[0], responseBody))
@@ -98,22 +99,30 @@ public class StudyPlanParser {
         }
 
         List<String> content = Jsoup.parse(responseBody)
-                .getElementById("tbSemI")
+                .getElementById(semester)
                 .select("td").eachText();
 
         StringBuilder sb = new StringBuilder();
+
         sb.append("Planul de studii -- ").append(group).append("\n");
+        if (semester.equals("tbSemI")) sb.append("====  Semestru I  ====\n");
+        else sb.append("====  Semestru II  ====\n");
+
         for (int i = 0; i < content.size() - 1; i += 2) {
             sb.append("- ").append(content.get(i)).append("\n--- ").append(content.get(i + 1)).append("\n");
         }
+
         return objectMapper.writeValueAsString(sb);
     }
 
     private static String getHiddenParam(String id, String body) {
+
         Matcher m = Pattern.compile(String.format("id=\"%s\"\\s+value=\"([^\"]+)\"", id)).matcher(body);
+
         if (m.find()) {
             return m.group(1);
         }
+
         return StringUtils.EMPTY;
     }
 }

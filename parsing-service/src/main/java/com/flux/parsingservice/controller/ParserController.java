@@ -47,7 +47,9 @@ public class ParserController {
     }
 
     @GetMapping("/getStudyPlan")
-    public String getStudyPlan(@RequestParam String group) {
-        return parserService.getStudyPlan(group);
+    public String getStudyPlan(
+            @RequestParam String group,
+            @RequestParam String semester) {
+        return parserService.getStudyPlan(group, semester);
     }
 }
