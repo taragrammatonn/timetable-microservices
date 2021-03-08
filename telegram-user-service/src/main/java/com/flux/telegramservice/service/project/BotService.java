@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flux.telegramservice.entity.GroupVO;
 import com.flux.telegramservice.entity.HistoryEvent;
 import com.flux.telegramservice.service.generator.CommandGenerator;
-import com.flux.telegramservice.service.generator.impl.AddDaysCommandGenerator;
+import com.flux.telegramservice.service.generator.impl.GenericCallbackQueryCommandGenerator;
 import com.flux.telegramservice.util.exception.CannotSaveHistoryException;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -56,16 +56,16 @@ public class BotService extends AbstractTelegramService {
     public SendMessage callBackQueryProcessing(Update update) {
         String command = update.getCallbackQuery().getData();
 
-        AddDaysCommandGenerator addDaysCommandGenerator = new AddDaysCommandGenerator(restTemplateService, botService, objectMapper) {
+        GenericCallbackQueryCommandGenerator genericCallbackQueryCommandGenerator = new GenericCallbackQueryCommandGenerator(restTemplateService, botService, objectMapper) {
             @Override
             public String getInputCommand() {
                 return command;
             }
         };
 
-        return !isNull(addDaysCommandGenerator.getCommandsList().get(command)) ?
-                addDaysCommandGenerator.generateCommand(update) :
-        new SendMessage().setChatId(update.getMessage().getChatId()).setText("Неверная команда.");
+        return !isNull(genericCallbackQueryCommandGenerator.getCommandsList().get(command)) ?
+                genericCallbackQueryCommandGenerator.generateCommand(update) :
+        new SendMessage(String.valueOf(update.getCallbackQuery().getFrom().getId()), "Неверная команда.");
     }
 
     public String getLessonsWithParam(String group, String param) {

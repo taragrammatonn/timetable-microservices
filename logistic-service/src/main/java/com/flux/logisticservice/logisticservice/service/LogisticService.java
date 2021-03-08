@@ -13,6 +13,7 @@ public class LogisticService {
     private static final String GET_GROUPS = "/groups";
     private static final String GET_LESSONS_WITH_PARAM = "/getLessons?groupJson={groupJson}&dailyParameters={dailyParameters}&day={day}";
     private static final String GET_DAILY_PARAMETERS = "/getDailyParameters";
+    public static final String GET_STUDY_PLAN = "/getStudyPlan?group={group}&semester={semester}";
 
     // DB-SERVICE API's
     private static final String DB_SERVICE = "http://DB-SERVICE/api-gateway";
@@ -65,8 +66,7 @@ public class LogisticService {
 
     public String getLessons(String groupJson, String day) {
         return restTemplate.getForObject(
-                PARSING_SERVICE + GET_LESSONS_WITH_PARAM, String.class, groupJson, saveDailyParameters(), day
-        );
+                PARSING_SERVICE + GET_LESSONS_WITH_PARAM, String.class, groupJson, saveDailyParameters(), day);
     }
 
     private String getDailyParameters() {
@@ -75,5 +75,9 @@ public class LogisticService {
 
     private String saveDailyParameters() {
         return restTemplate.postForObject(DB_SERVICE + SAVE_DAILY_PARAMETERS, getDailyParameters(), String.class);
+    }
+
+    public String getStudyPlan(String semester, String group) {
+        return restTemplate.getForObject(PARSING_SERVICE + GET_STUDY_PLAN, String.class, group, semester);
     }
 }
