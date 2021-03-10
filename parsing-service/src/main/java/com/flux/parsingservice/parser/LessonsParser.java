@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Connection;
@@ -24,7 +25,9 @@ import static java.util.Objects.isNull;
 
 @Component
 @Slf4j
-public class Parser {
+public class LessonsParser {
+
+    private Document document;
 
     // LOGISTIC_SERVICE API's
     public static final String LOGISTIC_SERVICE = "http://LOGISTIC-SERVICE/logistic-api";
@@ -48,7 +51,7 @@ public class Parser {
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
 
-    public Parser(ObjectMapper objectMapper, RestTemplate restTemplate) {
+    public LessonsParser(ObjectMapper objectMapper, RestTemplate restTemplate) {
         this.objectMapper = objectMapper;
         this.restTemplate = restTemplate;
     }
@@ -68,14 +71,14 @@ public class Parser {
     public String getLessons(String groupJson, String dailyParameters, String day) throws IOException {
 
         Connection.Response res = getResponseContent();
-        Document timeTableDom = res.parse();
-        String csrf = timeTableDom.select("meta[name=\"csrf-token\"]").first().attr("content");
+        this.document = res.parse();
+        String csrf = this.document.select("meta[name=\"csrf-token\"]").first().attr("content");
 
         JsonNode jsonNode = objectMapper.readTree(groupJson);
         Map<String, String> map = objectMapper.readValue(dailyParameters, new TypeReference<>() {});
 
         if (isNull(map.get("week"))) {
-            ArrayNode dailyParams = (ArrayNode) objectMapper.readTree(restTemplate.getForObject(LOGISTIC_SERVICE + GET_DAILY_PARAMETERS_BY_WEEK_NOT_NULL, String.class));
+            ObjectNode dailyParams = (ObjectNode) objectMapper.readTree(restTemplate.getForObject(LOGISTIC_SERVICE + GET_DAILY_PARAMETERS_BY_WEEK_NOT_NULL, String.class));
             map.put(
                     "week",
                     dailyParams.get("week").asText()
@@ -88,7 +91,7 @@ public class Parser {
             dayNumber = 1;
             map.put("day", "1");
         } else {
-            // +1 because somebody once told me the day on site is current day + 1 in JS, lmao
+            // +1 because somebody once told me that the day on site is current_day + 1 in JS, lmao
             dayNumber = Integer.parseInt(map.get("day")) + (!day.isEmpty() ? Integer.parseInt(day) : 0) + 1;
             map.put("day", String.valueOf(dayNumber));
         }
@@ -117,17 +120,16 @@ public class Parser {
             log.error("Bad request parameters!", e);
         }
 
-        return parseLessons(response, dayNumber);
+        return parseLessons(response, dayNumber, getWeekDay(dayNumber, map));
     }
 
     @SneakyThrows
-    private String parseLessons(String weekLessons, int dayNumber) {
+    private String parseLessons(String weekLessons, int dayNumber, String weekDay) {
         ObjectMapper mapper = new ObjectMapper();
         ArrayNode arrayNode = (ArrayNode) mapper.readTree(weekLessons).get("week");
         StringBuilder todayLessons = new StringBuilder();
         String newLine = "\n--- ";
-        String[] weekDay = getWeekDay(dayNumber);
-        todayLessons.append(weekDay[0]).append(" ---> ").append(weekDay[1]).append("\n");
+        todayLessons.append(weekDay);
         Map<Integer, String> courseNr = Map.of(
                 1, "\n1. 8:00-9:30\n- ",
                 2, "\n2. 9:45-11:15\n- ",
@@ -187,20 +189,22 @@ public class Parser {
         return objectMapper.writeValueAsString(weekData);
     }
 
-    public String[] getWeekDay(int day) throws IOException {
-        String[] weekDays = {"Luni", "Marți", "Miercuri", "Joi", "Vineri", "Sâmbătă", "Duminică"};
-        String[] weekDay = new String[2];
-        Document a = Jsoup.connect(String.valueOf(LessonsBy.GROUP.getApi())).get();
-        String b = a.select("option[selected=\"selected\"]").get(1).html();
-        String[] c = b.substring(b.indexOf("(") + 1, b.indexOf("-")).split("\\.");
+    public String getWeekDay(int day, Map<String, String> map) {
+        Map<Integer, String> daysOfWeek = Map.of(
+                1, "Luni",
+                2, "Marți",
+                3, "Miercuri",
+                4, "Joi",
+                5, "Vineri",
+                6, "Sâmbătă",
+                7, "Duminică"
+        );
 
-        for (int i = 0; i < 7; i++) {
-            if (day == i + 1) {
-                weekDay[0] = Arrays.toString(c).replaceAll("[\\[\\]]", "").replace(",", ".");
-                weekDay[1] = weekDays[i];
-            }
-            c[0] = String.valueOf(Integer.parseInt(c[0]) + 1);
-        }
-        return weekDay;
+        String[] a = this.document
+                .getElementById("weekSelector")
+                .select("option[value=" + map.get("week") + "]").text()
+                .substring(3, 12).split("\\.");
+
+        return (Integer.parseInt(a[0]) + day - 1) + "." + a[1] + "." + a[2] + " --- " + daysOfWeek.get(day) + "\n";
     }
 }

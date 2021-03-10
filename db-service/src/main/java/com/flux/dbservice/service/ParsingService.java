@@ -7,11 +7,11 @@ import com.flux.dbservice.repository.parsing.DailyParametersRepository;
 import com.flux.dbservice.repository.parsing.GroupRepository;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.NonUniqueResultException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import javax.persistence.NonUniqueResultException;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;

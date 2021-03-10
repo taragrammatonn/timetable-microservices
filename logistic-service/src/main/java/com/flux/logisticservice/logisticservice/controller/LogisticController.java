@@ -20,7 +20,7 @@ public class LogisticController {
 
     @RequestMapping("/findGroup")
     public String findGroup(@RequestParam String groupName) {
-        return logisticService.findLessonsByGroup(groupName);
+        return logisticService.findGroup(groupName);
     }
 
     @GetMapping("/getAllGroups")
@@ -59,5 +59,12 @@ public class LogisticController {
             @RequestParam String groupJson,
             @RequestParam String day) {
         return logisticService.getLessons(groupJson, day);
+    }
+
+    @GetMapping("getStudyPlan")
+    public String getStudyPlan(
+            @RequestParam String group,
+            @RequestParam String semester) {
+        return logisticService.getStudyPlan(group, semester);
     }
 }

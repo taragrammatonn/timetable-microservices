@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "daily_parameters", schema = "parsing")
+@Table(name = "daily_parameters", schema = "lesson_parsing")
 public class DailyParameters {
 
     @Id

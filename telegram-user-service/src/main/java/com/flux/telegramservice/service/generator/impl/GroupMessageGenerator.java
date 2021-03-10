@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.flux.telegramservice.util.Links.GET_USER_BY_CHAT_ID;
 import static java.util.Objects.isNull;
 
 @Component
@@ -32,7 +33,7 @@ public class GroupMessageGenerator implements CommandGenerator {
     @Override
     @SneakyThrows
     public SendMessage generateCommand(Update update) {
-        UserVO userVO = restTemplateService.getUserByChatId(update.getMessage().getChatId());
+        UserVO userVO = restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID, update.getMessage().getChatId());
 
         if (isNull(userVO.getUserGroup())) {
             restTemplateService.saveUserOption(new UserOptionVO().groupSelected(update.getMessage().getChatId()));
