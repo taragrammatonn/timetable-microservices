@@ -6,6 +6,7 @@ import com.flux.telegramservice.entity.UserVO;
 import com.flux.telegramservice.service.project.BotService;
 import com.flux.telegramservice.service.request.RestTemplateService;
 import lombok.SneakyThrows;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -15,6 +16,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static com.flux.telegramservice.util.Links.GET_USER_BY_CHAT_ID;
 import static java.util.Objects.isNull;
@@ -22,12 +24,14 @@ import static java.util.Objects.isNull;
 @Component
 public class GroupMessageGenerator implements CommandGenerator {
 
+    private final Environment env;
     protected final BotService botService;
     protected final RestTemplateService restTemplateService;
 
-    public GroupMessageGenerator(BotService botService, RestTemplateService restTemplateService) {
+    public GroupMessageGenerator(BotService botService, RestTemplateService restTemplateService, Environment env) {
         this.botService = botService;
         this.restTemplateService = restTemplateService;
+        this.env = env;
     }
 
     @Override
@@ -37,26 +41,33 @@ public class GroupMessageGenerator implements CommandGenerator {
 
         if (isNull(userVO.getUserGroup())) {
             restTemplateService.saveUserOption(new UserOptionVO().groupSelected(update.getMessage().getChatId()));
-            return new SendMessage(update.getMessage().getChatId(), "Введите навзание группы.");
+            return new SendMessage(update.getMessage().getChatId(),
+                    Objects.requireNonNull(env.getProperty(userVO.getUserLanguage() + ".get_group")));
         }
 
         String command = userVO.getUserGroup();
         String response = botService.searchCommand(command, update);
-        return new SendMessage(update.getMessage().getChatId(), response).setReplyMarkup(setButtons());
+        return new SendMessage(update.getMessage().getChatId(), response).setReplyMarkup(setButtons(update));
     }
 
-    public static InlineKeyboardMarkup setButtons() {
+    public InlineKeyboardMarkup setButtons(Update update) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
-        keyboardButtonsRow1.add(new InlineKeyboardButton().setText("+1day").setCallbackData("+1d"));
-        keyboardButtonsRow1.add(new InlineKeyboardButton().setText("+2day's").setCallbackData("+2d"));
-        keyboardButtonsRow1.add(new InlineKeyboardButton().setText("+1week").setCallbackData("+1w"));
+        keyboardButtonsRow1.add(new InlineKeyboardButton()
+                .setText(env.getProperty(
+                        update.getMessage().getFrom().getLanguageCode() + ".button.+1day")).setCallbackData("+1d"));
+        keyboardButtonsRow1.add(new InlineKeyboardButton()
+                .setText(env.getProperty(
+                        update.getMessage().getFrom().getLanguageCode() + ".button.+2day's")).setCallbackData("+2d"));
+        keyboardButtonsRow1.add(new InlineKeyboardButton()
+                .setText(env.getProperty(
+                        update.getMessage().getFrom().getLanguageCode() + ".button.+week")).setCallbackData("+1w"));
         inlineKeyboardMarkup.setKeyboard(Collections.singletonList(keyboardButtonsRow1));
         return inlineKeyboardMarkup;
     }
 
     @Override
     public String getInputCommand() {
-        return "Grupa";
+        return "Group";
     }
 }

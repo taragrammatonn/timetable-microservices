@@ -12,6 +12,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class GroupVO {
 
-    Long id;
+    String groupId;
     String name;
 }

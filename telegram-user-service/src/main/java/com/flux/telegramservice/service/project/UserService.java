@@ -3,18 +3,16 @@ package com.flux.telegramservice.service.project;
 import com.flux.telegramservice.entity.HistoryEvent;
 import com.flux.telegramservice.entity.UserVO;
 import com.flux.telegramservice.service.request.RestTemplateService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RestController;
 import org.telegram.telegrambots.meta.api.objects.Update;
+
+import java.util.Objects;
 
 import static com.flux.telegramservice.util.Links.GET_USER_BY_CHAT_ID;
 import static java.util.Objects.isNull;
 
 @Service
 public class UserService extends AbstractTelegramService {
-
-    private String message;
 
     public UserService(RestTemplateService restTemplateService) {
         this.restTemplateService = restTemplateService;
@@ -35,10 +33,12 @@ public class UserService extends AbstractTelegramService {
         if (Boolean.FALSE.equals(newUser.getIsDefined())) {
             newUser.setIsDefined(true);
             restTemplateService.saveUser(newUser);
-            return String.format("message", newUser.getFName());
+            return String.format(Objects.requireNonNull(
+                    env.getProperty(newUser.getUserLanguage() + ".first_start_input")), newUser.getFName());
         }
 
-        return String.format("message", newUser.getFName());
+        return String.format(Objects.requireNonNull(
+                env.getProperty(newUser.getUserLanguage() + ".repeating_start_input")), newUser.getFName());
     }
 
     private UserVO createNewUserVO(Update update) {

@@ -5,8 +5,7 @@ spring:
   application:
     name: TELEGRAM-SERVICE
   profiles:
-    include:
-      messages
+    active: language
 
 eureka:
   client:

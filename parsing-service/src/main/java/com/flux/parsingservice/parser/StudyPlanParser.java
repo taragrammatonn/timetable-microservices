@@ -1,5 +1,6 @@
 package com.flux.parsingservice.parser;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;
 import lombok.SneakyThrows;
@@ -16,6 +17,7 @@ import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.proxy.UndeclaredThrowableException;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -25,6 +27,9 @@ import java.util.regex.Pattern;
 
 @Component
 public class StudyPlanParser {
+
+    @Autowired
+    private Environment env;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -52,8 +57,12 @@ public class StudyPlanParser {
         }
     }
 
-    public String generateWebRequest(String group, String semester) {
+    @SneakyThrows
+    public String generateWebRequest(String semester, String userVo) {
         List<String> dd, ddValue;
+        JsonNode jsonNode = objectMapper.readTree(userVo);
+        String group = jsonNode.get("userGroup").asText();
+        String lang = jsonNode.get("userLanguage").asText();
         switch (group.toUpperCase()) {
             case "ME13M" -> {
                 dd = List.of("ddCiclu", "ddDomeniul", "ddSpecialitatea");
@@ -65,11 +74,11 @@ public class StudyPlanParser {
             }
             default -> throw new IllegalStateException("Unexpected value: " + group.toUpperCase());
         }
-        return getStudyPlan(dd, ddValue, group, semester);
+        return getStudyPlan(dd, ddValue, group, semester, lang);
     }
 
     @SneakyThrows
-    private String getStudyPlan(List<String> dd, List<String> ddValue, String group, String semester) {
+    private String getStudyPlan(List<String> dd, List<String> ddValue, String group, String semester, String lang) {
 
         getRequest();
 
@@ -104,9 +113,9 @@ public class StudyPlanParser {
 
         StringBuilder sb = new StringBuilder();
 
-        sb.append("Planul de studii -- ").append(group).append("\n");
-        if (semester.equals("tbSemI")) sb.append("====  Semestru I  ====\n");
-        else sb.append("====  Semestru II  ====\n");
+        sb.append(env.getProperty(lang + ".study_plan")).append(group).append("\n");
+        if (semester.equals("tbSemI")) sb.append(env.getProperty(lang + ".semester_I"));
+        else sb.append(env.getProperty(lang + ".semester_II"));
 
         for (int i = 0; i < content.size() - 1; i += 2) {
             sb.append("- ").append(content.get(i)).append("\n--- ").append(content.get(i + 1)).append("\n");

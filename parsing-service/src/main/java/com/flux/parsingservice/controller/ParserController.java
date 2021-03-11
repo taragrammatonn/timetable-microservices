@@ -42,14 +42,15 @@ public class ParserController {
     public String getLessons(
             @RequestParam String groupJson,
             @RequestParam String dailyParameters,
-            @RequestParam String day) {
-        return parserService.getLessons(groupJson, dailyParameters, day);
+            @RequestParam String day,
+            @RequestParam String userVo) {
+        return parserService.getLessons(groupJson, dailyParameters, day, userVo);
     }
 
     @GetMapping("/getStudyPlan")
     public String getStudyPlan(
-            @RequestParam String group,
-            @RequestParam String semester) {
-        return parserService.getStudyPlan(group, semester);
+            @RequestParam String semester,
+            @RequestParam String userVo) {
+        return parserService.getStudyPlan(semester, userVo);
     }
 }
