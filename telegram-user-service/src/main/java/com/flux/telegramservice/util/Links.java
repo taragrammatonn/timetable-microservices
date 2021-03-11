@@ -15,9 +15,6 @@ public class Links {
     public static final String SAVE_HISTORY = "/saveHistory";
     public static final String SAVE_USER_OPTION = "/saveUserOption";
     public static final String GET_USER_OPTION_BY_CHAT_ID = "/getUserOption?chatId={chatId}";
-    public static final String GET_STUDY_PLAN = "/getStudyPlan?group={group}&semester={semester}";
-    public static final String GET_LESSONS_WITH_PARAM = "/getLessons?groupJson={groupJson}&day={day}";
-
-    // Util
-    public static final String NULL = "null";
+    public static final String GET_STUDY_PLAN = "/getStudyPlan?semester={semester}&userVo={userVo}";
+    public static final String GET_LESSONS_WITH_PARAM = "/getLessons?groupJson={groupJson}&day={day}&userVo={userVo}";
 }

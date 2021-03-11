@@ -11,9 +11,9 @@ public class LogisticService {
     // PARSING_SERVICE API's
     private static final String PARSING_SERVICE = "http://PARSING-SERVICE/lessons/api";
     private static final String GET_GROUPS = "/groups";
-    private static final String GET_LESSONS_WITH_PARAM = "/getLessons?groupJson={groupJson}&dailyParameters={dailyParameters}&day={day}";
+    private static final String GET_LESSONS_WITH_PARAM = "/getLessons?groupJson={groupJson}&dailyParameters={dailyParameters}&day={day}&userVo={userVo}";
     private static final String GET_DAILY_PARAMETERS = "/getDailyParameters";
-    public static final String GET_STUDY_PLAN = "/getStudyPlan?group={group}&semester={semester}";
+    public static final String GET_STUDY_PLAN = "/getStudyPlan?semester={semester}&userVo={userVo}";
 
     // DB-SERVICE API's
     private static final String DB_SERVICE = "http://DB-SERVICE/api-gateway";
@@ -64,9 +64,9 @@ public class LogisticService {
         return restTemplate.getForObject(DB_SERVICE + GET_USER_OPTION_BY_CHAT_ID, String.class, chatId);
     }
 
-    public String getLessons(String groupJson, String day) {
+    public String getLessons(String groupJson, String day, String userVo) {
         return restTemplate.getForObject(
-                PARSING_SERVICE + GET_LESSONS_WITH_PARAM, String.class, groupJson, saveDailyParameters(), day);
+                PARSING_SERVICE + GET_LESSONS_WITH_PARAM, String.class, groupJson, saveDailyParameters(), day, userVo);
     }
 
     private String getDailyParameters() {
@@ -77,7 +77,7 @@ public class LogisticService {
         return restTemplate.postForObject(DB_SERVICE + SAVE_DAILY_PARAMETERS, getDailyParameters(), String.class);
     }
 
-    public String getStudyPlan(String semester, String group) {
-        return restTemplate.getForObject(PARSING_SERVICE + GET_STUDY_PLAN, String.class, group, semester);
+    public String getStudyPlan(String semester, String userVo) {
+        return restTemplate.getForObject(PARSING_SERVICE + GET_STUDY_PLAN, String.class, semester, userVo);
     }
 }

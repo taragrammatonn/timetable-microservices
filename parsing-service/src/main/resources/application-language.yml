@@ -1,0 +1,53 @@
+ru:
+  study_plan: "Учебный план -- "
+  semester_I: "====  Семестр I  ====\n"
+  semester_II: "====  Семестр I  ====\n"
+  weekDay:
+   monday: "Понедельник"
+   tuesday: "Вторник"
+   wednesday: "Среда"
+   thursday: "Четверг"
+   friday: "Пятница"
+   saturday: "Суббота"
+   sunday: "Воскресенье"
+
+en:
+  study_plan: "Study plan -- "
+  semester_I: "====  Semester I  ====\n"
+  semester_II: "====  Semester I  ====\n"
+  weekDay:
+    monday: "Monday"
+    tuesday: "Tuesday"
+    wednesday: "Wednesday"
+    thursday: "Thursday"
+    friday: "Friday"
+    saturday: "Saturday"
+    sunday: "Sunday"
+
+
+ro:
+  study_plan: "Plan de studii -- "
+  semester_I: "====  Semesteru I  ====\n"
+  semester_II: "====  Semesteru I  ====\n"
+  weekDay:
+    monday: "Luni"
+    tuesday: "Marți"
+    wednesday: "Miercuri"
+    thursday: "Joi"
+    friday: "Vineri"
+    saturday: "Sâmbătă"
+    sunday: "Duminică"
+
+
+fr:
+  study_plan: "Curriculum -- "
+  semester_I: "====  Semestre I  ====\n"
+  semester_II: "====  Semestre I  ====\n"
+  weekDay:
+    monday: "Luni"
+    tuesday: "Marți"
+    wednesday: "Miercuri"
+    thursday: "Joi"
+    friday: "Vineri"
+    saturday: "Sâmbătă"
+    sunday: "Duminică"

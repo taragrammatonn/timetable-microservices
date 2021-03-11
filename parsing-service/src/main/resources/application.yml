@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: PARSING-SERVICE
+  profiles:
+    active: language
 
 eureka:
   client:

@@ -40,9 +40,9 @@ public class StartMessageGenerator implements CommandGenerator {
         replyKeyboardMarkup.setOneTimeKeyboard(false);
         List<KeyboardRow> keyboard = new ArrayList<>();
         KeyboardRow keyboardFirstRow = new KeyboardRow();
-        keyboardFirstRow.add(new KeyboardButton("Grupa"));
-        keyboardFirstRow.add(new KeyboardButton("Profesor"));
-        keyboardFirstRow.add(new KeyboardButton("Hata"));
+        keyboardFirstRow.add(new KeyboardButton("Group"));
+        keyboardFirstRow.add(new KeyboardButton("Teacher"));
+        keyboardFirstRow.add(new KeyboardButton("Audience"));
         replyKeyboardMarkup.setOneTimeKeyboard(false);
         keyboard.add(keyboardFirstRow);
         replyKeyboardMarkup.setKeyboard(keyboard);

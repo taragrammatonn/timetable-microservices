@@ -57,14 +57,15 @@ public class LogisticController {
     @GetMapping("/getLessons")
     public String lessonsDay(
             @RequestParam String groupJson,
-            @RequestParam String day) {
-        return logisticService.getLessons(groupJson, day);
+            @RequestParam String day,
+            @RequestParam String userVo) {
+        return logisticService.getLessons(groupJson, day, userVo);
     }
 
     @GetMapping("getStudyPlan")
     public String getStudyPlan(
-            @RequestParam String group,
-            @RequestParam String semester) {
-        return logisticService.getStudyPlan(group, semester);
+            @RequestParam String semester,
+            @RequestParam String userVo) {
+        return logisticService.getStudyPlan(semester, userVo);
     }
 }

@@ -1,6 +1,7 @@
 package com.flux.parsingservice.service;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.flux.parsingservice.parser.LessonsParser;
 import com.flux.parsingservice.parser.StudyPlanParser;
 import lombok.SneakyThrows;
@@ -37,11 +38,12 @@ public class ParserService {
     }
 
     @SneakyThrows
-    public String getLessons(String groupJson, String dailyParameters, String day) {
-        return parser.getLessons(groupJson, dailyParameters, day);
+    public String getLessons(String groupJson, String dailyParameters, String day, String userVo) {
+        return parser.getLessons(groupJson, dailyParameters, day, userVo);
     }
 
-    public String getStudyPlan(String semester, String group) {
-        return studyPlanParser.generateWebRequest(group, semester);
+    @SneakyThrows
+    public String getStudyPlan(String semester, String userVo) {
+        return studyPlanParser.generateWebRequest(semester, userVo);
     }
 }

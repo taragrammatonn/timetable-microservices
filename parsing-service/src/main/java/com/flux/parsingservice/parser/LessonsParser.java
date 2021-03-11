@@ -12,14 +12,12 @@ import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.Objects.isNull;
 
@@ -48,10 +46,12 @@ public class LessonsParser {
 
     private static final List<String> CURRENT = Arrays.asList("day", "week", "semester");
 
+    private final Environment env;
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
 
-    public LessonsParser(ObjectMapper objectMapper, RestTemplate restTemplate) {
+    public LessonsParser(Environment env, ObjectMapper objectMapper, RestTemplate restTemplate) {
+        this.env = env;
         this.objectMapper = objectMapper;
         this.restTemplate = restTemplate;
     }
@@ -68,7 +68,7 @@ public class LessonsParser {
         return getJsonContent(AUDIENCE_API);
     }
 
-    public String getLessons(String groupJson, String dailyParameters, String day) throws IOException {
+    public String getLessons(String groupJson, String dailyParameters, String userVo, String day) throws IOException {
 
         Connection.Response res = getResponseContent();
         this.document = res.parse();
@@ -120,7 +120,7 @@ public class LessonsParser {
             log.error("Bad request parameters!", e);
         }
 
-        return parseLessons(response, dayNumber, getWeekDay(dayNumber, map));
+        return objectMapper.writeValueAsString(parseLessons(response, dayNumber, getWeekDay(dayNumber, map, userVo)));
     }
 
     @SneakyThrows
@@ -189,22 +189,25 @@ public class LessonsParser {
         return objectMapper.writeValueAsString(weekData);
     }
 
-    public String getWeekDay(int day, Map<String, String> map) {
+    @SneakyThrows
+    public String getWeekDay(int day, Map<String, String> map, String userVo) {
+        JsonNode jsonNode = objectMapper.readTree(userVo);
+        String lang = jsonNode.get("userLanguage").asText();
         Map<Integer, String> daysOfWeek = Map.of(
-                1, "Luni",
-                2, "Marți",
-                3, "Miercuri",
-                4, "Joi",
-                5, "Vineri",
-                6, "Sâmbătă",
-                7, "Duminică"
+                1, Objects.requireNonNull(env.getProperty(lang + ".weekDay.monday")),
+                2, Objects.requireNonNull(env.getProperty(lang + ".weekDay.tuesday")),
+                3, Objects.requireNonNull(env.getProperty(lang + ".weekDay.wednesday")),
+                4, Objects.requireNonNull(env.getProperty(lang + ".weekDay.thursday")),
+                5, Objects.requireNonNull(env.getProperty(lang + ".weekDay.friday")),
+                6, Objects.requireNonNull(env.getProperty(lang + ".weekDay.saturday")),
+                7, Objects.requireNonNull(env.getProperty(lang + ".weekDay.sunday"))
         );
 
-        String[] a = this.document
+        String[] data = this.document
                 .getElementById("weekSelector")
                 .select("option[value=" + map.get("week") + "]").text()
                 .substring(3, 12).split("\\.");
 
-        return (Integer.parseInt(a[0]) + day - 1) + "." + a[1] + "." + a[2] + " --- " + daysOfWeek.get(day) + "\n";
+        return (Integer.parseInt(data[0]) + day - 1) + "." + data[1] + "." + data[2] + " --- " + daysOfWeek.get(day) + "\n";
     }
 }

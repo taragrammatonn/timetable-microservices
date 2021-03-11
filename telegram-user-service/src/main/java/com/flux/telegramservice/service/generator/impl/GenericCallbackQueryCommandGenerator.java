@@ -47,14 +47,11 @@ public abstract class GenericCallbackQueryCommandGenerator implements CommandGen
     @SneakyThrows
     public SendMessage generateCommand(Update update) {
         UserVO userVO = restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID, Long.valueOf(update.getCallbackQuery().getFrom().getId()));
-        String userGroup = userVO.getUserGroup();
         String command = update.getCallbackQuery().getData();
 
-        String response = command.equals("tbSemI") || command.equals("tbSemII") ? restTemplateService.getForObject(String.class, GET_STUDY_PLAN, userGroup, command)
-                : botService.getLessonsWithParam(
-                objectMapper.writeValueAsString(restTemplateService.getForObject(GroupVO.class, FIND_GROUP, userVO.getUserGroup())),
-                commandsList.get(command)
-        );
+        String response = command.equals("tbSemI") || command.equals("tbSemII") ?
+                restTemplateService.getForObject(String.class, GET_STUDY_PLAN, command, objectMapper.writeValueAsString(userVO))
+                : botService.getLessonsByGroup(update, userVO.getUserGroup(), commandsList.get(command));
 
         return new SendMessage(String.valueOf(update.getCallbackQuery().getFrom().getId()), response);
     }
