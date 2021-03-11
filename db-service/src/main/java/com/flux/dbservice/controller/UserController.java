@@ -26,8 +26,8 @@ public class UserController {
     }
 
     @GetMapping("/check-connection")
-    public String checkConnection() {
-        return parsingService.checkConnection();
+    public ResponseEntity<String> checkConnection() {
+        return new ResponseEntity<>(parsingService.checkConnection(), HttpStatus.OK);
     }
 
     @SneakyThrows
@@ -37,23 +37,18 @@ public class UserController {
     }
 
     @GetMapping("/findGroup")
-    public String findGroup(@RequestParam String groupName) {
-        return parsingService.findLessonsByGroup(groupName);
-    }
-
-    @PostMapping("/refreshGroups")
-    public void refreshGroups(@RequestBody String groupsJson) {
-        parsingService.refreshGroups(groupsJson);
+    public ResponseEntity<String> findGroup(@RequestParam String groupName) {
+        return new ResponseEntity<>(parsingService.findLessonsByGroup(groupName), HttpStatus.OK);
     }
 
     @PostMapping("/saveDailyParameters")
-    public String saveDailyParameters(@RequestBody String parametersJson) {
-        return parsingService.saveDailyParameters(parametersJson);
+    public ResponseEntity<String> saveDailyParameters(@RequestBody String parametersJson) {
+        return new ResponseEntity<>(parsingService.saveDailyParameters(parametersJson), HttpStatus.OK);
     }
 
     @GetMapping("/getDailyParametersByWeekNotNull")
-    public String getDailyParametersByWeekNotNull() {
-        return parsingService.getDailyParametersByWeekNotNull();
+    public ResponseEntity<String> getDailyParametersByWeekNotNull() {
+        return new ResponseEntity<>(parsingService.getDailyParametersByWeekNotNull(), HttpStatus.OK);
     }
 
     @PostMapping("/saveHistory")
@@ -64,5 +59,15 @@ public class UserController {
     @GetMapping("/getUser")
     public ResponseEntity<String> getDailyParametersByWeekNotNull(@RequestParam String chatId) {
         return new ResponseEntity<>(userService.getUserByChatId(chatId), HttpStatus.OK);
+    }
+
+    @PostMapping("/saveUserOption")
+    public void saveUserOption(@RequestBody String userOptionJson) {
+        userService.saveUserOptions(userOptionJson);
+    }
+
+    @GetMapping("/getUserOption")
+    public ResponseEntity<String> getUserOption(@RequestParam Long chatId) {
+        return new ResponseEntity<>(userService.getUserOptionByChatId(chatId), HttpStatus.OK);
     }
 }

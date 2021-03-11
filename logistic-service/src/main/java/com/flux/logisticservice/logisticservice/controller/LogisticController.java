@@ -2,6 +2,7 @@ package com.flux.logisticservice.logisticservice.controller;
 
 import com.flux.logisticservice.logisticservice.service.LogisticService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,17 +20,12 @@ public class LogisticController {
 
     @RequestMapping("/findGroup")
     public String findGroup(@RequestParam String groupName) {
-        return logisticService.findLessonsByGroup(groupName);
+        return logisticService.findGroup(groupName);
     }
 
     @GetMapping("/getAllGroups")
-    public String getAllGroups() {
+    public ResponseEntity<String> getAllGroups() {
         return logisticService.getAllGroups();
-    }
-
-    @RequestMapping("/lessonByGroup")
-    public String lessonByGroup(@RequestParam String groupJson) {
-        return logisticService.getLessonsByGroup(groupJson);
     }
 
     @GetMapping("/getDailyParametersByWeekNotNull")
@@ -46,5 +42,30 @@ public class LogisticController {
     @GetMapping("/getUser")
     public String getUserByChatId(@RequestParam String chatId) {
         return logisticService.getUserByChatId(chatId);
+    }
+
+    @RequestMapping("/saveUserOption") @ResponseBody
+    public void saveUserOption(@RequestBody String userOptionJson) {
+        logisticService.saveUserOption(userOptionJson);
+    }
+
+    @GetMapping("/getUserOption")
+    public ResponseEntity<String> getUserOption(@RequestParam Long chatId) {
+        return new ResponseEntity<>(logisticService.getUserOptionByChatId(chatId), HttpStatus.OK);
+    }
+
+    @GetMapping("/getLessons")
+    public String lessonsDay(
+            @RequestParam String groupJson,
+            @RequestParam String day,
+            @RequestParam String userVo) {
+        return logisticService.getLessons(groupJson, day, userVo);
+    }
+
+    @GetMapping("getStudyPlan")
+    public String getStudyPlan(
+            @RequestParam String semester,
+            @RequestParam String userVo) {
+        return logisticService.getStudyPlan(semester, userVo);
     }
 }

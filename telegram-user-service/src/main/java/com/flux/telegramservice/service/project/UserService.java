@@ -6,20 +6,20 @@ import com.flux.telegramservice.service.request.RestTemplateService;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.util.Objects;
+
+import static com.flux.telegramservice.util.Links.GET_USER_BY_CHAT_ID;
 import static java.util.Objects.isNull;
 
 @Service
 public class UserService extends AbstractTelegramService {
-
-    public static final String FIRST_START_INPUT = "Привет, %s!\nВведи имя группы, что получить расписание на сегодня!";
-    public static final String REPEATING_START_INPUT = "Астановитесь, %s!\nОтделу GroupConsulting нужно название вашей группы! \nВведите название:";
 
     public UserService(RestTemplateService restTemplateService) {
         this.restTemplateService = restTemplateService;
     }
 
     public UserVO addNewUser(Update update) {
-        UserVO user = restTemplateService.getUserByChatId(update.getMessage().getChatId());
+        UserVO user = restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID, update.getMessage().getChatId());
 
         if (isNull(user)) {
             user = restTemplateService.saveUser(createNewUserVO(update));
@@ -33,10 +33,12 @@ public class UserService extends AbstractTelegramService {
         if (Boolean.FALSE.equals(newUser.getIsDefined())) {
             newUser.setIsDefined(true);
             restTemplateService.saveUser(newUser);
-            return String.format(FIRST_START_INPUT, newUser.getFName());
+            return String.format(Objects.requireNonNull(
+                    env.getProperty(newUser.getUserLanguage() + ".first_start_input")), newUser.getFName());
         }
 
-        return String.format(REPEATING_START_INPUT, newUser.getFName());
+        return String.format(Objects.requireNonNull(
+                env.getProperty(newUser.getUserLanguage() + ".repeating_start_input")), newUser.getFName());
     }
 
     private UserVO createNewUserVO(Update update) {

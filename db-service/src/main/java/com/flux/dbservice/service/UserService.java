@@ -1,16 +1,16 @@
 package com.flux.dbservice.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flux.dbservice.entity.history.History;
 import com.flux.dbservice.entity.users.User;
-import com.flux.dbservice.repository.history.HistoryRepository;
+import com.flux.dbservice.entity.users.UserOption;
+import com.flux.dbservice.repository.users.UserOptionRepository;
 import com.flux.dbservice.repository.users.UserRepository;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static java.util.Objects.isNull;
-
 
 @Service
 public class UserService {
@@ -19,7 +19,7 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
-    private HistoryRepository historyRepository;
+    private UserOptionRepository userOptionRepository;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -38,5 +38,28 @@ public class UserService {
     @SneakyThrows
     public String getUserByChatId(String chatId) {
         return objectMapper.writeValueAsString(userRepository.findByChatId(Long.valueOf(chatId)));
+    }
+
+    @SneakyThrows
+    @Transactional
+    public void saveUserOptions(String userOptionJson) {
+        UserOption jsonUserOption = objectMapper.readValue(userOptionJson, UserOption.class);
+        User user = userRepository.findByChatId(jsonUserOption.getChatId());
+        UserOption userOption = userOptionRepository.findByUserId(user.getId());
+
+        if (!isNull(userOption)) {
+            jsonUserOption.setId(userOption.getId());
+        }
+
+        jsonUserOption.setUserId(user.getId());
+        user.setUserOption(jsonUserOption);
+
+        userRepository.save(user);
+    }
+
+    @SneakyThrows
+    public String getUserOptionByChatId(Long chatId) {
+        return objectMapper.writeValueAsString(userOptionRepository.findByUserId(
+                userRepository.findByChatId(chatId).getId()));
     }
 }

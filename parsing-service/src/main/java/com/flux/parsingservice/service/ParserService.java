@@ -1,22 +1,21 @@
 package com.flux.parsingservice.service;
 
 
-import com.flux.parsingservice.parser.Parser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.flux.parsingservice.parser.LessonsParser;
+import com.flux.parsingservice.parser.StudyPlanParser;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ParserService {
 
-    private final Parser parser;
+    private final LessonsParser parser;
+    private final StudyPlanParser studyPlanParser;
 
-    public ParserService(Parser parser) {
+    public ParserService(LessonsParser parser, StudyPlanParser studyPlanParser) {
         this.parser = parser;
-    }
-
-    @SneakyThrows
-    public String getLessons(String groupJson, String dailyParameters) {
-        return parser.getLessons(groupJson, dailyParameters);
+        this.studyPlanParser = studyPlanParser;
     }
 
     @SneakyThrows
@@ -36,5 +35,15 @@ public class ParserService {
 
     public String getDailyParameters() {
         return parser.getDailyParameters();
+    }
+
+    @SneakyThrows
+    public String getLessons(String groupJson, String dailyParameters, String day, String userVo) {
+        return parser.getLessons(groupJson, dailyParameters, day, userVo);
+    }
+
+    @SneakyThrows
+    public String getStudyPlan(String semester, String userVo) {
+        return studyPlanParser.generateWebRequest(semester, userVo);
     }
 }

@@ -13,7 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "teacher", schema = "parsing")
+@Table(name = "teacher", schema = "lesson_parsing")
 public class Teacher {
 
     @Id

@@ -1,4 +1,4 @@
-package com.flux.dbservice.entity.parsing;
+package com.flux.telegramservice.entity;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -6,19 +6,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-import javax.persistence.*;
-
 @Data
-@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "group", schema = "lesson_parsing")
-public class Group {
+public class GroupVO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
-    Long id;
     String groupId;
     String name;
 }

@@ -1,11 +1,14 @@
 package com.flux.dbservice.entity.users;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.flux.dbservice.entity.history.History;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
 import java.util.LinkedList;
@@ -31,7 +34,14 @@ public class User {
     String userLanguage;
     Boolean active;
     Boolean adminEntity;
+    Boolean isDefined;
 
     @OneToMany(fetch = FetchType.LAZY)
     List<History> history = new LinkedList<>();
+
+    @Cascade(CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_option_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    UserOption userOption;
 }
