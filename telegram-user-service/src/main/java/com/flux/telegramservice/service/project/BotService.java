@@ -9,7 +9,6 @@ import com.flux.telegramservice.service.generator.impl.GenericCallbackQueryComma
 import com.flux.telegramservice.util.exception.CannotSaveHistoryException;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -25,19 +24,21 @@ import static java.util.Objects.isNull;
 @Slf4j
 public class BotService extends AbstractTelegramService {
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
+
+    public BotService(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     private final Map<String, CommandGenerator> commands = new HashMap<>();
 
     @SneakyThrows
     public String getLessonsByGroup(Update update, String command, String day) {
-        UserVO userVO;
-
-        if (isNull(update.getMessage()))
-            userVO = restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID,
-                    Long.valueOf(update.getCallbackQuery().getFrom().getId()));
-        else userVO = restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID,
+        UserVO userVO = isNull(update.getMessage()) ?
+                restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID,
+                    Long.valueOf(update.getCallbackQuery().getFrom().getId()))
+                :
+                restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID,
                 update.getMessage().getChatId());
 
         GroupVO groupJson = restTemplateService.getForObject(GroupVO.class, FIND_GROUP, command);
@@ -45,17 +46,11 @@ public class BotService extends AbstractTelegramService {
         if (isNull(groupJson))
             return env.getProperty(update.getMessage().getFrom().getLanguageCode() + ".no_group");
 
-        if (!saveHistory(update, HistoryEvent.GROUP)) {
+        if (!saveHistory(update, HistoryEvent.GROUP))
             throw new CannotSaveHistoryException("Can't save History at entity: " + update.getMessage().getChatId());
-        }
 
         return restTemplateService.getForObject(String.class, GET_LESSONS_WITH_PARAM,
                 objectMapper.writeValueAsString(groupJson), objectMapper.writeValueAsString(userVO), day);
-    }
-
-    @SneakyThrows
-    public String findGroup(String group) {
-        return objectMapper.writeValueAsString(restTemplateService.getForObject(GroupVO.class, FIND_GROUP, group));
     }
 
     @SneakyThrows
@@ -66,7 +61,6 @@ public class BotService extends AbstractTelegramService {
     }
 
     public SendMessage callBackQueryProcessing(Update update) {
-
         String command = update.getCallbackQuery().getData();
 
         GenericCallbackQueryCommandGenerator genericCallbackQueryCommandGenerator =
@@ -82,10 +76,6 @@ public class BotService extends AbstractTelegramService {
                 new SendMessage(String.valueOf(update.getCallbackQuery().getFrom().getId()),
                         Objects.requireNonNull(env.getProperty(update.getMessage().getFrom().getLanguageCode()
                                 + ".wrong_command")));
-    }
-
-    public String getLessonsWithParam(String group, String param) {
-        return restTemplateService.getLessonsWithParam(group, param);
     }
 
     public void register(String code, CommandGenerator generator) {

@@ -1,7 +1,6 @@
 package com.flux.telegramservice.service.generator.impl;
 
 import com.flux.telegramservice.service.generator.CommandGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -12,8 +11,11 @@ import java.util.Objects;
 @Component
 public class GetHelpMessageGenerator implements CommandGenerator {
 
-    @Autowired
-    private Environment env;
+    private final Environment env;
+
+    public GetHelpMessageGenerator(Environment env) {
+        this.env = env;
+    }
 
     @Override
     public SendMessage generateCommand(Update update) {

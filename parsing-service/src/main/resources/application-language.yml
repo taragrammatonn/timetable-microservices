@@ -1,7 +1,7 @@
 ru:
   study_plan: "Учебный план -- "
   semester_I: "====  Семестр I  ====\n"
-  semester_II: "====  Семестр I  ====\n"
+  semester_II: "====  Семестр II  ====\n"
   weekDay:
    monday: "Понедельник"
    tuesday: "Вторник"
@@ -14,7 +14,7 @@ ru:
 en:
   study_plan: "Study plan -- "
   semester_I: "====  Semester I  ====\n"
-  semester_II: "====  Semester I  ====\n"
+  semester_II: "====  Semester II  ====\n"
   weekDay:
     monday: "Monday"
     tuesday: "Tuesday"
@@ -28,7 +28,7 @@ en:
 ro:
   study_plan: "Plan de studii -- "
   semester_I: "====  Semesteru I  ====\n"
-  semester_II: "====  Semesteru I  ====\n"
+  semester_II: "====  Semesteru II  ====\n"
   weekDay:
     monday: "Luni"
     tuesday: "Marți"
@@ -42,7 +42,7 @@ ro:
 fr:
   study_plan: "Curriculum -- "
   semester_I: "====  Semestre I  ====\n"
-  semester_II: "====  Semestre I  ====\n"
+  semester_II: "====  Semestre II  ====\n"
   weekDay:
     monday: "Luni"
     tuesday: "Marți"

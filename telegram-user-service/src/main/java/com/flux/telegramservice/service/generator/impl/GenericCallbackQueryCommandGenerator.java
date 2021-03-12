@@ -1,7 +1,6 @@
 package com.flux.telegramservice.service.generator.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flux.telegramservice.entity.GroupVO;
 import com.flux.telegramservice.entity.UserVO;
 import com.flux.telegramservice.service.generator.CommandGenerator;
 import com.flux.telegramservice.service.project.BotService;

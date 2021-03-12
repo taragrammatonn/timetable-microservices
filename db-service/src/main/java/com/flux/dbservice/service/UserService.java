@@ -6,7 +6,6 @@ import com.flux.dbservice.entity.users.UserOption;
 import com.flux.dbservice.repository.users.UserOptionRepository;
 import com.flux.dbservice.repository.users.UserRepository;
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,14 +14,15 @@ import static java.util.Objects.isNull;
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final UserOptionRepository userOptionRepository;
+    private final ObjectMapper objectMapper;
 
-    @Autowired
-    private UserOptionRepository userOptionRepository;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+    public UserService(UserRepository userRepository, UserOptionRepository userOptionRepository, ObjectMapper objectMapper) {
+        this.userRepository = userRepository;
+        this.userOptionRepository = userOptionRepository;
+        this.objectMapper = objectMapper;
+    }
 
     @SneakyThrows
     public String saveUser(String userJson) {

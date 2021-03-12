@@ -45,8 +45,7 @@ public class GroupMessageGenerator implements CommandGenerator {
                     Objects.requireNonNull(env.getProperty(userVO.getUserLanguage() + ".get_group")));
         }
 
-        String command = userVO.getUserGroup();
-        String response = botService.searchCommand(command, update);
+        String response = botService.searchCommand(userVO.getUserGroup(), update);
         return new SendMessage(update.getMessage().getChatId(), response).setReplyMarkup(setButtons(update));
     }
 

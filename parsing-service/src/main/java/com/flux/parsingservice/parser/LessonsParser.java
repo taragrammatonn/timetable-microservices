@@ -30,17 +30,10 @@ public class LessonsParser {
     // LOGISTIC_SERVICE API's
     public static final String LOGISTIC_SERVICE = "http://LOGISTIC-SERVICE/logistic-api";
     public static final String GET_DAILY_PARAMETERS_BY_WEEK_NOT_NULL = "/getDailyParametersByWeekNotNull";
-
     public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36";
-
     public static final String ORIGIN_URL = "http://orar.usarb.md";
 
-    private static final String GROUP_API = "http://orar.usarb.md/api/getGroups";
-    private static final String TEACHERS_API = "http://orar.usarb.md/api/getteachers";
-    private static final String AUDIENCE_API = "http://orar.usarb.md/api/getOffices";
-
     private static final String VALUE = "value";
-
     private static final String NO_DATA_FOR_TODAY = "[[]]";
     private static final String NO_DATA_FOR_TODAY_MESSAGE = "No data for today.";
 
@@ -56,20 +49,7 @@ public class LessonsParser {
         this.restTemplate = restTemplate;
     }
 
-    public String getGroups() throws IOException {
-        return getJsonContent(GROUP_API).replace("id", "groupId");
-    }
-
-    public String getTeachers() throws IOException {
-        return getJsonContent(TEACHERS_API);
-    }
-
-    public String getAudiences() throws IOException {
-        return getJsonContent(AUDIENCE_API);
-    }
-
     public String getLessons(String groupJson, String dailyParameters, String userVo, String day) throws IOException {
-
         Connection.Response res = getResponseContent();
         this.document = res.parse();
         String csrf = this.document.select("meta[name=\"csrf-token\"]").first().attr("content");
@@ -79,22 +59,16 @@ public class LessonsParser {
 
         if (isNull(map.get("week"))) {
             ObjectNode dailyParams = (ObjectNode) objectMapper.readTree(restTemplate.getForObject(LOGISTIC_SERVICE + GET_DAILY_PARAMETERS_BY_WEEK_NOT_NULL, String.class));
-            map.put(
-                    "week",
-                    dailyParams.get("week").asText()
-            );
+            map.put("week", dailyParams.get("week").asText());
         }
-        int dayNumber;
 
+        // +1 because somebody once told me that the day on site is current_day + 1 in JS, lmao
+        int dayNumber = Integer.parseInt(map.get("day")) + (!day.isEmpty() ? Integer.parseInt(day) : 0) + 1;
         if (day.equals("nextWeek")) {
-            map.replace("week",  String.valueOf(Integer.parseInt(map.get("week")) + 1));
-            dayNumber = 1;
+            map.replace("week", String.valueOf(Integer.parseInt(map.get("week")) + 1));
             map.put("day", "1");
-        } else {
-            // +1 because somebody once told me that the day on site is current_day + 1 in JS, lmao
-            dayNumber = Integer.parseInt(map.get("day")) + (!day.isEmpty() ? Integer.parseInt(day) : 0) + 1;
-            map.put("day", String.valueOf(dayNumber));
-        }
+            dayNumber = 1;
+        } else map.put("day", String.valueOf(dayNumber));
 
         String response = null;
         try {
@@ -113,9 +87,7 @@ public class LessonsParser {
                     .execute()
                     .body();
 
-            if (response.equals(NO_DATA_FOR_TODAY)) {
-                return NO_DATA_FOR_TODAY_MESSAGE;
-            }
+            if (response.equals(NO_DATA_FOR_TODAY)) return NO_DATA_FOR_TODAY_MESSAGE;
         } catch (HttpStatusException e) {
             log.error("Bad request parameters!", e);
         }
@@ -125,8 +97,7 @@ public class LessonsParser {
 
     @SneakyThrows
     private String parseLessons(String weekLessons, int dayNumber, String weekDay) {
-        ObjectMapper mapper = new ObjectMapper();
-        ArrayNode arrayNode = (ArrayNode) mapper.readTree(weekLessons).get("week");
+        ArrayNode arrayNode = (ArrayNode) objectMapper.readTree(weekLessons).get("week");
         StringBuilder todayLessons = new StringBuilder();
         String newLine = "\n--- ";
         todayLessons.append(weekDay);
@@ -153,28 +124,13 @@ public class LessonsParser {
         return todayLessons.toString();
     }
 
-    private String formatJson(String json) {
-        return json.replace("Denumire", "name").replace("Id", "id");
-    }
-
     private Connection.Response getResponseContent() throws IOException {
         return Jsoup.connect(ORIGIN_URL).userAgent(USER_AGENT).method(Connection.Method.GET).execute();
     }
 
-    private String getJsonContent(String apiUrl) throws IOException {
-        return formatJson(Jsoup.connect(apiUrl)
-                .userAgent(USER_AGENT)
-                .method(Connection.Method.POST)
-                .ignoreContentType(true)
-                .execute()
-                .body());
-    }
-
     @SneakyThrows
     public String getDailyParameters() {
-        Connection.Response res = getResponseContent();
-        Document timeTableDom = res.parse();
-        Elements current = timeTableDom.select("option[selected=\"selected\"]");
+        Elements current = getResponseContent().parse().select("option[selected=\"selected\"]");
 
         Map<String, String> weekData = new HashMap<>();
         if (current.size() < 3) {
@@ -191,8 +147,7 @@ public class LessonsParser {
 
     @SneakyThrows
     public String getWeekDay(int day, Map<String, String> map, String userVo) {
-        JsonNode jsonNode = objectMapper.readTree(userVo);
-        String lang = jsonNode.get("userLanguage").asText();
+        String lang = objectMapper.readTree(userVo).get("userLanguage").asText();
         Map<Integer, String> daysOfWeek = Map.of(
                 1, Objects.requireNonNull(env.getProperty(lang + ".weekDay.monday")),
                 2, Objects.requireNonNull(env.getProperty(lang + ".weekDay.tuesday")),

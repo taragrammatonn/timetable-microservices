@@ -1,7 +1,5 @@
 package com.flux.parsingservice.service;
 
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.flux.parsingservice.parser.LessonsParser;
 import com.flux.parsingservice.parser.StudyPlanParser;
 import lombok.SneakyThrows;
@@ -16,21 +14,6 @@ public class ParserService {
     public ParserService(LessonsParser parser, StudyPlanParser studyPlanParser) {
         this.parser = parser;
         this.studyPlanParser = studyPlanParser;
-    }
-
-    @SneakyThrows
-    public String getGroups() {
-        return parser.getGroups();
-    }
-
-    @SneakyThrows
-    public String getTeachers() {
-        return parser.getTeachers();
-    }
-
-    @SneakyThrows
-    public String getAudiences() {
-        return parser.getAudiences();
     }
 
     public String getDailyParameters() {

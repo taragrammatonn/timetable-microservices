@@ -18,21 +18,6 @@ public class ParserController {
         return "Connected";
     }
 
-    @RequestMapping("/groups")
-    public String getGroups() {
-        return parserService.getGroups();
-    }
-
-    @RequestMapping("/teachers")
-    public String getTeachers() {
-        return parserService.getTeachers();
-    }
-
-    @RequestMapping("/audiences")
-    public String getAudiences() {
-        return parserService.getAudiences();
-    }
-
     @RequestMapping("/getDailyParameters")
     public String getDailyParameters() {
         return parserService.getDailyParameters();
