@@ -1,7 +1,6 @@
 package com.flux.logisticservice.logisticservice.controller;
 
 import com.flux.logisticservice.logisticservice.service.LogisticService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,8 +9,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/logistic-api")
 public class LogisticController {
 
-    @Autowired
-    private LogisticService logisticService;
+    private final LogisticService logisticService;
+
+    public LogisticController(LogisticService logisticService) {
+        this.logisticService = logisticService;
+    }
 
     @RequestMapping("/addUser") @ResponseBody
     public ResponseEntity<String> addUser(@RequestBody String userJson) {

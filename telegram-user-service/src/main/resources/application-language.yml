@@ -5,11 +5,12 @@ ru:
  Слишко много работы может растроить Ждуна! \nВыбери тип расписания."
  choose_option: "Выбери тип расписания из списка кнопок"
  help: "Здарова сталкер!\n А если ты девушка то,Привет красавица!\n
-        Этот бот сделан группой энтузиастов (ну как \"группой\", бота создал @tetragramatonn а @MihaiCojusnean
-        так подсосался под конец) для студетов и хорошых учителей USARB.\n
-        Пока что бот поддерживает следующие команды:\n
-        /penis\n
-        Другие команды в разработке.\n
+ Этот бот сделан группой энтузиастов (ну как \"группой\", бота создал @tetragramatonn а @MihaiCojusnean
+ так подсосался под конец) для студетов и хорошых учителей USARB.\n
+ Пока что бот поддерживает следующие команды:\n
+ /studyPlan -- см. учебный план (в настоящее время поддерживаются только группы ME13M и DM11M)\n
+ /penis -- генерирует *****\n
+ Другие команды в разработке.\n
  {\nЧерный список @UsarbOrarBot:\n Zastanceanu Liubov\n}"
  no_group: "Такой группы не существует."
  get_group: "Введите навзание группы."
@@ -32,7 +33,8 @@ en:
  And if you are a girl then, Hello, beauty!\n
  This bot was made by a group of enthusiasts for USARB students and good teachers.\n
  So far, the bot supports the following commands:\n
- /penis\n
+ /studyPlan -- see study plan (currently only supports groups ME13M ang DM11M)\n
+ /penis -- generates your *****\n
  More commands are under development.\n
  {\n @UsarbOrarBot Blacklist: \\ n Zastanceanu Liubov \n}"
  no_group: "Such a group does not exist."
@@ -57,7 +59,8 @@ ro:
  Acest bot a fost creat de un grup de entuziaști (bine, baza a fost pusă de @tetragramatonn dar la măreţie a fost adus de @MihaiCojusnean)\n
  pentru studenții USARB și profesorii buni.\n
  Până în prezent, botul acceptă următoarele comenzi:\n
- /penis\n
+ /studyPlan -- vezi planul de studiu (la moment suportă doar grupele ME13M și DM11M)\n
+ /penis -- generează un *****\n
  Până o să apara alete comenzi mai aveți de mâncat măligă.\n
  Totul abia începe! Vseo toliko nacinaetse\n
  {\n @UsarbOrarBot Lista neagră: \n Zastanceanu Liubov (Da ăto jestko)\n}"
@@ -67,7 +70,7 @@ ro:
  wrong_command: "Comandă greșită."
  button:
   semester_I: "Semestru I"
-  semester_II: "Semestru I"
+  semester_II: "Semestru II"
   +1day: "+1Zi"
   +2day's: "+2Zile"
   +week: "+1Săptămână"
@@ -82,7 +85,8 @@ fr:
  help: "Bonjour Stalker!\nEt si vous êtes une fille alors, Bonjour, beauté!\n
  Ce bot a été créé par un groupe de passionnés pour les étudiants de l'USARB et les bons professeurs.\n
  Jusqu'à présent, le bot prend en charge les commandes suivantes:\n
- /penis\n
+ /studyPlan -- voir le plan d'étude (ne prend actuellement en charge que les groupes ME13M est DM11M)\n
+ /penis -- génère un *****\n
  D'autres commandes sont en cours de développement.\n
  {\n @UsarbOrarBot Liste noire: \\ n Zastanceanu Liubov \n}"
  no_group: "Un tel groupe n'existe pas."

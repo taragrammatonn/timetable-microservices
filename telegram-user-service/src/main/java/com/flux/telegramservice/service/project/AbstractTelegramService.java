@@ -11,6 +11,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import static com.flux.telegramservice.util.Links.GET_USER_BY_CHAT_ID;
+import static com.flux.telegramservice.util.Links.GET_USER_OPTION_BY_CHAT_ID;
 
 public abstract class AbstractTelegramService {
 
@@ -32,9 +33,9 @@ public abstract class AbstractTelegramService {
 
     @SneakyThrows
     public String searchCommand(String command, Update update) {
-        UserOptionVO userOption = restTemplateService.getUserOptionVO(update.getMessage().getChatId());
+        UserOptionVO userOption = restTemplateService.getForObject(
+                UserOptionVO.class, GET_USER_OPTION_BY_CHAT_ID, update.getMessage().getChatId());
         UserVO userVO = restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID, update.getMessage().getChatId());
-        String response = null;
 
         try {
             if (Boolean.TRUE.equals(userOption.getGroupSelected())) {
@@ -45,18 +46,18 @@ public abstract class AbstractTelegramService {
                 return botService.getLessonsByGroup(update, command, null);
             }
 
-            if (userOption.getAudienceSelected()) {
+/*          if (userOption.getAudienceSelected()) {
 
             }
 
             if (userOption.getTeacherSelected()) {
 
-            }
+            } */
         } catch (NullPointerException e) {
             return env.getProperty(update.getMessage().getFrom().getLanguageCode() + ".choose_option");
         }
 
-        return response;
+        return null;
     }
 
     @SneakyThrows

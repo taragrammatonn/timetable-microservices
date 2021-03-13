@@ -1,6 +1,5 @@
 package com.flux.telegramservice.botconfiguration;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -15,7 +14,6 @@ public abstract class Bot extends TelegramLongPollingBot {
     @Value("${bot.token}")
     private String botToken;
 
-    @SneakyThrows
     @Override
     public void onUpdateReceived(Update update) {
         // default implementation
