@@ -55,7 +55,8 @@ public class LessonsParser {
         String csrf = this.document.select("meta[name=\"csrf-token\"]").first().attr("content");
 
         JsonNode jsonNode = objectMapper.readTree(groupJson);
-        Map<String, String> map = objectMapper.readValue(dailyParameters, new TypeReference<>() {});
+        Map<String, String> map = objectMapper.readValue(dailyParameters, new TypeReference<>() {
+        });
 
         if (isNull(map.get("week"))) {
             ObjectNode dailyParams = (ObjectNode) objectMapper.readTree(restTemplate.getForObject(LOGISTIC_SERVICE + GET_DAILY_PARAMETERS_BY_WEEK_NOT_NULL, String.class));
@@ -113,10 +114,14 @@ public class LessonsParser {
         if (arrayNode.isArray()) {
             for (JsonNode jsonNode : arrayNode) {
                 if (dayNumber == (jsonNode.get("day_number").asInt())) {
-                    todayLessons.append(courseNr.get(jsonNode.get("cours_nr").asInt())).append(jsonNode.get("cours_name").asText()).append(newLine);
-                    todayLessons.append(jsonNode.get("cours_type").asText()).append(newLine);
-                    todayLessons.append(jsonNode.get("Titlu").asText()).append(" ").append(jsonNode.get("teacher_name").asText()).append(newLine);
-                    todayLessons.append(jsonNode.get("cours_office").asText()).append("\n");
+                    todayLessons
+                            .append(courseNr.get(jsonNode.get("cours_nr").asInt()))
+                            .append(jsonNode.get("cours_name").asText()).append(newLine)
+                            .append(jsonNode.get("cours_type").asText()).append(newLine)
+                            .append(jsonNode.get("Titlu").asText()).append(" ")
+                            .append(jsonNode.get("teacher_name").asText())
+                            .append(newLine)
+                            .append(jsonNode.get("cours_office").asText()).append("\n");
                 }
             }
         }

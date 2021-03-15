@@ -105,8 +105,8 @@ public class StudyPlanParser {
         String lang = jsonNode.get("userLanguage").asText();
         StringBuilder sb = new StringBuilder();
 
-        sb.append(env.getProperty(lang + ".study_plan")).append(group.toUpperCase()).append("\n");
-        sb.append(env.getProperty(lang + (semester.equals("tbSemI") ? ".semester_I" : ".semester_II")));
+        sb.append(env.getProperty(lang + ".study_plan")).append(group.toUpperCase()).append("\n")
+        .append(env.getProperty(lang + (semester.equals("tbSemI") ? ".semester_I" : ".semester_II")));
 
         for (int i = 0; i < content.size() - 1; i += 2) {
             sb.append("- ").append(content.get(i)).append("\n--- ").append(content.get(i + 1)).append("\n");
