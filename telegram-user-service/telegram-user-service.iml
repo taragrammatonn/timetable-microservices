@@ -7,6 +7,8 @@
         <sourceRoots>
           <root url="file://$MODULE_DIR$/src/main/java" />
           <root url="file://$MODULE_DIR$/src/main/resources" />
+          <root url="file://$MODULE_DIR$/target/generated-sources/protobuf/grpc-java" />
+          <root url="file://$MODULE_DIR$/target/generated-sources/protobuf/java" />
         </sourceRoots>
       </configuration>
     </facet>
@@ -21,6 +23,8 @@
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/target/generated-sources/protobuf/grpc-java" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/target/generated-sources/protobuf/java" isTestSource="false" generated="true" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
@@ -90,7 +94,6 @@
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.antlr:antlr-runtime:3.4" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.antlr:stringtemplate:3.2.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: antlr:antlr:2.7.7" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.google.code.gson:gson:2.8.6" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.commons:commons-math:2.2" level="project" />
     <orderEntry type="library" name="Maven: javax.ws.rs:jsr311-api:1.1.1" level="project" />
     <orderEntry type="library" name="Maven: com.netflix.servo:servo-core:0.12.21" level="project" />
@@ -115,6 +118,27 @@
     <orderEntry type="library" name="Maven: com.thoughtworks.xstream:xstream:1.4.14" level="project" />
     <orderEntry type="library" name="Maven: xmlpull:xmlpull:1.1.3.1" level="project" />
     <orderEntry type="library" name="Maven: xpp3:xpp3_min:1.1.4c" level="project" />
+    <orderEntry type="library" name="Maven: net.devh:grpc-spring-boot-starter:2.11.0.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: net.devh:grpc-server-spring-boot-starter:2.11.0.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: net.devh:grpc-server-spring-boot-autoconfigure:2.11.0.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: io.grpc:grpc-services:1.35.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.google.protobuf:protobuf-java-util:3.12.0" level="project" />
+    <orderEntry type="library" name="Maven: net.devh:grpc-client-spring-boot-starter:2.11.0.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: net.devh:grpc-client-spring-boot-autoconfigure:2.11.0.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: net.devh:grpc-common-spring-boot:2.11.0.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: io.grpc:grpc-core:1.35.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.google.code.gson:gson:2.8.6" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.google.android:annotations:4.1.1.4" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: io.perfmark:perfmark-api:0.23.0" level="project" />
+    <orderEntry type="library" name="Maven: io.grpc:grpc-netty-shaded:1.35.0" level="project" />
+    <orderEntry type="library" name="Maven: io.grpc:grpc-protobuf:1.35.0" level="project" />
+    <orderEntry type="library" name="Maven: io.grpc:grpc-api:1.35.0" level="project" />
+    <orderEntry type="library" name="Maven: io.grpc:grpc-context:1.35.0" level="project" />
+    <orderEntry type="library" name="Maven: com.google.protobuf:protobuf-java:3.12.0" level="project" />
+    <orderEntry type="library" name="Maven: com.google.api.grpc:proto-google-common-protos:2.0.1" level="project" />
+    <orderEntry type="library" name="Maven: io.grpc:grpc-protobuf-lite:1.35.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.codehaus.mojo:animal-sniffer-annotations:1.19" level="project" />
+    <orderEntry type="library" name="Maven: io.grpc:grpc-stub:1.35.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework.boot:spring-boot-starter-test:2.4.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework.boot:spring-boot-test:2.4.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework.boot:spring-boot-test-autoconfigure:2.4.1" level="project" />

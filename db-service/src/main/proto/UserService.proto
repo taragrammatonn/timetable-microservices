@@ -1,0 +1,16 @@
+syntax = "proto3";
+package com.flux.telegramservice;
+
+message getUserByChatId {
+  int64 user_chat_id = 1;
+}
+
+message getUserByChatIdResponse {
+  bool IsDefined = 1;
+  string userLanguage = 2;
+  string fName = 3;
+}
+
+service UserService {
+  rpc getUserVO(getUserByChatId) returns (getUserByChatIdResponse);
+}

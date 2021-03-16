@@ -2,24 +2,29 @@ package com.flux.telegramservice.service.project;
 
 import com.flux.telegramservice.entity.HistoryEvent;
 import com.flux.telegramservice.entity.UserVO;
+import com.flux.telegramservice.service.gRPC.UserServiceGRPC;
 import com.flux.telegramservice.service.request.RestTemplateService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.Objects;
 
-import static com.flux.telegramservice.util.Links.GET_USER_BY_CHAT_ID;
 import static java.util.Objects.isNull;
 
 @Service
 public class UserService extends AbstractTelegramService {
+
+    @Autowired
+    private UserServiceGRPC userServiceGRPC;
 
     public UserService(RestTemplateService restTemplateService) {
         this.restTemplateService = restTemplateService;
     }
 
     public UserVO addNewUser(Update update) {
-        UserVO user = restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID, update.getMessage().getChatId());
+        UserVO user = userServiceGRPC.getUserVO(update.getMessage().getChatId());
+//                restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID, update.getMessage().getChatId());
 
         if (isNull(user)) {
             user = restTemplateService.saveUser(createNewUserVO(update));

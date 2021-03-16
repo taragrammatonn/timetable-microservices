@@ -24,15 +24,10 @@ public class UserVO {
         this.isDefined = isDefined;
     }
 
-    public UserVO(Long chatId, String fName, String lName) {
-        this.chatId = chatId;
+    public UserVO(String fName, String userLanguage, Boolean isDefined) {
         this.fName = fName;
-        this.lName = lName;
-    }
-
-    public UserVO(Long chatId, String userGroup) {
-        this.chatId = chatId;
-        this.userGroup = userGroup;
+        this.userLanguage = userLanguage;
+        this.isDefined = isDefined;
     }
 
     Long chatId;
