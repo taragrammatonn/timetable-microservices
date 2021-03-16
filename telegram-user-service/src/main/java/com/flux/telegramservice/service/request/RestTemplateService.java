@@ -21,7 +21,7 @@ public class RestTemplateService extends RestTemplateHelper {
         return restTemplate.postForObject(LOGISTIC_SERVICE + SAVE_USER, userVO, UserVO.class);
     }
 
-    public boolean saveHistory(Update update, HistoryEvent event) {
+    public Boolean saveHistory(Update update, HistoryEvent event) {
         if (update.getMessage() == null) {
             return restTemplate.postForObject(
                     LOGISTIC_SERVICE + SAVE_HISTORY,

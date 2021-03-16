@@ -6,7 +6,6 @@ import com.flux.telegramservice.entity.HistoryEvent;
 import com.flux.telegramservice.entity.UserVO;
 import com.flux.telegramservice.service.generator.CommandGenerator;
 import com.flux.telegramservice.service.generator.impl.GenericCallbackQueryCommandGenerator;
-import com.flux.telegramservice.util.exception.CannotSaveHistoryException;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,18 +35,17 @@ public class BotService extends AbstractTelegramService {
     public String getLessonsByGroup(Update update, String command, String day) {
         UserVO userVO = isNull(update.getMessage()) ?
                 restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID,
-                    Long.valueOf(update.getCallbackQuery().getFrom().getId()))
+                        Long.valueOf(update.getCallbackQuery().getFrom().getId()))
                 :
                 restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID,
-                update.getMessage().getChatId());
+                        update.getMessage().getChatId());
 
         GroupVO groupJson = restTemplateService.getForObject(GroupVO.class, FIND_GROUP, command);
 
         if (isNull(groupJson))
-            return env.getProperty(update.getMessage().getFrom().getLanguageCode() + ".no_group");
+            return env.getProperty(isNull(update.getMessage()) ? update.getCallbackQuery().getFrom().getLanguageCode() + ".no_group" : update.getMessage().getFrom().getLanguageCode() + ".no_group");
 
-        if (!saveHistory(update, HistoryEvent.GROUP))
-            throw new CannotSaveHistoryException("Can't save History at entity: " + update.getMessage().getChatId());
+        saveHistory(update, HistoryEvent.GROUP);
 
         return restTemplateService.getForObject(String.class, GET_LESSONS_WITH_PARAM,
                 objectMapper.writeValueAsString(groupJson), objectMapper.writeValueAsString(userVO), day);
@@ -65,11 +63,11 @@ public class BotService extends AbstractTelegramService {
 
         GenericCallbackQueryCommandGenerator genericCallbackQueryCommandGenerator =
                 new GenericCallbackQueryCommandGenerator(restTemplateService, botService, objectMapper) {
-            @Override
-            public String getInputCommand() {
-                return command;
-            }
-        };
+                    @Override
+                    public String getInputCommand() {
+                        return command;
+                    }
+                };
 
         return !isNull(genericCallbackQueryCommandGenerator.getCommandsList().get(command)) ?
                 genericCallbackQueryCommandGenerator.generateCommand(update) :

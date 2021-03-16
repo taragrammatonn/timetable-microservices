@@ -33,6 +33,10 @@ public class LessonsParser {
     public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36";
     public static final String ORIGIN_URL = "http://orar.usarb.md";
 
+    private static final String GROUP_API = "http://orar.usarb.md/api/getGroups";
+    private static final String TEACHERS_API = "http://orar.usarb.md/api/getteachers";
+    private static final String AUDIENCE_API = "http://orar.usarb.md/api/getOffices";
+
     private static final String VALUE = "value";
     private static final String NO_DATA_FOR_TODAY = "[[]]";
     private static final String NO_DATA_FOR_TODAY_MESSAGE = "No data for today.";
@@ -49,13 +53,43 @@ public class LessonsParser {
         this.restTemplate = restTemplate;
     }
 
+    private Connection.Response getResponseContent() throws IOException {
+        return Jsoup.connect(ORIGIN_URL).userAgent(USER_AGENT).method(Connection.Method.GET).execute();
+    }
+
+    private String formatJson(String json) {
+        return json.replace("Denumire", "name").replace("Id", "id");
+    }
+
+    private String getJsonContent(String apiUrl) throws IOException {
+        return formatJson(Jsoup.connect(apiUrl)
+                .userAgent(USER_AGENT)
+                .method(Connection.Method.POST)
+                .ignoreContentType(true)
+                .execute()
+                .body());
+    }
+
+    public String getGroups() throws IOException {
+        return getJsonContent(GROUP_API);
+    }
+
+    public String getTeachers() throws IOException {
+        return getJsonContent(TEACHERS_API);
+    }
+
+    public String getAudiences() throws IOException {
+        return getJsonContent(AUDIENCE_API);
+    }
+
     public String getLessons(String groupJson, String dailyParameters, String userVo, String day) throws IOException {
         Connection.Response res = getResponseContent();
         this.document = res.parse();
         String csrf = this.document.select("meta[name=\"csrf-token\"]").first().attr("content");
 
         JsonNode jsonNode = objectMapper.readTree(groupJson);
-        Map<String, String> map = objectMapper.readValue(dailyParameters, new TypeReference<>() {});
+        Map<String, String> map = objectMapper.readValue(dailyParameters, new TypeReference<>() {
+        });
 
         if (isNull(map.get("week"))) {
             ObjectNode dailyParams = (ObjectNode) objectMapper.readTree(restTemplate.getForObject(LOGISTIC_SERVICE + GET_DAILY_PARAMETERS_BY_WEEK_NOT_NULL, String.class));
@@ -113,19 +147,19 @@ public class LessonsParser {
         if (arrayNode.isArray()) {
             for (JsonNode jsonNode : arrayNode) {
                 if (dayNumber == (jsonNode.get("day_number").asInt())) {
-                    todayLessons.append(courseNr.get(jsonNode.get("cours_nr").asInt())).append(jsonNode.get("cours_name").asText()).append(newLine);
-                    todayLessons.append(jsonNode.get("cours_type").asText()).append(newLine);
-                    todayLessons.append(jsonNode.get("Titlu").asText()).append(" ").append(jsonNode.get("teacher_name").asText()).append(newLine);
-                    todayLessons.append(jsonNode.get("cours_office").asText()).append("\n");
+                    todayLessons
+                            .append(courseNr.get(jsonNode.get("cours_nr").asInt()))
+                            .append(jsonNode.get("cours_name").asText()).append(newLine)
+                            .append(jsonNode.get("cours_type").asText()).append(newLine)
+                            .append(jsonNode.get("Titlu").asText()).append(" ")
+                            .append(jsonNode.get("teacher_name").asText())
+                            .append(newLine)
+                            .append(jsonNode.get("cours_office").asText()).append("\n");
                 }
             }
         }
 
         return todayLessons.toString();
-    }
-
-    private Connection.Response getResponseContent() throws IOException {
-        return Jsoup.connect(ORIGIN_URL).userAgent(USER_AGENT).method(Connection.Method.GET).execute();
     }
 
     @SneakyThrows
