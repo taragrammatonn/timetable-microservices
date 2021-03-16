@@ -6,7 +6,6 @@ import com.flux.telegramservice.entity.HistoryEvent;
 import com.flux.telegramservice.entity.UserVO;
 import com.flux.telegramservice.service.generator.CommandGenerator;
 import com.flux.telegramservice.service.generator.impl.GenericCallbackQueryCommandGenerator;
-import com.flux.telegramservice.util.exception.CannotSaveHistoryException;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -44,7 +43,7 @@ public class BotService extends AbstractTelegramService {
         GroupVO groupJson = restTemplateService.getForObject(GroupVO.class, FIND_GROUP, command);
 
         if (isNull(groupJson))
-            return env.getProperty(update.getMessage().getFrom().getLanguageCode() + ".no_group");
+            return env.getProperty(isNull(update.getMessage()) ? update.getCallbackQuery().getFrom().getLanguageCode() + ".no_group" : update.getMessage().getFrom().getLanguageCode() + ".no_group");
 
         saveHistory(update, HistoryEvent.GROUP);
 
