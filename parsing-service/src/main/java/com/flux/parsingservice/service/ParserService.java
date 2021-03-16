@@ -16,6 +16,21 @@ public class ParserService {
         this.studyPlanParser = studyPlanParser;
     }
 
+    @SneakyThrows
+    public String getGroups() {
+        return parser.getGroups();
+    }
+
+    @SneakyThrows
+    public String getTeachers() {
+        return parser.getTeachers();
+    }
+
+    @SneakyThrows
+    public String getAudiences() {
+        return parser.getAudiences();
+    }
+
     public String getDailyParameters() {
         return parser.getDailyParameters();
     }
