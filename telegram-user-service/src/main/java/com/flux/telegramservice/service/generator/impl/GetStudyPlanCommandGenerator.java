@@ -17,11 +17,9 @@ import java.util.Objects;
 @Component
 public class GetStudyPlanCommandGenerator implements CommandGenerator {
 
-    protected final RestTemplateService restTemplateService;
     private final Environment env;
 
-    public GetStudyPlanCommandGenerator(RestTemplateService restTemplateService, Environment env) {
-        this.restTemplateService = restTemplateService;
+    public GetStudyPlanCommandGenerator(Environment env) {
         this.env = env;
     }
 

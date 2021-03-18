@@ -29,7 +29,7 @@ public class BotService extends AbstractTelegramService {
         this.objectMapper = objectMapper;
     }
 
-    private final Map<String, CommandGenerator> commands = new HashMap<>();
+    protected final Map<String, CommandGenerator> commands = new HashMap<>();
 
     @SneakyThrows
     public String getLessonsByGroup(Update update, String command, String day) {

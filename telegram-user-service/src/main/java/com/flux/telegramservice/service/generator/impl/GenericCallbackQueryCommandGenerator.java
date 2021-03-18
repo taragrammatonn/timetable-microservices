@@ -27,7 +27,6 @@ public abstract class GenericCallbackQueryCommandGenerator implements CommandGen
     private final BotService botService;
     private final ObjectMapper objectMapper;
 
-    @Autowired
     protected GenericCallbackQueryCommandGenerator(RestTemplateService restTemplateService, BotService botService, ObjectMapper objectMapper) {
         this.restTemplateService = restTemplateService;
         this.botService = botService;

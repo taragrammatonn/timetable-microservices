@@ -3,12 +3,10 @@ package com.flux.telegramservice.service.project;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flux.telegramservice.entity.GroupVO;
 import com.flux.telegramservice.entity.UserVO;
-import com.flux.telegramservice.service.generator.CommandGenerator;
 import com.flux.telegramservice.service.request.RestTemplateService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,11 +33,11 @@ class BotServiceTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    private Chat chat;
     private Message message;
-    private User user;
-    private CallbackQuery callbackQuery;
     private Update update;
+    private Chat chat;
+    private CallbackQuery callbackQuery;
+    private User user;
     private UserVO userVO;
     private GroupVO groupVO;
 
@@ -137,7 +135,7 @@ class BotServiceTest {
 
     @Test
     void getLessonsByGroup_Should_Return_no_group_Message() {
-        initFields();
+        setFieldsByReflection();
 
         ReflectionTestUtils.setField(update, "message", null);
         assertThat(update.getMessage()).isNull();
@@ -151,7 +149,7 @@ class BotServiceTest {
     @Test
     @SneakyThrows
     void getLessonsByGroup_Should_Return_Lessons() {
-        initFields();
+        setFieldsByReflection();
         when(restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID, Long.valueOf(update.getCallbackQuery().getFrom().getId()))).thenReturn(userVO);
         UserVO userVOMock = restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID, Long.valueOf(update.getCallbackQuery().getFrom().getId()));
 
@@ -184,19 +182,7 @@ class BotServiceTest {
         assertThat(res).isNotNull().isEqualTo(s);
     }
 
-    @Test
-    void messageProcessing() {
-    }
-
-    @Test
-    void callBackQueryProcessing() {
-    }
-
-    @Test
-    void register() {
-    }
-
-    private void initFields() {
+    private void setFieldsByReflection() {
         ReflectionTestUtils.setField(chat, "id", 123L);
         ReflectionTestUtils.setField(user, "languageCode", "ru");
         ReflectionTestUtils.setField(message, "from", user);
