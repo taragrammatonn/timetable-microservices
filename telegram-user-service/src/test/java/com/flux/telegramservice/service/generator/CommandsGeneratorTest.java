@@ -176,14 +176,6 @@ class CommandsGeneratorTest extends BotService {
         setFieldsByReflection("test");
         ReflectionTestUtils.setField(callbackQuery, "data", "tbSemI");
 
-        GenericCallbackQueryCommandGenerator genericCallbackQueryCommandGenerator =
-                new GenericCallbackQueryCommandGenerator(mockRestTemplateService, mockBotService, mockObjectMapper) {
-                    @Override
-                    public String getInputCommand() {
-                        return null;
-                    }
-                };
-
         UserVO userVO = new UserVO();
         userVO.setUserGroup("gr");
 
@@ -203,13 +195,6 @@ class CommandsGeneratorTest extends BotService {
         setFieldsByReflection("test");
         ReflectionTestUtils.setField(callbackQuery, "data", "+1w");
 
-        GenericCallbackQueryCommandGenerator genericCallbackQueryCommandGenerator =
-                new GenericCallbackQueryCommandGenerator(mockRestTemplateService, mockBotService, mockObjectMapper) {
-                    @Override
-                    public String getInputCommand() {
-                        return null;
-                    }
-                };
         Map<String, String> commandsList = Map.ofEntries(Map.entry("+1w", "nextWeek"));
         ReflectionTestUtils.setField(genericCallbackQueryCommandGenerator, "commandsList", commandsList);
 
