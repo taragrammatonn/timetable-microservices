@@ -23,19 +23,21 @@ import java.util.Map;
 import static com.flux.telegramservice.util.Links.GET_STUDY_PLAN;
 import static com.flux.telegramservice.util.Links.GET_USER_BY_CHAT_ID;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-public class CommandsGeneratorTest extends BotService {
+class CommandsGeneratorTest extends BotService {
 
     @Autowired private Environment env;
+    @Autowired private ObjectMapper objectMapper;
+    @Autowired private GenericCallbackQueryCommandGenerator genericCallbackQueryCommandGenerator;
 
-    @MockBean private UserService userService;
-    @MockBean private BotService botService;
-    @MockBean private RestTemplateService restTemplateService;
-    @MockBean private ObjectMapper objectMapper;
+    @MockBean private UserService mockUserService;
+    @MockBean private BotService mockBotService;
+    @MockBean private RestTemplateService mockRestTemplateService;
+    @MockBean private ObjectMapper mockObjectMapper;
 
     private Chat chat;
     private Message message;
@@ -60,13 +62,13 @@ public class CommandsGeneratorTest extends BotService {
     void startMessageGenerator() {
         setFieldsByReflection("/start");
 
-        register("/start", new StartMessageGenerator(userService));
+        register("/start", new StartMessageGenerator(mockUserService));
 
         assertThat(update.getMessage().getText()).isNotNull().isEqualTo("/start");
         assertThat(commands.get(update.getMessage().getText())).isNotNull();
 
-        when(userService.completeUser(userService.addNewUser(update))).thenReturn(env.getProperty("en.first_start_input"));
-        String response = userService.completeUser(userService.addNewUser(update));
+        when(mockUserService.completeUser(mockUserService.addNewUser(update))).thenReturn(env.getProperty("en.first_start_input"));
+        String response = mockUserService.completeUser(mockUserService.addNewUser(update));
 
         assertThat(response).isNotNull();
 
@@ -82,7 +84,7 @@ public class CommandsGeneratorTest extends BotService {
     void groupMessageGenerator_When_UserVO_Group_Is_Null() {
         setFieldsByReflection("Group");
 
-        register("Group", new GroupMessageGenerator(botService, restTemplateService, env));
+        register("Group", new GroupMessageGenerator(botService, mockRestTemplateService, env));
 
         assertThat(update.getMessage().getText()).isNotNull().isEqualTo("Group");
         assertThat(commands.get(update.getMessage().getText())).isNotNull();
@@ -90,11 +92,11 @@ public class CommandsGeneratorTest extends BotService {
         UserVO userVO = new UserVO();
         userVO.setUserLanguage("en");
 
-        when(restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID, update.getMessage().getChatId()))
+        when(mockRestTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID, update.getMessage().getChatId()))
                 .thenReturn(userVO);
 
         doNothing()
-                .when(restTemplateService)
+                .when(mockRestTemplateService)
                     .saveUserOption(new UserOptionVO().groupSelected(update.getMessage().getChatId()));
 
         SendMessage message = commands.get("Group").generateCommand(update);
@@ -105,10 +107,22 @@ public class CommandsGeneratorTest extends BotService {
     }
 
     @Test
+    void groupMessageGenerator_Should_Throw_Exception() {
+        setFieldsByReflection("Group");
+
+        register("Group", new GroupMessageGenerator(botService, mockRestTemplateService, env));
+
+        assertThrows(
+                NullPointerException.class,
+                () -> commands.get("Group").generateCommand(new Update())
+        );
+    }
+
+    @Test
     void groupMessageGenerator_When_UserVO_Group_Is_Not_Null() {
         setFieldsByReflection("Group");
 
-        register("Group", new GroupMessageGenerator(botService, restTemplateService, env));
+        register("Group", new GroupMessageGenerator(botService, mockRestTemplateService, env));
 
         assertThat(update.getMessage().getText()).isNotNull().isEqualTo("Group");
         assertThat(commands.get(update.getMessage().getText())).isNotNull();
@@ -116,7 +130,7 @@ public class CommandsGeneratorTest extends BotService {
         UserVO userVO = new UserVO();
         userVO.setUserGroup("test_response");
 
-        when(restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID, update.getMessage().getChatId()))
+        when(mockRestTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID, update.getMessage().getChatId()))
                 .thenReturn(userVO);
 
         assertThat(userVO.getUserGroup()).isNotNull();
@@ -163,7 +177,7 @@ public class CommandsGeneratorTest extends BotService {
         ReflectionTestUtils.setField(callbackQuery, "data", "tbSemI");
 
         GenericCallbackQueryCommandGenerator genericCallbackQueryCommandGenerator =
-                new GenericCallbackQueryCommandGenerator(restTemplateService, botService, objectMapper) {
+                new GenericCallbackQueryCommandGenerator(mockRestTemplateService, mockBotService, mockObjectMapper) {
                     @Override
                     public String getInputCommand() {
                         return null;
@@ -173,8 +187,8 @@ public class CommandsGeneratorTest extends BotService {
         UserVO userVO = new UserVO();
         userVO.setUserGroup("gr");
 
-        when(restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID, Long.valueOf(update.getCallbackQuery().getFrom().getId()))).thenReturn(userVO);
-        when(restTemplateService.getForObject(String.class, GET_STUDY_PLAN, update.getCallbackQuery().getData(), objectMapper.writeValueAsString(userVO))).thenReturn("test_answer_study_plan");
+        when(mockRestTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID, Long.valueOf(update.getCallbackQuery().getFrom().getId()))).thenReturn(userVO);
+        when(mockRestTemplateService.getForObject(String.class, GET_STUDY_PLAN, update.getCallbackQuery().getData(), mockObjectMapper.writeValueAsString(userVO))).thenReturn("test_answer_study_plan");
 
         SendMessage message = genericCallbackQueryCommandGenerator.generateCommand(update);
 
@@ -190,7 +204,7 @@ public class CommandsGeneratorTest extends BotService {
         ReflectionTestUtils.setField(callbackQuery, "data", "+1w");
 
         GenericCallbackQueryCommandGenerator genericCallbackQueryCommandGenerator =
-                new GenericCallbackQueryCommandGenerator(restTemplateService, botService, objectMapper) {
+                new GenericCallbackQueryCommandGenerator(mockRestTemplateService, mockBotService, mockObjectMapper) {
                     @Override
                     public String getInputCommand() {
                         return null;
@@ -202,13 +216,25 @@ public class CommandsGeneratorTest extends BotService {
         UserVO userVO = new UserVO();
         userVO.setUserGroup("gr");
 
-        when(restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID, Long.valueOf(update.getCallbackQuery().getFrom().getId()))).thenReturn(userVO);
-        when(botService.getLessonsByGroup(update, userVO.getUserGroup(), commandsList.get("+1w"))).thenReturn("response");
+        when(mockRestTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID, Long.valueOf(update.getCallbackQuery().getFrom().getId()))).thenReturn(userVO);
+        when(mockBotService.getLessonsByGroup(update, userVO.getUserGroup(), commandsList.get("+1w"))).thenReturn("response");
 
         SendMessage message = genericCallbackQueryCommandGenerator.generateCommand(update);
 
         assertThat(message).isNotNull();
         assertThat(message.getText()).isNotNull().isEqualTo("response");
+    }
+
+    @Test
+    void getPenisCommandGenerator() {
+        setFieldsByReflection("test");
+
+        register("/penis", new GetPenisCommandGenerator());
+
+        SendMessage p = commands.get("/penis").generateCommand(update);
+
+        assertThat(p).isNotNull();
+        assertThat(p.getText()).isNotNull();
     }
 
     private void setFieldsByReflection(String inputCommand) {
