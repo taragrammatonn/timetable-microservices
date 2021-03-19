@@ -20,15 +20,41 @@ public class LogisticController {
         return logisticService.addUser(userJson);
     }
 
+
+    /* find id and name for group/teacher/audience */
     @RequestMapping("/findGroup")
     public String findGroup(@RequestParam String groupName) {
         return logisticService.findGroup(groupName);
+    }
+
+    @RequestMapping("/findTeacher")
+    public String findTeacher(@RequestParam String teacherName) {
+        return logisticService.findTeacher(teacherName);
+    }
+
+    @RequestMapping("/findAudience")
+    public String findAudience(@RequestParam String audienceName) {
+        return logisticService.findAudience(audienceName);
+    }
+
+
+    /* find all groups/teachers/audiences from orar.usarb.com */
+    @GetMapping("/getAllAudiences")
+    public ResponseEntity<String> getAllAudiences() {
+        return logisticService.getAllAudiences();
     }
 
     @GetMapping("/getAllGroups")
     public ResponseEntity<String> getAllGroups() {
         return logisticService.getAllGroups();
     }
+
+    @GetMapping("/getAllTeachers")
+    public ResponseEntity<String> getAllTeachers() {
+        return logisticService.getAllTeachers();
+    }
+
+
 
     @GetMapping("/getDailyParametersByWeekNotNull")
     public String getDailyParametersByWeekNotNull() {

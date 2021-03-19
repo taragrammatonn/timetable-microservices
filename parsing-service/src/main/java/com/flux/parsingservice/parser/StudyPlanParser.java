@@ -18,6 +18,8 @@ import org.jsoup.Jsoup;
 import org.springframework.cglib.proxy.UndeclaredThrowableException;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
+
 
 import java.io.IOException;
 import java.util.*;
@@ -25,6 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component
+@Slf4j
 public class StudyPlanParser {
 
     private final Environment env;
@@ -54,20 +57,22 @@ public class StudyPlanParser {
             responseBody = EntityUtils.toString(entity1);
             EntityUtils.consume(entity1);
         } catch (UndeclaredThrowableException | IOException ignored) {
-            System.out.println("Unexpected code");
+            log.error("Unexpected code");
         }
     }
 
     @SneakyThrows
     public String generateWebRequest(String semester, String userVo) {
-        List<String> ddValue;
+        String lang = objectMapper.readTree(userVo).get("userLanguage").asText();
         String group = objectMapper.readTree(userVo).get("userGroup").asText();
-        switch (group.toUpperCase()) {
-            case "ME13M" -> ddValue = List.of("Ciclul II (Master)", "Ştiinţe ale educaţiei", "Managementul educaţional (90)");
-            case "DM11M" -> ddValue = List.of("Ciclul II (Master)", "Ştiinţe ale educaţiei", "Didactica matematicii");
-            default -> throw new IllegalStateException("Unexpected value: " + group.toUpperCase());
-        }
-        return getStudyPlan(ddValue, semester, userVo);
+        List<String> ddValue = switch (group.toUpperCase()) {
+            case "ME13M" -> List.of("Ciclul II (Master)", "Ştiinţe ale educaţiei", "Managementul educaţional (90)");
+            case "DM11M" -> List.of("Ciclul II (Master)", "Ştiinţe ale educaţiei", "Didactica matematicii");
+            default -> List.of();
+        };
+
+        return ddValue.isEmpty() ? objectMapper.writeValueAsString(env.getProperty(lang + ".unsupported_group"))
+                : getStudyPlan(ddValue, semester, userVo);
     }
 
     @SneakyThrows
