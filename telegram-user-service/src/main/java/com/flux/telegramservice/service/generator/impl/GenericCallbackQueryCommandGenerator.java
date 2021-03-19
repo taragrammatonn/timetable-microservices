@@ -6,35 +6,32 @@ import com.flux.telegramservice.service.generator.CommandGenerator;
 import com.flux.telegramservice.service.project.BotService;
 import com.flux.telegramservice.service.request.RestTemplateService;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.Map;
 
-import static com.flux.telegramservice.util.Links.*;
+import static com.flux.telegramservice.util.Links.GET_STUDY_PLAN;
+import static com.flux.telegramservice.util.Links.GET_USER_BY_CHAT_ID;
 
 
 @Getter
-@Setter
 @Component
-public abstract class GenericCallbackQueryCommandGenerator implements CommandGenerator {
+public class GenericCallbackQueryCommandGenerator implements CommandGenerator {
 
     private final RestTemplateService restTemplateService;
     private final BotService botService;
     private final ObjectMapper objectMapper;
 
-    @Autowired
-    protected GenericCallbackQueryCommandGenerator(RestTemplateService restTemplateService, BotService botService, ObjectMapper objectMapper) {
+    public GenericCallbackQueryCommandGenerator(RestTemplateService restTemplateService, BotService botService, ObjectMapper objectMapper) {
         this.restTemplateService = restTemplateService;
         this.botService = botService;
         this.objectMapper = objectMapper;
     }
 
-    private Map<String, String> commandsList = Map.ofEntries(
+    private final Map<String, String> commandsList = Map.ofEntries(
             Map.entry("+1d", "1"),
             Map.entry("+2d", "2"),
             Map.entry("+1w", "nextWeek"),
@@ -53,5 +50,10 @@ public abstract class GenericCallbackQueryCommandGenerator implements CommandGen
                 : botService.getLessonsByGroup(update, userVO.getUserGroup(), commandsList.get(command));
 
         return new SendMessage(String.valueOf(update.getCallbackQuery().getFrom().getId()), response);
+    }
+
+    @Override
+    public String getInputCommand() {
+        return "callBackGenerator";
     }
 }
