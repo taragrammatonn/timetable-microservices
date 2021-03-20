@@ -26,8 +26,8 @@ public class BotController extends Bot {
     public void onUpdateReceived(Update update) {
         execute(
                 isNull(update.getMessage()) ?
-                botService.callBackQueryProcessing(update) :
-                botService.messageProcessing(update)
+                        botService.callBackQueryProcessing(update) :
+                        botService.messageProcessing(update)
         );
     }
 }

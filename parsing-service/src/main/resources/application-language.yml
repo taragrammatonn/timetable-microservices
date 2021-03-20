@@ -1,4 +1,6 @@
 ru:
+  unsupported_group: "Команда /studyPlan не поддерживает данную группу. Можете поплакать, но не сильно
+  или написать @tetragramatonn что добавить её."
   study_plan: "Учебный план -- "
   semester_I: "====  Семестр I  ====\n"
   semester_II: "====  Семестр II  ====\n"
@@ -12,6 +14,8 @@ ru:
    sunday: "Воскресенье"
 
 en:
+  unsupported_group: "The /studyPlan command does not support this group. You can cry, but not much
+  or write @tetragramatonn to add it"
   study_plan: "Study plan -- "
   semester_I: "====  Semester I  ====\n"
   semester_II: "====  Semester II  ====\n"
@@ -26,6 +30,8 @@ en:
 
 
 ro:
+  unsupported_group: "Acestă grupă nu acceptă comanda /studyPlan. Poți să plângi, dar nu prea mult
+       sau scrie lui @tetragramatonn pentru a o adăuga."
   study_plan: "Plan de studii -- "
   semester_I: "====  Semesteru I  ====\n"
   semester_II: "====  Semesteru II  ====\n"
@@ -40,6 +46,8 @@ ro:
 
 
 fr:
+  unsupported_group: "La commande /studyPlan ne prend pas en charge ce groupe. Tu peux pleurer, mais pas beaucoup
+  ou écrivez @tetragramatonn pour l'ajouter"
   study_plan: "Curriculum -- "
   semester_I: "====  Semestre I  ====\n"
   semester_II: "====  Semestre II  ====\n"
