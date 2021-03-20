@@ -17,6 +17,7 @@ import javax.persistence.*;
 public class Audience {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.TABLE)
     Long id;
     String name;
 }
