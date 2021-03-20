@@ -21,7 +21,6 @@ import java.util.Objects;
 import static com.flux.telegramservice.util.Links.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -64,76 +63,6 @@ class BotServiceTest {
     }
 
     @Test
-    void getLessonsByGroup_Update_Get_Message_Is_Not_Null() {
-        ReflectionTestUtils.setField(chat, "id", 123L);
-        ReflectionTestUtils.setField(message, "chat", chat);
-        ReflectionTestUtils.setField(update, "message", message);
-
-        assertThat(chat).isNotNull();
-        assertThat(message).isNotNull();
-        assertThat(update).isNotNull();
-
-        doReturn(userVO).when(restTemplateService).getForObject(UserVO.class, GET_USER_BY_CHAT_ID,
-                update.getMessage().getChatId());
-
-        UserVO userVOMock = restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID, update.getMessage().getChatId());
-
-        assertThat(userVOMock).isNotNull();
-        assertThat(userVOMock.getChatId()).isNotNull().isEqualTo(123L);
-    }
-
-    @Test
-    @SneakyThrows
-    void getLessonsByGroup_Update_Get_Message_Is_Null() {
-        ReflectionTestUtils.setField(user, "id", 123);
-        ReflectionTestUtils.setField(callbackQuery, "from", user);
-        ReflectionTestUtils.setField(update, "callbackQuery", callbackQuery);
-
-        assertThat(user).isNotNull();
-        assertThat(callbackQuery).isNotNull();
-        assertThat(update).isNotNull();
-        assertThat(update.getMessage()).isNull();
-
-        when(restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID,
-                Long.valueOf(update.getCallbackQuery().getFrom().getId()))).thenReturn(userVO);
-
-        UserVO userVOMock = restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID,
-                Long.valueOf(update.getCallbackQuery().getFrom().getId()));
-
-        assertThat(userVOMock).isNotNull();
-        assertThat(userVOMock.getChatId()).isNotNull().isEqualTo(123L);
-
-        doReturn(userVO).when(restTemplateService).getForObject(UserVO.class, GET_USER_BY_CHAT_ID,
-                update.getCallbackQuery().getFrom().getId());
-
-        userVOMock = restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID, update.getCallbackQuery().getFrom().getId());
-
-        assertThat(userVOMock).isNotNull();
-        assertThat(userVOMock.getChatId()).isNotNull().isEqualTo(123L);
-
-        assertThat(user).isNotNull();
-        assertThat(userVO.getChatId()).isNotNull().isEqualTo(123L);
-    }
-
-    @Test
-    void getGroupVo_With_Not_Null_Message() {
-        when(restTemplateService.getForObject(GroupVO.class, FIND_GROUP, "MI31Z")).thenReturn(groupVO);
-        GroupVO mockGroupVO = restTemplateService.getForObject(GroupVO.class, FIND_GROUP, "MI31Z");
-
-        assertThat(mockGroupVO).isNotNull();
-        assertThat(mockGroupVO.getName()).isEqualTo("MI31Z");
-    }
-
-    @Test
-    void getGroupVo_With_Null_Message() {
-        when(restTemplateService.getForObject(GroupVO.class, FIND_GROUP, "MI31Z")).thenReturn(groupVO);
-        GroupVO mockGroupVO = restTemplateService.getForObject(GroupVO.class, FIND_GROUP, "MI31Z");
-
-        assertThat(mockGroupVO).isNotNull();
-        assertThat(mockGroupVO.getName()).isEqualTo("MI31Z");
-    }
-
-    @Test
     void getLessonsByGroup_Should_Return_no_group_Message() {
         setFieldsByReflection();
 
@@ -160,9 +89,7 @@ class BotServiceTest {
         GroupVO mockGroupVO = restTemplateService.getForObject(GroupVO.class, FIND_GROUP, "MI31Z");
 
         assertThat(mockGroupVO).isNotNull();
-        assertThat(mockGroupVO.getGroupId())
-                .isEqualTo("228")
-                .isNotNull();
+        assertThat(mockGroupVO.getGroupId()).isEqualTo("228").isNotNull();
 
         var s = new String(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("lessons_answer.txt")).readAllBytes());
 

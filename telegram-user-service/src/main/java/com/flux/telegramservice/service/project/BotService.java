@@ -40,10 +40,10 @@ public class BotService extends AbstractTelegramService {
                         GET_USER_BY_CHAT_ID,
                         Long.valueOf(
                                 update.getCallbackQuery()
-                                .getFrom()
-                                .getId()
-                )
-        ) : restTemplateService.getForObject(
+                                        .getFrom()
+                                        .getId()
+                        )
+                ) : restTemplateService.getForObject(
                 UserVO.class,
                 GET_USER_BY_CHAT_ID,
                 update.getMessage().getChatId()
