@@ -25,8 +25,6 @@ import static java.util.Objects.isNull;
 @Slf4j
 public class LessonsParser {
 
-    private Document document;
-
     // LOGISTIC_SERVICE API's
     public static final String LOGISTIC_SERVICE = "http://LOGISTIC-SERVICE/logistic-api";
     public static final String GET_DAILY_PARAMETERS_BY_WEEK_NOT_NULL = "/getDailyParametersByWeekNotNull";
@@ -34,7 +32,7 @@ public class LessonsParser {
     public static final String ORIGIN_URL = "http://orar.usarb.md";
 
     private static final String GROUP_API = "http://orar.usarb.md/api/getGroups";
-    private static final String TEACHERS_API = "http://orar.usarb.md/api/getteachers";
+    private static final String TEACHERS_API = "http://orar.usarb.md/api/getTeachers";
     private static final String AUDIENCE_API = "http://orar.usarb.md/api/getOffices";
 
     private static final String VALUE = "value";
@@ -43,9 +41,13 @@ public class LessonsParser {
 
     private static final List<String> CURRENT = Arrays.asList("day", "week", "semester");
 
+    private static final String TITLU = "Titlu";
+
     private final Environment env;
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
+
+    private Document document;
 
     public LessonsParser(Environment env, ObjectMapper objectMapper, RestTemplate restTemplate) {
         this.env = env;
@@ -82,7 +84,8 @@ public class LessonsParser {
         return getJsonContent(AUDIENCE_API);
     }
 
-    public String getLessons(String groupJson, String dailyParameters, String userVo, String day) throws IOException {
+    @SneakyThrows
+    public String getLessons(String groupJson, String dailyParameters, String userVo, String day) {
         Connection.Response res = getResponseContent();
         this.document = res.parse();
         String csrf = this.document.select("meta[name=\"csrf-token\"]").first().attr("content");
@@ -96,20 +99,21 @@ public class LessonsParser {
             map.put("week", dailyParams.get("week").asText());
         }
 
-        // +1 because somebody once told me that the day on site is current_day + 1 in JS, lmao
-        int dayNumber = Integer.parseInt(map.get("day")) + (!day.isEmpty() ? Integer.parseInt(day) : 0) + 1;
+        int dayNumber = 1;
         if (day.equals("nextWeek")) {
             map.replace("week", String.valueOf(Integer.parseInt(map.get("week")) + 1));
-            map.put("day", "1");
-            dayNumber = 1;
-        } else map.put("day", String.valueOf(dayNumber));
+            map.replace("day", "1");
+        } else {
+            map.replace("day", String.valueOf(dayNumber));
+            // +1 because somebody once told me that the day on site is current_day + 1 in JS, lmao
+            dayNumber = Integer.parseInt(map.get("day")) + (!day.isEmpty() ? Integer.parseInt(day) : 0) + 1;
+        }
 
         String response = null;
         try {
-            response = Jsoup.connect(String.valueOf(LessonsBy.GROUP.getApi()))
+            response = Jsoup.connect(lessonsBy(userVo))
                     .method(Connection.Method.POST)
                     .userAgent(USER_AGENT)
-                    .referrer(ORIGIN_URL)
                     .ignoreContentType(true)
                     .cookies(res.cookies())
                     .data("_csrf", csrf)
@@ -126,11 +130,12 @@ public class LessonsParser {
             log.error("Bad request parameters!", e);
         }
 
-        return objectMapper.writeValueAsString(parseLessons(response, dayNumber, getWeekDay(dayNumber, map, userVo)));
+        return parseLessons(response, dayNumber, userVo, getWeekDay(dayNumber, map, userVo));
     }
 
+    /* userVo пока не используется потому что думаю как лучше сделать этот метод*/
     @SneakyThrows
-    private String parseLessons(String weekLessons, int dayNumber, String weekDay) {
+    private String parseLessons(String weekLessons, int dayNumber, String userVO, String weekDay) {
         ArrayNode arrayNode = (ArrayNode) objectMapper.readTree(weekLessons).get("week");
         StringBuilder todayLessons = new StringBuilder();
         String newLine = "\n--- ";
@@ -144,22 +149,26 @@ public class LessonsParser {
                 6, "\n6. 16:45-18:15\n- ",
                 7, "\n7. 18:30-20:00\n- "
         );
-        if (arrayNode.isArray()) {
-            for (JsonNode jsonNode : arrayNode) {
-                if (dayNumber == (jsonNode.get("day_number").asInt())) {
-                    todayLessons
-                            .append(courseNr.get(jsonNode.get("cours_nr").asInt()))
-                            .append(jsonNode.get("cours_name").asText()).append(newLine)
-                            .append(jsonNode.get("cours_type").asText()).append(newLine)
-                            .append(jsonNode.get("Titlu").asText()).append(" ")
-                            .append(jsonNode.get("teacher_name").asText())
-                            .append(newLine)
-                            .append(jsonNode.get("cours_office").asText()).append("\n");
-                }
-            }
-        }
 
-        return todayLessons.toString();
+        arrayNode.forEach(jsonNode -> {
+            if (dayNumber == (jsonNode.get("day_number").asInt())) {
+                todayLessons
+                        .append(courseNr.get(jsonNode.get("cours_nr").asInt()))
+                        .append(jsonNode.get("cours_name").asText()).append(newLine)
+                        .append(jsonNode.get("cours_type").asText()).append(newLine);
+                if (jsonNode.get(TITLU) != null) {
+                    todayLessons
+                            .append(jsonNode.get(TITLU).asText().equals("null") ? ""
+                                    : jsonNode.get(TITLU).asText()).append(" ");
+                }
+                todayLessons
+                        .append(jsonNode.get("teacher_name").asText()).append(newLine)
+                        .append(jsonNode.get("cours_office").asText().equals("null") ? ""
+                                : jsonNode.get("cours_office").asText()).append("\n");
+            }
+        });
+
+        return objectMapper.writeValueAsString(todayLessons);
     }
 
     @SneakyThrows
@@ -198,5 +207,24 @@ public class LessonsParser {
                 .substring(3, 12).split("\\.");
 
         return (Integer.parseInt(data[0]) + day - 1) + "." + data[1] + "." + data[2] + " --- " + daysOfWeek.get(day) + "\n";
+    }
+
+    @SneakyThrows
+    @SuppressWarnings("unchecked")
+    private String lessonsBy(String userVo) {
+        Map<String, Object> result = objectMapper.readValue(
+                objectMapper.readTree(userVo).get("userOption").toString(),
+                HashMap.class
+        );
+
+        return LessonsBy.findByValue(
+                result
+                        .entrySet()
+                        .stream()
+                        .filter(entry -> entry.getValue() != null && (Boolean) entry.getValue())
+                        .map(Map.Entry::getKey)
+                        .findFirst()
+                .orElse(null)
+        ).getApi();
     }
 }

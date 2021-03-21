@@ -36,6 +36,8 @@ public class UserController {
         return new ResponseEntity<>(userService.saveUser(user), HttpStatus.OK);
     }
 
+
+    /* find id and name for group/teacher/audience */
     @GetMapping("/findGroup")
     public ResponseEntity<String> findGroup(@RequestParam String groupName) {
         return new ResponseEntity<>(parsingService.findLessonsByGroup(groupName), HttpStatus.OK);

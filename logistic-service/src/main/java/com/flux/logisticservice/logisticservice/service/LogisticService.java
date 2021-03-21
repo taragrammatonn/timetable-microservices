@@ -10,16 +10,20 @@ public class LogisticService {
 
     // PARSING_SERVICE API's
     private static final String PARSING_SERVICE = "http://PARSING-SERVICE/lessons/api";
+    private static final String GET_AUDIENCES = "/audiences";
     private static final String GET_GROUPS = "/groups";
+    private static final String GET_TEACHERS = "/teachers";
     private static final String GET_LESSONS_WITH_PARAM = "/getLessons?groupJson={groupJson}&dailyParameters={dailyParameters}&day={day}&userVo={userVo}";
     private static final String GET_DAILY_PARAMETERS = "/getDailyParameters";
-    public static final String GET_STUDY_PLAN = "/getStudyPlan?semester={semester}&userVo={userVo}";
+    private static final String GET_STUDY_PLAN = "/getStudyPlan?semester={semester}&userVo={userVo}";
 
     // DB-SERVICE API's
     private static final String DB_SERVICE = "http://DB-SERVICE/api-gateway";
     private static final String SAVE_USER = "/saveUser";
     private static final String GET_USER_BY_CHAT_ID = "/getUser?chatId={chatId}";
     private static final String FIND_GROUP = "/findGroup?groupName={groupName}";
+    private static final String FIND_TEACHER = "/findTeacher?teacherName={teacherName}";
+    private static final String FIND_AUDIENCE = "/findAudience?audienceName={audienceName}";
     private static final String SAVE_DAILY_PARAMETERS = "/saveDailyParameters";
     public static final String GET_DAILY_PARAMETERS_BY_WEEK_NOT_NULL = "/getDailyParametersByWeekNotNull";
     public static final String SAVE_HISTORY = "/saveHistory";
@@ -36,13 +40,34 @@ public class LogisticService {
         return new ResponseEntity<>(restTemplate.postForObject(DB_SERVICE + SAVE_USER, userJson, String.class), HttpStatus.OK);
     }
 
+
+    /* find id and name for group/teacher/audience */
     public String findGroup(String groupName) {
         return restTemplate.getForObject(DB_SERVICE + FIND_GROUP, String.class, groupName);
+    }
+
+    public String findTeacher(String teacherName) {
+        return restTemplate.getForObject(DB_SERVICE + FIND_TEACHER, String.class, teacherName);
+    }
+
+    public String findAudience(String audienceName) {
+        return restTemplate.getForObject(DB_SERVICE + FIND_AUDIENCE, String.class, audienceName);
+    }
+
+
+    /* find all groups/teachers/audiences from orar.usarb.com */
+    public  ResponseEntity<String> getAllAudiences() {
+        return new ResponseEntity<>(restTemplate.getForObject(PARSING_SERVICE + GET_AUDIENCES, String.class), HttpStatus.OK);
     }
 
     public  ResponseEntity<String> getAllGroups() {
         return new ResponseEntity<>(restTemplate.getForObject(PARSING_SERVICE + GET_GROUPS, String.class), HttpStatus.OK);
     }
+
+    public  ResponseEntity<String> getAllTeachers() {
+        return new ResponseEntity<>(restTemplate.getForObject(PARSING_SERVICE + GET_TEACHERS, String.class), HttpStatus.OK);
+    }
+
 
     public String getDailyParametersByWeekNotNull() {
         return restTemplate.getForObject(DB_SERVICE + GET_DAILY_PARAMETERS_BY_WEEK_NOT_NULL, String.class);

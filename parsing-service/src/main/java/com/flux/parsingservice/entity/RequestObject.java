@@ -1,4 +1,4 @@
-package com.flux.parsingservice.entity.util;
+package com.flux.parsingservice.entity;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

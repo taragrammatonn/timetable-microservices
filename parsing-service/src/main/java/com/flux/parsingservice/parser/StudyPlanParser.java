@@ -2,9 +2,12 @@ package com.flux.parsingservice.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import okhttp3.*;
 import lombok.SneakyThrows;
-
+import lombok.extern.slf4j.Slf4j;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -20,11 +23,18 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component
+@Slf4j
 public class StudyPlanParser {
 
     private final Environment env;
@@ -35,39 +45,42 @@ public class StudyPlanParser {
         this.objectMapper = objectMapper;
     }
 
-    private final String[] PARAMS = {"__EVENTTARGET", "__EVENTARGUMENT", "__LASTFOCUS", "__VIEWSTATE", "__VIEWSTATEGENERATOR", "__EVENTVALIDATION"};
-    private final String STUDY_PLAN_URL = "http://planstudii.usarb.md";
+    private static final String[] PARAMS = {"__EVENTTARGET", "__EVENTARGUMENT", "__LASTFOCUS", "__VIEWSTATE", "__VIEWSTATEGENERATOR", "__EVENTVALIDATION"};
+    private static final String STUDY_PLAN_URL = "http://planstudii.usarb.md";
 
     private String responseBody;
     private final OkHttpClient httpClient = new OkHttpClient();
 
     public void getRequest() {
-        String AGENT_URL = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36";
-        CloseableHttpClient httpClient = HttpClientBuilder.create()
+        String agentUrl = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36";
+        CloseableHttpClient closeableHttpClient = HttpClientBuilder.create()
                 .setRedirectStrategy(new LaxRedirectStrategy())
-                .setUserAgent(AGENT_URL)
+                .setUserAgent(agentUrl)
                 .setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy())
                 .build();
         HttpGet httpGet = new HttpGet(STUDY_PLAN_URL);
-        try (CloseableHttpResponse response1 = httpClient.execute(httpGet)) {
+        try (CloseableHttpResponse response1 = closeableHttpClient.execute(httpGet)) {
             HttpEntity entity1 = response1.getEntity();
             responseBody = EntityUtils.toString(entity1);
             EntityUtils.consume(entity1);
         } catch (UndeclaredThrowableException | IOException ignored) {
-            System.out.println("Unexpected code");
+            log.error("Unexpected code");
         }
     }
 
     @SneakyThrows
     public String generateWebRequest(String semester, String userVo) {
-        List<String> ddValue;
+        String lang = objectMapper.readTree(userVo).get("userLanguage").asText();
         String group = objectMapper.readTree(userVo).get("userGroup").asText();
-        switch (group.toUpperCase()) {
-            case "ME13M" -> ddValue = List.of("Ciclul II (Master)", "Ştiinţe ale educaţiei", "Managementul educaţional (90)");
-            case "DM11M" -> ddValue = List.of("Ciclul II (Master)", "Ştiinţe ale educaţiei", "Didactica matematicii");
-            default -> throw new IllegalStateException("Unexpected value: " + group.toUpperCase());
-        }
-        return getStudyPlan(ddValue, semester, userVo);
+        // will be better to load from db list of possible commands
+        List<String> ddValue = switch (group.toUpperCase()) {
+            case "ME13M" -> List.of("Ciclul II (Master)", "Ştiinţe ale educaţiei", "Managementul educaţional (90)");
+            case "DM11M" -> List.of("Ciclul II (Master)", "Ştiinţe ale educaţiei", "Didactica matematicii");
+            default -> Collections.emptyList();
+        };
+
+        return ddValue.isEmpty() ? objectMapper.writeValueAsString(env.getProperty(lang + ".unsupported_group"))
+                : getStudyPlan(ddValue, semester, userVo);
     }
 
     @SneakyThrows
@@ -75,11 +88,9 @@ public class StudyPlanParser {
         getRequest();
 
         List<String> dd = List.of("ddCiclu", "ddDomeniul", "ddSpecialitatea");
-        for (int i = 0; i < dd.size(); i++) {
+        dd.forEach(withCounter((i, param) -> {
             FormBody.Builder formBody = new FormBody.Builder();
-            for (String param: PARAMS) {
-                formBody.add(param, getHiddenParam(param, responseBody));
-            }
+            Arrays.stream(PARAMS).forEach(p -> formBody.add(p, getHiddenParam(p, responseBody)));
             formBody.add(dd.get(i), ddValue.get(i));
 
             Request request = new Request.Builder()
@@ -93,8 +104,10 @@ public class StudyPlanParser {
                 if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
 
                 responseBody = Objects.requireNonNull(response.body()).string();
+            } catch (IOException ex) {
+                log.error("Error: ", ex);
             }
-        }
+        }));
 
         List<String> content = Jsoup.parse(responseBody)
                 .getElementById(semester)
@@ -119,5 +132,10 @@ public class StudyPlanParser {
         Matcher m = Pattern.compile(String.format("id=\"%s\"\\s+value=\"([^\"]+)\"", id)).matcher(body);
 
         return m.find() ? m.group(1) : StringUtils.EMPTY;
+    }
+
+    public static <T> Consumer<T> withCounter(BiConsumer<Integer, T> consumer) {
+        AtomicInteger counter = new AtomicInteger(0);
+        return item -> consumer.accept(counter.getAndIncrement(), item);
     }
 }

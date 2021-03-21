@@ -38,9 +38,9 @@ public class GroupMessageGenerator implements CommandGenerator {
     @SneakyThrows
     public SendMessage generateCommand(Update update) {
         UserVO userVO = restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID, update.getMessage().getChatId());
+        restTemplateService.saveUserOption(new UserOptionVO().groupSelected(update.getMessage().getChatId()));
 
         if (isNull(userVO.getUserGroup())) {
-            restTemplateService.saveUserOption(new UserOptionVO().groupSelected(update.getMessage().getChatId()));
             return new SendMessage(update.getMessage().getChatId(),
                     Objects.requireNonNull(env.getProperty(userVO.getUserLanguage() + ".get_group")));
         }

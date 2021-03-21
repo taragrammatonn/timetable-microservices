@@ -3,24 +3,24 @@ package com.flux.telegramservice.service.project;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flux.telegramservice.entity.GroupVO;
 import com.flux.telegramservice.entity.UserVO;
-import com.flux.telegramservice.service.generator.CommandGenerator;
+import com.flux.telegramservice.service.generator.impl.GetHelpMessageGenerator;
 import com.flux.telegramservice.service.request.RestTemplateService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.env.Environment;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.*;
 
 import java.util.Objects;
 
 import static com.flux.telegramservice.util.Links.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.Mockito.doReturn;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -29,17 +29,14 @@ class BotServiceTest {
     @MockBean private RestTemplateService restTemplateService;
 
     @Autowired private BotService botService;
-    @Autowired ObjectMapper objectMapper;
+    @Autowired private ObjectMapper objectMapper;
+    @Autowired private Environment env;
 
-    public BotServiceTest() {
-        MockitoAnnotations.openMocks(this);
-    }
-
-    private Chat chat;
     private Message message;
-    private User user;
-    private CallbackQuery callbackQuery;
     private Update update;
+    private Chat chat;
+    private CallbackQuery callbackQuery;
+    private User user;
     private UserVO userVO;
     private GroupVO groupVO;
 
@@ -57,7 +54,7 @@ class BotServiceTest {
                 "fName",
                 "lName",
                 "nickName",
-                null,
+                "mi41z",
                 "language",
                 true, false, false
         );
@@ -66,78 +63,8 @@ class BotServiceTest {
     }
 
     @Test
-    void getLessonsByGroup_Update_Get_Message_Is_Not_Null() {
-        ReflectionTestUtils.setField(chat, "id", 123L);
-        ReflectionTestUtils.setField(message, "chat", chat);
-        ReflectionTestUtils.setField(update, "message", message);
-
-        assertThat(chat).isNotNull();
-        assertThat(message).isNotNull();
-        assertThat(update).isNotNull();
-
-        doReturn(userVO).when(restTemplateService).getForObject(UserVO.class, GET_USER_BY_CHAT_ID,
-                update.getMessage().getChatId());
-
-        UserVO userVOMock = restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID, update.getMessage().getChatId());
-
-        assertThat(userVOMock).isNotNull();
-        assertThat(userVOMock.getChatId()).isNotNull().isEqualTo(123L);
-    }
-
-    @Test
-    @SneakyThrows
-    void getLessonsByGroup_Update_Get_Message_Is_Null() {
-        ReflectionTestUtils.setField(user, "id", 123);
-        ReflectionTestUtils.setField(callbackQuery, "from", user);
-        ReflectionTestUtils.setField(update, "callbackQuery", callbackQuery);
-
-        assertThat(user).isNotNull();
-        assertThat(callbackQuery).isNotNull();
-        assertThat(update).isNotNull();
-        assertThat(update.getMessage()).isNull();
-
-        when(restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID,
-                Long.valueOf(update.getCallbackQuery().getFrom().getId()))).thenReturn(userVO);
-
-        UserVO userVOMock = restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID,
-                Long.valueOf(update.getCallbackQuery().getFrom().getId()));
-
-        assertThat(userVOMock).isNotNull();
-        assertThat(userVOMock.getChatId()).isNotNull().isEqualTo(123L);
-
-        doReturn(userVO).when(restTemplateService).getForObject(UserVO.class, GET_USER_BY_CHAT_ID,
-                update.getCallbackQuery().getFrom().getId());
-
-        userVOMock = restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID, update.getCallbackQuery().getFrom().getId());
-
-        assertThat(userVOMock).isNotNull();
-        assertThat(userVOMock.getChatId()).isNotNull().isEqualTo(123L);
-
-        assertThat(user).isNotNull();
-        assertThat(userVO.getChatId()).isNotNull().isEqualTo(123L);
-    }
-
-    @Test
-    void getGroupVo_With_Not_Null_Message() {
-        when(restTemplateService.getForObject(GroupVO.class, FIND_GROUP, "MI31Z")).thenReturn(groupVO);
-        GroupVO mockGroupVO = restTemplateService.getForObject(GroupVO.class, FIND_GROUP, "MI31Z");
-
-        assertThat(mockGroupVO).isNotNull();
-        assertThat(mockGroupVO.getName()).isEqualTo("MI31Z");
-    }
-
-    @Test
-    void getGroupVo_With_Null_Message() {
-        when(restTemplateService.getForObject(GroupVO.class, FIND_GROUP, "MI31Z")).thenReturn(groupVO);
-        GroupVO mockGroupVO = restTemplateService.getForObject(GroupVO.class, FIND_GROUP, "MI31Z");
-
-        assertThat(mockGroupVO).isNotNull();
-        assertThat(mockGroupVO.getName()).isEqualTo("MI31Z");
-    }
-
-    @Test
     void getLessonsByGroup_Should_Return_no_group_Message() {
-        initFields();
+        setFieldsByReflection();
 
         ReflectionTestUtils.setField(update, "message", null);
         assertThat(update.getMessage()).isNull();
@@ -145,13 +72,13 @@ class BotServiceTest {
         String res = botService.getLessonsByGroup(update, "MI31Z", "1");
 
         assertThat(res).isNotNull();
-        assertThat(res).isEqualTo("Такой группы не существует.");
+        assertThat(res).isEqualTo(env.getProperty("ru.no_response"));
     }
 
     @Test
     @SneakyThrows
     void getLessonsByGroup_Should_Return_Lessons() {
-        initFields();
+        setFieldsByReflection();
         when(restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID, Long.valueOf(update.getCallbackQuery().getFrom().getId()))).thenReturn(userVO);
         UserVO userVOMock = restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID, Long.valueOf(update.getCallbackQuery().getFrom().getId()));
 
@@ -162,9 +89,7 @@ class BotServiceTest {
         GroupVO mockGroupVO = restTemplateService.getForObject(GroupVO.class, FIND_GROUP, "MI31Z");
 
         assertThat(mockGroupVO).isNotNull();
-        assertThat(mockGroupVO.getGroupId())
-                .isEqualTo("228")
-                .isNotNull();
+        assertThat(mockGroupVO.getGroupId()).isEqualTo("228").isNotNull();
 
         var s = new String(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("lessons_answer.txt")).readAllBytes());
 
@@ -185,18 +110,61 @@ class BotServiceTest {
     }
 
     @Test
-    void messageProcessing() {
+    void getLessonsByGroup_Should_Throw_Exception() {
+        assertThrows(
+                NullPointerException.class,
+                () -> botService.getLessonsByGroup(new Update(), "test", "+1")
+        );
+    }
+
+    @Test
+    void messageProcessing_When_Command_Is_Null() {
+        setFieldsByReflection();
+        ReflectionTestUtils.setField(message, "text", "/help");
+        botService.register("/help", new GetHelpMessageGenerator(env));
+
+        SendMessage message = botService.messageProcessing(update);
+
+        assertThat(botService.commands.get(update.getMessage().getText())).isNotNull();
+        assertThat(message).isNotNull();
+        assertThat(message.getText()).isNotNull().isEqualTo(env.getProperty("ru.help"));
+    }
+
+    @Test
+    void messageProcessing_When_Command_Is_Not_Null() {
+        setFieldsByReflection();
+        ReflectionTestUtils.setField(message, "text", "another_command");
+        botService.register("/help", new GetHelpMessageGenerator(env));
+
+        SendMessage message = botService.messageProcessing(update);
+
+        assertThat(botService.commands.get(update.getMessage().getText())).isNull();
+        assertThat(message).isNotNull();
+        assertThat(message.getText()).isNotNull().isEqualTo(env.getProperty("ru.choose_option"));
+    }
+
+    @Test
+    void messageProcessing_Should_Throw_Exception() {
+        assertThrows(
+                NullPointerException.class,
+                () -> botService.messageProcessing(new Update())
+        );
     }
 
     @Test
     void callBackQueryProcessing() {
+        setFieldsByReflection();
+        ReflectionTestUtils.setField(callbackQuery, "data", "+1w");
+
+        when(restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID, Long.valueOf(update.getCallbackQuery().getFrom().getId()))).thenReturn(userVO);
+
+        SendMessage message = botService.callBackQueryProcessing(update);
+
+        assertThat(message).isNotNull();
+        assertThat(message.getText()).isNotNull().isEqualTo(env.getProperty("ru.no_response"));
     }
 
-    @Test
-    void register() {
-    }
-
-    private void initFields() {
+    private void setFieldsByReflection() {
         ReflectionTestUtils.setField(chat, "id", 123L);
         ReflectionTestUtils.setField(user, "languageCode", "ru");
         ReflectionTestUtils.setField(message, "from", user);

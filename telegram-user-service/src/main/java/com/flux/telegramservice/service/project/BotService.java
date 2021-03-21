@@ -5,7 +5,6 @@ import com.flux.telegramservice.entity.GroupVO;
 import com.flux.telegramservice.entity.HistoryEvent;
 import com.flux.telegramservice.entity.UserVO;
 import com.flux.telegramservice.service.generator.CommandGenerator;
-import com.flux.telegramservice.service.generator.impl.GenericCallbackQueryCommandGenerator;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import static com.flux.telegramservice.util.Links.*;
 import static java.util.Objects.isNull;
@@ -29,21 +27,31 @@ public class BotService extends AbstractTelegramService {
         this.objectMapper = objectMapper;
     }
 
-    private final Map<String, CommandGenerator> commands = new HashMap<>();
+    protected final Map<String, CommandGenerator> commands = new HashMap<>();
 
     @SneakyThrows
     public String getLessonsByGroup(Update update, String command, String day) {
-        UserVO userVO = isNull(update.getMessage()) ?
-                restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID,
-                        Long.valueOf(update.getCallbackQuery().getFrom().getId()))
-                :
-                restTemplateService.getForObject(UserVO.class, GET_USER_BY_CHAT_ID,
-                        update.getMessage().getChatId());
+        UserVO userVO = isNull(
+                update.getMessage()
+        ) ? restTemplateService
+                .getForObject(
+                        UserVO.class,
+                        GET_USER_BY_CHAT_ID,
+                        Long.valueOf(
+                                update.getCallbackQuery()
+                                        .getFrom()
+                                        .getId()
+                        )
+                ) : restTemplateService.getForObject(
+                UserVO.class,
+                GET_USER_BY_CHAT_ID,
+                update.getMessage().getChatId()
+        );
 
         GroupVO groupJson = restTemplateService.getForObject(GroupVO.class, FIND_GROUP, command);
 
         if (isNull(groupJson))
-            return env.getProperty(isNull(update.getMessage()) ? update.getCallbackQuery().getFrom().getLanguageCode() + ".no_group" : update.getMessage().getFrom().getLanguageCode() + ".no_group");
+            return env.getProperty(isNull(update.getMessage()) ? update.getCallbackQuery().getFrom().getLanguageCode() + ".no_response" : update.getMessage().getFrom().getLanguageCode() + ".no_response");
 
         saveHistory(update, HistoryEvent.GROUP);
 
@@ -59,21 +67,7 @@ public class BotService extends AbstractTelegramService {
     }
 
     public SendMessage callBackQueryProcessing(Update update) {
-        String command = update.getCallbackQuery().getData();
-
-        GenericCallbackQueryCommandGenerator genericCallbackQueryCommandGenerator =
-                new GenericCallbackQueryCommandGenerator(restTemplateService, botService, objectMapper) {
-                    @Override
-                    public String getInputCommand() {
-                        return command;
-                    }
-                };
-
-        return !isNull(genericCallbackQueryCommandGenerator.getCommandsList().get(command)) ?
-                genericCallbackQueryCommandGenerator.generateCommand(update) :
-                new SendMessage(String.valueOf(update.getCallbackQuery().getFrom().getId()),
-                        Objects.requireNonNull(env.getProperty(update.getMessage().getFrom().getLanguageCode()
-                                + ".wrong_command")));
+        return commands.get("callBackGenerator").generateCommand(update);
     }
 
     public void register(String code, CommandGenerator generator) {

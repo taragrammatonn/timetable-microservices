@@ -5,17 +5,18 @@ ru:
  Слишко много работы может растроить Ждуна! \nВыбери тип расписания."
  choose_option: "Выбери тип расписания из списка кнопок"
  help: "Здарова сталкер!\n А если ты девушка то,Привет красавица!\n
- Этот бот сделан группой энтузиастов (ну как \"группой\", бота создал @tetragramatonn а @MihaiCojusnean
- так подсосался под конец) для студетов и хорошых учителей USARB.\n
+ Этот бот сделан группой энтузиастов для студетов и хорошых учителей USARB.\n
  Пока что бот поддерживает следующие команды:\n
  /studyPlan -- см. учебный план (в настоящее время поддерживаются только группы ME13M и DM11M)\n
  /penis -- генерирует *****\n
  Другие команды в разработке.\n
  {\nЧерный список @UsarbOrarBot:\n Zastanceanu Liubov\n}"
- no_group: "Такой группы не существует."
+ no_response: "По данному запросу ничего не найдено."
  get_group: "Введите навзание группы."
+ get_teacher: "Введите имя учителя."
+ get_audience: "Введите кабинет."
  choose_semester: "Выбери семестр."
- wrong_command: "Неверная команда."
+ wrong_command: "Эта команда пока не поддерживается"
  button:
   semester_I: "Семестр I"
   semester_II: "Семестр II"
@@ -37,10 +38,12 @@ en:
  /penis -- generates your *****\n
  More commands are under development.\n
  {\n @UsarbOrarBot Blacklist: \\ n Zastanceanu Liubov \n}"
- no_group: "Such a group does not exist."
+ no_response: "No results were found for this request."
  get_group: "Enter your group."
+ get_teacher: "Enter teacher's name."
+ get_audience: "Enter audience."
  choose_semester: "Choose Semester."
- wrong_command: "Wrong command."
+ wrong_command: "This command is not yet supported."
  button:
   semester_I: "Semester I"
   semester_II: "Semester II"
@@ -64,10 +67,12 @@ ro:
  Până o să apara alete comenzi mai aveți de mâncat măligă.\n
  Totul abia începe! Vseo toliko nacinaetse\n
  {\n @UsarbOrarBot Lista neagră: \n Zastanceanu Liubov (Da ăto jestko)\n}"
- no_group: "Acestă grupă nu există."
+ no_response: "Nu s-au găsit rezultate pentru această solicitare."
  get_group: "Scrie denumirea grupei."
+ get_teacher: "Scrie numele profesorului (cu ș/ț/â/ă/î dacă e cazul)."
+ get_audience: "Scrie nr/denumirea cabinenutului."
  choose_semester: "Alege semestrul."
- wrong_command: "Comandă greșită."
+ wrong_command: "Această comandă nu se suștine la moment :(."
  button:
   semester_I: "Semestru I"
   semester_II: "Semestru II"
@@ -89,10 +94,12 @@ fr:
  /penis -- génère un *****\n
  D'autres commandes sont en cours de développement.\n
  {\n @UsarbOrarBot Liste noire: \\ n Zastanceanu Liubov \n}"
- no_group: "Un tel groupe n'existe pas."
+ no_response: "Aucun résultat n'a été trouvé pour cette demande."
  get_group: "Entrez le nom du groupe."
+ get_teacher: "Entrez le nom de l'enseignant."
+ get_audience: "Entrez le numéro de la chambre."
  choose_semester: "Choisissez un semestre."
- wrong_command: "Commande non valide."
+ wrong_command: "Cette commande n'est pas encore prise en charge."
  button:
   semester_I: "Semestere I"
   semester_II: "Semestere II"
