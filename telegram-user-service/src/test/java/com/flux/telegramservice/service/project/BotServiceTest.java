@@ -72,7 +72,7 @@ class BotServiceTest {
         String res = botService.getLessonsByGroup(update, "MI31Z", "1");
 
         assertThat(res).isNotNull();
-        assertThat(res).isEqualTo("Такой группы не существует.");
+        assertThat(res).isEqualTo(env.getProperty("ru.no_response"));
     }
 
     @Test
@@ -161,7 +161,7 @@ class BotServiceTest {
         SendMessage message = botService.callBackQueryProcessing(update);
 
         assertThat(message).isNotNull();
-        assertThat(message.getText()).isNotNull().isEqualTo(env.getProperty("ru.no_group"));
+        assertThat(message.getText()).isNotNull().isEqualTo(env.getProperty("ru.no_response"));
     }
 
     private void setFieldsByReflection() {

@@ -27,8 +27,8 @@ public abstract class AbstractTelegramService {
     @Autowired
     protected BotService botService;
 
-    protected boolean saveHistory(Update update, HistoryEvent event) {
-        return restTemplateService.saveHistory(update, event);
+    protected void saveHistory(Update update, HistoryEvent event) {
+        restTemplateService.saveHistory(update, event);
     }
 
     @SneakyThrows
@@ -45,14 +45,6 @@ public abstract class AbstractTelegramService {
                 }
                 return botService.getLessonsByGroup(update, command, null);
             }
-
-/*          if (userOption.getAudienceSelected()) {
-
-            }
-
-            if (userOption.getTeacherSelected()) {
-
-            } */
         } catch (NullPointerException e) {
             return env.getProperty(update.getMessage().getFrom().getLanguageCode() + ".choose_option");
         }

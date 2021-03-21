@@ -44,7 +44,6 @@ public class ParsingService {
             GroupRepository groupRepository,
             RestTemplate restTemplate,
             ObjectMapper objectMapper
-
     ) {
         this.dailyParametersRepository = dailyParametersRepository;
         this.groupRepository = groupRepository;

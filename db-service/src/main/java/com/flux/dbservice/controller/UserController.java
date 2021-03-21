@@ -40,20 +40,8 @@ public class UserController {
     /* find id and name for group/teacher/audience */
     @GetMapping("/findGroup")
     public ResponseEntity<String> findGroup(@RequestParam String groupName) {
-        return new ResponseEntity<>(parsingService.findGroup(groupName), HttpStatus.OK);
+        return new ResponseEntity<>(parsingService.findLessonsByGroup(groupName), HttpStatus.OK);
     }
-
-    @GetMapping("/findTeacher")
-    public ResponseEntity<String> findTeacher(@RequestParam String teacherName) {
-        return new ResponseEntity<>(parsingService.findTeacher(teacherName), HttpStatus.OK);
-    }
-
-    @GetMapping("/findAudience")
-    public ResponseEntity<String> findAudience(@RequestParam String audienceName) {
-        return new ResponseEntity<>(parsingService.findAudience(audienceName), HttpStatus.OK);
-    }
-
-
 
     @PostMapping("/saveDailyParameters")
     public ResponseEntity<String> saveDailyParameters(@RequestBody String parametersJson) {

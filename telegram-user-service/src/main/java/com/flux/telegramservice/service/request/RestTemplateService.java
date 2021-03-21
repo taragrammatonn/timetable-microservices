@@ -21,9 +21,9 @@ public class RestTemplateService extends RestTemplateHelper {
         return restTemplate.postForObject(LOGISTIC_SERVICE + SAVE_USER, userVO, UserVO.class);
     }
 
-    public Boolean saveHistory(Update update, HistoryEvent event) {
+    public void saveHistory(Update update, HistoryEvent event) {
         if (update.getMessage() == null) {
-            return restTemplate.postForObject(
+            restTemplate.postForObject(
                     LOGISTIC_SERVICE + SAVE_HISTORY,
                     new HistoryVO(
                             event,
@@ -31,16 +31,18 @@ public class RestTemplateService extends RestTemplateHelper {
                             new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()),
                             Long.valueOf(update.getCallbackQuery().getFrom().getId())),
                     HistoryVO.class
-            ) != null;
-        } else return restTemplate.postForObject(
-                LOGISTIC_SERVICE + SAVE_HISTORY,
-                new HistoryVO(
-                        event,
-                        update.getMessage().getText(),
-                        new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()),
-                        update.getMessage().getChatId()),
-                HistoryVO.class
-        ) != null;
+            );
+        } else {
+            restTemplate.postForObject(
+                    LOGISTIC_SERVICE + SAVE_HISTORY,
+                    new HistoryVO(
+                            event,
+                            update.getMessage().getText(),
+                            new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()),
+                            update.getMessage().getChatId()),
+                    HistoryVO.class
+            );
+        }
     }
 
     public void saveUserOption(UserOptionVO userOptionVO) {

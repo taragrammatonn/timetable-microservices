@@ -8,7 +8,6 @@ import com.flux.dbservice.entity.users.User;
 import com.flux.dbservice.repository.history.HistoryRepository;
 import com.flux.dbservice.repository.users.UserRepository;
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service

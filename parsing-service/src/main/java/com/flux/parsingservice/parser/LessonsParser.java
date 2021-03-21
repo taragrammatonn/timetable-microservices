@@ -25,8 +25,6 @@ import static java.util.Objects.isNull;
 @Slf4j
 public class LessonsParser {
 
-    private Document document;
-
     // LOGISTIC_SERVICE API's
     public static final String LOGISTIC_SERVICE = "http://LOGISTIC-SERVICE/logistic-api";
     public static final String GET_DAILY_PARAMETERS_BY_WEEK_NOT_NULL = "/getDailyParametersByWeekNotNull";
@@ -43,9 +41,13 @@ public class LessonsParser {
 
     private static final List<String> CURRENT = Arrays.asList("day", "week", "semester");
 
+    private static final String TITLU = "Titlu";
+
     private final Environment env;
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
+
+    private Document document;
 
     public LessonsParser(Environment env, ObjectMapper objectMapper, RestTemplate restTemplate) {
         this.env = env;
@@ -82,7 +84,8 @@ public class LessonsParser {
         return getJsonContent(AUDIENCE_API);
     }
 
-    public String getLessons(String groupJson, String dailyParameters, String userVo, String day) throws IOException {
+    @SneakyThrows
+    public String getLessons(String groupJson, String dailyParameters, String userVo, String day) {
         Connection.Response res = getResponseContent();
         this.document = res.parse();
         String csrf = this.document.select("meta[name=\"csrf-token\"]").first().attr("content");
@@ -114,7 +117,7 @@ public class LessonsParser {
                     .ignoreContentType(true)
                     .cookies(res.cookies())
                     .data("_csrf", csrf)
-                    .data("gr", jsonNode.get("id").toString().replace("\"", ""))
+                    .data("gr", jsonNode.get("groupId").toString().replace("\"", ""))
                     .data("sem", map.get("semester").replace("\"", ""))
                     .data("day", map.get("day").replace("\"", ""))
                     .data("week", map.get("week").replace("\"", ""))
@@ -146,23 +149,24 @@ public class LessonsParser {
                 6, "\n6. 16:45-18:15\n- ",
                 7, "\n7. 18:30-20:00\n- "
         );
-        for (JsonNode jsonNode : arrayNode) {
+
+        arrayNode.forEach(jsonNode -> {
             if (dayNumber == (jsonNode.get("day_number").asInt())) {
                 todayLessons
                         .append(courseNr.get(jsonNode.get("cours_nr").asInt()))
                         .append(jsonNode.get("cours_name").asText()).append(newLine)
                         .append(jsonNode.get("cours_type").asText()).append(newLine);
-                if (jsonNode.get("Titlu") != null) {
+                if (jsonNode.get(TITLU) != null) {
                     todayLessons
-                            .append(jsonNode.get("Titlu").asText().equals("null") ? ""
-                                    : jsonNode.get("Titlu").asText()).append(" ");
+                            .append(jsonNode.get(TITLU).asText().equals("null") ? ""
+                                    : jsonNode.get(TITLU).asText()).append(" ");
                 }
                 todayLessons
                         .append(jsonNode.get("teacher_name").asText()).append(newLine)
                         .append(jsonNode.get("cours_office").asText().equals("null") ? ""
                                 : jsonNode.get("cours_office").asText()).append("\n");
             }
-        }
+        });
 
         return objectMapper.writeValueAsString(todayLessons);
     }
@@ -206,13 +210,21 @@ public class LessonsParser {
     }
 
     @SneakyThrows
+    @SuppressWarnings("unchecked")
     private String lessonsBy(String userVo) {
-        String user = objectMapper.readTree(userVo).get("userOption").toString();
-        Map<String, Object> result = objectMapper.readValue(user, HashMap.class);
+        Map<String, Object> result = objectMapper.readValue(
+                objectMapper.readTree(userVo).get("userOption").toString(),
+                HashMap.class
+        );
 
-        if (result.get("teacherSelected").equals(true)) return "http://orar.usarb.md/api/getlessonsByTeacher";
-        if (result.get("audienceSelected").equals(true)) return "http://orar.usarb.md/api/getlessonsByOffice";
-
-        return "http://orar.usarb.md/api/getlessons";
+        return LessonsBy.findByValue(
+                result
+                        .entrySet()
+                        .stream()
+                        .filter(entry -> entry.getValue() != null && (Boolean) entry.getValue())
+                        .map(Map.Entry::getKey)
+                        .findFirst()
+                .orElse(null)
+        ).getApi();
     }
 }

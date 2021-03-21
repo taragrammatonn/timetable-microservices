@@ -20,7 +20,6 @@ public class LogisticController {
         return logisticService.addUser(userJson);
     }
 
-
     /* find id and name for group/teacher/audience */
     @RequestMapping("/findGroup")
     public String findGroup(@RequestParam String groupName) {
@@ -37,7 +36,6 @@ public class LogisticController {
         return logisticService.findAudience(audienceName);
     }
 
-
     /* find all groups/teachers/audiences from orar.usarb.com */
     @GetMapping("/getAllAudiences")
     public ResponseEntity<String> getAllAudiences() {
@@ -53,8 +51,6 @@ public class LogisticController {
     public ResponseEntity<String> getAllTeachers() {
         return logisticService.getAllTeachers();
     }
-
-
 
     @GetMapping("/getDailyParametersByWeekNotNull")
     public String getDailyParametersByWeekNotNull() {

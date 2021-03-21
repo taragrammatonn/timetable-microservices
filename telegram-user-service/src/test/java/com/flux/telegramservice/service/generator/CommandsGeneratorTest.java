@@ -31,7 +31,6 @@ import static org.mockito.Mockito.when;
 class CommandsGeneratorTest extends BotService {
 
     @Autowired private Environment env;
-    @Autowired private ObjectMapper objectMapper;
     @Autowired private GenericCallbackQueryCommandGenerator genericCallbackQueryCommandGenerator;
 
     @MockBean private UserService mockUserService;
