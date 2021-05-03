@@ -19,6 +19,6 @@ public class Group {
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
     Long id;
-    String groupId;
+    Long groupId;
     String name;
 }

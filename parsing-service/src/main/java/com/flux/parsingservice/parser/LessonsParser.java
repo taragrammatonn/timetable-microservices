@@ -73,7 +73,7 @@ public class LessonsParser {
     }
 
     public String getGroups() throws IOException {
-        return getJsonContent(GROUP_API);
+        return getJsonContent(GROUP_API).replace("id", "groupId");
     }
 
     public String getTeachers() throws IOException {
@@ -91,8 +91,7 @@ public class LessonsParser {
         String csrf = this.document.select("meta[name=\"csrf-token\"]").first().attr("content");
 
         JsonNode jsonNode = objectMapper.readTree(groupJson);
-        Map<String, String> map = objectMapper.readValue(dailyParameters, new TypeReference<>() {
-        });
+        Map<String, String> map = objectMapper.readValue(dailyParameters, new TypeReference<>() {});
 
         if (isNull(map.get("week"))) {
             ObjectNode dailyParams = (ObjectNode) objectMapper.readTree(restTemplate.getForObject(LOGISTIC_SERVICE + GET_DAILY_PARAMETERS_BY_WEEK_NOT_NULL, String.class));
@@ -204,7 +203,7 @@ public class LessonsParser {
         String[] data = this.document
                 .getElementById("weekSelector")
                 .select("option[value=" + map.get("week") + "]").text()
-                .substring(3, 12).split("\\.");
+                .substring(3, 12).replace("(", "").split("\\.");
 
         return (Integer.parseInt(data[0]) + day - 1) + "." + data[1] + "." + data[2] + " --- " + daysOfWeek.get(day) + "\n";
     }
