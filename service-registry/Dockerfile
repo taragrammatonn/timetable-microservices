@@ -8,10 +8,12 @@ COPY ./ ./
 RUN mvn clean package
 
 # Second stage
-FROM adoptopenjdk/openjdk11
+FROM openjdk:11.0.7-jdk-slim
 
 # Copy artifacts
-COPY --from=MAVEN_BUILD /target/timetable-service-registry.jar /service-registry.jar
+COPY --from=MAVEN_BUILD /target/service-registry-0.0.1-SNAPSHOT.jar /service-registry.jar
 
 # Startup
 CMD ["java", "-jar", "/service-registry.jar"]
+
+EXPOSE 8761
