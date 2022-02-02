@@ -7,7 +7,6 @@
 		<groupId>com.flux.parent-pom</groupId>
 		<artifactId>parent-pom</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
-		<relativePath>../pom.xml</relativePath> <!-- lookup parent from repository -->
 	</parent>
 
 	<groupId>com.flux.logistic-service</groupId>
