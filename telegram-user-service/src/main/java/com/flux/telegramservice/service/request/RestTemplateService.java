@@ -48,4 +48,8 @@ public class RestTemplateService extends RestTemplateHelper {
     public void saveUserOption(UserOptionVO userOptionVO) {
         restTemplate.postForObject(LOGISTIC_SERVICE + SAVE_USER_OPTION, userOptionVO, UserOptionVO.class);
     }
+
+    public boolean refreshGroupsRequest() {
+        return Boolean.TRUE.equals(restTemplate.getForObject(LOGISTIC_SERVICE + REFRESH_GROUPS, Boolean.class));
+    }
 }
