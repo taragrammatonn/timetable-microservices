@@ -31,22 +31,20 @@ public class BotService extends AbstractTelegramService {
 
     @SneakyThrows
     public String getLessonsByGroup(Update update, String command, String day) {
-        UserVO userVO = isNull(
-                update.getMessage()
-        ) ? restTemplateService
+        UserVO userVO;
+        if (!isNull(update.getMessage()))
+            userVO = restTemplateService.getForObject(
+                    UserVO.class,
+                    GET_USER_BY_CHAT_ID,
+                    update.getMessage().getChatId());
+        else userVO = restTemplateService
                 .getForObject(
                         UserVO.class,
                         GET_USER_BY_CHAT_ID,
                         Long.valueOf(
                                 update.getCallbackQuery()
                                         .getFrom()
-                                        .getId()
-                        )
-                ) : restTemplateService.getForObject(
-                UserVO.class,
-                GET_USER_BY_CHAT_ID,
-                update.getMessage().getChatId()
-        );
+                                        .getId()));
 
         GroupVO groupJson = restTemplateService.getForObject(GroupVO.class, FIND_GROUP, command);
 

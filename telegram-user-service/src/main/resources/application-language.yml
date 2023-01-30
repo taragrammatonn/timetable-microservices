@@ -4,13 +4,10 @@ ru:
  repeating_start_input: "Астановитесь, %s!\n
  Слишко много работы может растроить Ждуна! \nВыбери тип расписания."
  choose_option: "Выбери тип расписания из списка кнопок"
- help: "Здарова сталкер!\n А если ты девушка то,Привет красавица!\n
+ help: "Здарова, студент!\n А если ты девушка, то привет красавица!\n
  Этот бот сделан группой энтузиастов для студетов и хорошых учителей USARB.\n
  Пока что бот поддерживает следующие команды:\n
- /studyPlan -- см. учебный план (в настоящее время поддерживаются только группы ME13M и DM11M)\n
- /penis -- генерирует *****\n
- Другие команды в разработке.\n
- {\nЧерный список @UsarbOrarBot:\n Zastanceanu Liubov\n}"
+ Другие команды в разработке.\n"
  no_response: "По данному запросу ничего не найдено."
  get_group: "Введите навзание группы."
  get_teacher: "Введите имя учителя."
@@ -30,14 +27,11 @@ en:
  repeating_start_input: "Stop! %s!\n
  Too much work can upset Zhdun!\nChoose the type of schedule."
  choose_option: "Select the type of schedule from the list of buttons"
- help: "Hy stalker!\n
+ help: "Sup Big Boy!\n
  And if you are a girl then, Hello, beauty!\n
  This bot was made by a group of enthusiasts for USARB students and good teachers.\n
  So far, the bot supports the following commands:\n
- /studyPlan -- see study plan (currently only supports groups ME13M ang DM11M)\n
- /penis -- generates your *****\n
- More commands are under development.\n
- {\n @UsarbOrarBot Blacklist: \\ n Zastanceanu Liubov \n}"
+ More commands are under development.\n"
  no_response: "No results were found for this request."
  get_group: "Enter your group."
  get_teacher: "Enter teacher's name."
@@ -57,7 +51,7 @@ ro:
  repeating_start_input: "Stop! %s!\n
  Prea multă muncă poate abiji pe Zhdun!\nAlegeți tipul de program."
  choose_option: "Alege tipul orarului!\n Indiciu: Din butoane!"
- help: "Cimok în pupok stalker!\n
+ help: "Buna!\n
  Și dacă ești fată, atunci, Bună frumusețe!\n
  Acest bot a fost creat de un grup de entuziaști (bine, baza a fost pusă de @tetragramatonn dar la măreţie a fost adus de @MihaiCojusnean)\n
  pentru studenții USARB și profesorii buni.\n
@@ -90,10 +84,7 @@ fr:
  help: "Bonjour Stalker!\nEt si vous êtes une fille alors, Bonjour, beauté!\n
  Ce bot a été créé par un groupe de passionnés pour les étudiants de l'USARB et les bons professeurs.\n
  Jusqu'à présent, le bot prend en charge les commandes suivantes:\n
- /studyPlan -- voir le plan d'étude (ne prend actuellement en charge que les groupes ME13M est DM11M)\n
- /penis -- génère un *****\n
- D'autres commandes sont en cours de développement.\n
- {\n @UsarbOrarBot Liste noire: \\ n Zastanceanu Liubov \n}"
+ D'autres commandes sont en cours de développement.\n"
  no_response: "Aucun résultat n'a été trouvé pour cette demande."
  get_group: "Entrez le nom du groupe."
  get_teacher: "Entrez le nom de l'enseignant."

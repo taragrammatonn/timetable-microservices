@@ -29,6 +29,7 @@ public class LogisticService {
     public static final String SAVE_HISTORY = "/saveHistory";
     private static final String SAVE_USER_OPTION = "/saveUserOption";
     private static final String GET_USER_OPTION_BY_CHAT_ID = "/getUserOption?chatId={chatId}";
+    private static final String REFRESH_GROUPS = "/refreshGroups";
 
     private final RestTemplate restTemplate;
 
@@ -104,5 +105,9 @@ public class LogisticService {
 
     public String getStudyPlan(String semester, String userVo) {
         return restTemplate.getForObject(PARSING_SERVICE + GET_STUDY_PLAN, String.class, semester, userVo);
+    }
+
+    public Boolean refreshGroups() {
+        return restTemplate.getForObject(DB_SERVICE + REFRESH_GROUPS, Boolean.class);
     }
 }

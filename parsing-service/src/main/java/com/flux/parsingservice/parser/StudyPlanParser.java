@@ -73,14 +73,15 @@ public class StudyPlanParser {
         String lang = objectMapper.readTree(userVo).get("userLanguage").asText();
         String group = objectMapper.readTree(userVo).get("userGroup").asText();
         // will be better to load from db list of possible commands
-        List<String> ddValue = switch (group.toUpperCase()) {
-            case "ME13M" -> List.of("Ciclul II (Master)", "Ştiinţe ale educaţiei", "Managementul educaţional (90)");
-            case "DM11M" -> List.of("Ciclul II (Master)", "Ştiinţe ale educaţiei", "Didactica matematicii");
-            default -> Collections.emptyList();
-        };
+//        List<String> ddValue = switch (group.toUpperCase()) {
+//            case "ME13M" -> List.of("Ciclul II (Master)", "Ştiinţe ale educaţiei", "Managementul educaţional (90)");
+//            case "DM11M" -> List.of("Ciclul II (Master)", "Ştiinţe ale educaţiei", "Didactica matematicii");
+//            default -> Collections.emptyList();
+//        };
 
-        return ddValue.isEmpty() ? objectMapper.writeValueAsString(env.getProperty(lang + ".unsupported_group"))
-                : getStudyPlan(ddValue, semester, userVo);
+//        return ddValue.isEmpty() ? objectMapper.writeValueAsString(env.getProperty(lang + ".unsupported_group"))
+//                : getStudyPlan(ddValue, semester, userVo);
+        return StringUtils.EMPTY;
     }
 
     @SneakyThrows

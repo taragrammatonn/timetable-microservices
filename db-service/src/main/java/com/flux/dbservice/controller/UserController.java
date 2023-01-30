@@ -72,4 +72,10 @@ public class UserController {
     public ResponseEntity<String> getUserOption(@RequestParam Long chatId) {
         return new ResponseEntity<>(userService.getUserOptionByChatId(chatId), HttpStatus.OK);
     }
+
+    @GetMapping("/refreshGroups")
+    public ResponseEntity<Boolean> refreshGroups() {
+        // TODO admin required
+        return new ResponseEntity<>(parsingService.refreshGroups(), HttpStatus.OK);
+    }
 }

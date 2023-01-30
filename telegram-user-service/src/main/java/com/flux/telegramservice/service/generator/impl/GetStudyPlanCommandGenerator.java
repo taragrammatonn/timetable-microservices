@@ -1,7 +1,6 @@
 package com.flux.telegramservice.service.generator.impl;
 
 import com.flux.telegramservice.service.generator.CommandGenerator;
-import com.flux.telegramservice.service.request.RestTemplateService;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;

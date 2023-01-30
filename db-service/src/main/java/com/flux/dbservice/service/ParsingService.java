@@ -85,7 +85,22 @@ public class ParsingService {
         }
 
         log.error("Error in ParsingService.findLessonsByGroup. Cannot find group.");
-         return false;
+        return false;
+    }
+
+    @SneakyThrows
+    public Boolean refreshGroups() {
+        log.info("Refreshing groups.");
+        groupRepository.deleteAll();
+
+        List<Group> groups = Arrays.asList(
+                objectMapper.readValue(
+                        restTemplate.getForObject(
+                                LOGISTIC_SERVICE + GET_ALL_GROUPS, String.class),
+                        Group[].class));
+
+        groupRepository.saveAll(groups);
+        return true;
     }
 
     @SneakyThrows

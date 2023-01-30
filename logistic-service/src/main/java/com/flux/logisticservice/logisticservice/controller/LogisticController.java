@@ -92,4 +92,9 @@ public class LogisticController {
             @RequestParam String userVo) {
         return logisticService.getStudyPlan(semester, userVo);
     }
+
+    @GetMapping("/refreshGroups")
+    public ResponseEntity<Boolean> getUserOption() {
+        return new ResponseEntity<>(logisticService.refreshGroups(), HttpStatus.OK);
+    }
 }
