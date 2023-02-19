@@ -2,7 +2,6 @@ package com.flux.telegramservice.service.request;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flux.telegramservice.pubsub.PubsubOutboundGateway;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,8 +20,6 @@ public abstract class RestTemplateHelper {
     @Autowired protected RestTemplate restTemplate;
 
     @Autowired protected ObjectMapper objectMapper;
-
-    @Autowired protected MessageChannel pubsubInputChannel;
 
 
     public <T> T getForObject(Class<T> clazz, String url, Object...uriVariables) {

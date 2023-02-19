@@ -6,6 +6,11 @@ spring:
     name: TELEGRAM-SERVICE
   profiles:
     active: language
+  activemq:
+    broker-url: tcp://localhost:61616
+    user: admin
+    password: admin
+    topic: user
 
 eureka:
   client:
@@ -17,5 +22,5 @@ eureka:
     hostname: localhost
 
 bot:
-  name: ${env.BOT_NAME}
-  token: ${env.BOT_TOKEN}
+  name: "@UsarbOrarBot"
+  token: "832766512:AAEkYX4hYAM1HfGkWETQiuzYrBLlzCdfcuU"
